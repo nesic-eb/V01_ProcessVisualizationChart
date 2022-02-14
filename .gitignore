@@ -1,0 +1,17 @@
+# *.bak はいらない
+*.bak
+
+# csv はいらない
+static/csv_template.csv
+static/property_number_maintenance.csv
+static/upload.csv
+
+# log
+.vscode/
+log/
+model/
+__pycache__/
+Bootstrap/
+bootstrap-4.3.1-dist/
+static/img
+static/manual
