@@ -132,7 +132,7 @@ def goToProcessDiagram():
 @app.route("/goToProcessDiagramDetail")
 def goToProcessDiagramDetail():
     logger.info("goToProcessDiagramDetail .....")
-    return render_template("process_diagram2.html")
+    return render_template("ProcessDiagramDetail.html")
 
 
 # ############################################################################################################
