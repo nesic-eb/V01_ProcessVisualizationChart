@@ -41,6 +41,10 @@
     margin-left: 33px;
 }
 
+h3{
+  border: 1px solid;
+  margin-top: 25px;
+}
 
 input[type=text] {
   height: 25px !important;
@@ -55,7 +59,7 @@ button[type=submit] {
 }
 
 #btn_initialize {
-  margin-top: 8px;
+  margin-top: 24px;
   background-color:#ffcc80;
   height: 45px;
   border: none;
@@ -63,15 +67,14 @@ button[type=submit] {
 }
 
 #btn_update {
-  margin-top: 20px;
+  margin-top: 37px;
   margin-left: 440px;
   height: 35px;
 }
 
 
 #btn_Back {
-  margin-top: 20px;
-  /* margin-left: 175px; */
+  margin-top: 37px;
   height: 35px;
 }
 

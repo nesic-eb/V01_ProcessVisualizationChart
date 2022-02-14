@@ -39,14 +39,15 @@
             </div>
         </div>
     </header>
+
     <div class="l-content">
         <div class="container-fluid">
             <div class="row">
-                <h2>Process Diagram Detail</h2>
+                <h2>Process Detail Diagram</h2>
             </div><br>
             <div class="row">
                 <div class="col-sm-3">
-                    <button type="submit" class="btn btn-primary">表示</button>
+                    <button class="btn btn-primary">表示</button>
                 </div>
                 <div class="col-sm-3">
                     <a href="/goToProcessDiagram"><button type="submit" id="btn_design"
@@ -56,7 +57,7 @@
                     <button type="submit" id="btn_description" class="btn btn-primary">説明文一括登録</button>
                 </div>
                 <div class="col-sm-3">
-                    <button type="submit" class="btn btn-primary">登録</button>
+                    <button class="btn btn-primary">登録</button>
                     &nbsp;&nbsp;&nbsp;
                     <button class="btn btn-primary">登録（未使用コメントを削除する）</button>
                 </div>
@@ -109,687 +110,585 @@
 
                     <table border="1" class="table">
                         <tr>
-                            <th style="text-align: center;">No.</th>
-                            <th style="text-align: center;">A</th>
-                            <th style="text-align: center;">B</th>
-                            <th style="text-align: center;">C</th>
-                            <th style="text-align: center;">D</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/start.png" style="margin-left:25px;" />
-                            </td>
-                            <td>
-
-                            </td>
+                            <th style="text-align: center; width: 40px;">No.</th>
+                            <th style="text-align: center; width: 40px;">A</th>
+                            <th style="text-align: center; width: 140px;">B</th>
+                            <th style="text-align: center; width: 140px;">C</th>
+                            <th style="text-align: center; width: 140px;">D</th>
                         </tr>
 
+                        <!-- 1 -->
                         <tr>
-                            <td>2</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>3</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/process.png" />
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>4</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop" selected>C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>5</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/arrow.png" style="margin-left:60px ;" />
-                            </td>
-                            <td>
-                                <img src="/static/img/png/down_arrow.png" style="margin-left:20px ;" />
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>6</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input" selected>C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">D-1</option>
-                                    <option value="stop">D-2</option>
-                                    <option value="input" selected>D-3</option>
-                                    <option value="process">D-4</option>
-                                    <option value="decision">D-5</option>
-                                    <option value="output">D-6</option>
-                                    <option value="text">D-7</option>
-                                    <option value="down">D-8</option>
-                                    <option value="up">D-9</option>
-                                    <option value="left">D-10</option>
-                                    <option value="right">D-11</option>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>7</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/line.png" style="margin-left:55px;" />
-                            </td>
-                            <td>
-                                <img src="/static/img/png/process_symbol.png">
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>8</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process" selected>C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">D-1</option>
-                                    <option value="stop">D-2</option>
-                                    <option value="input">D-3</option>
-                                    <option value="process" selected>D-4</option>
-                                    <option value="decision">D-5</option>
-                                    <option value="output">D-6</option>
-                                    <option value="text">D-7</option>
-                                    <option value="down">D-8</option>
-                                    <option value="up">D-9</option>
-                                    <option value="left">D-10</option>
-                                    <option value="right">D-11</option>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>9</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/line.png" style="margin-left:50px" />
-                            </td>
-                            <td>
-                                <img src="/static/img/png/uptoleft.png" style="margin-right: 70px;">
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>10</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision" selected>C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">D-1</option>
-                                    <option value="stop">D-2</option>
-                                    <option value="input">D-3</option>
-                                    <option value="process">D-4</option>
-                                    <option value="decision" selected>D-5</option>
-                                    <option value="output">D-6</option>
-                                    <option value="text">D-7</option>
-                                    <option value="down">D-8</option>
-                                    <option value="up">D-9</option>
-                                    <option value="left">D-10</option>
-                                    <option value="right">D-11</option>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>11</td>
+                            <td style="text-align:center; vertical-align:middle; ">1</td>
                             <td></td>
-                            <td>
-                                <img src="/static/img/png/downtoright.png"
-                                    style="margin-left: 25px;margin-top: 13px;" />
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/start.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="開始">
                             </td>
-                            <td>
-                                <img src="/static/img/png/condition.png" style="margin-left:35px ;">
+                            <td></td>
+                        </tr>
+
+                        <!-- 2 -->
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle; ">2</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/process.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="見積依頼を実施">
                             </td>
+                            <td></td>
+                        </tr>
 
-                            <td>
-
+                        <!-- 3 -->
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle; ">3</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/arrow.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="見積書の内容判定">
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/down_arrow.png" style="margin-left:20px ;" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="確認が必要">
                             </td>
                         </tr>
 
+                        <!-- 4 -->
                         <tr>
-                            <td>12</td>
-                            <td>
-
+                            <td style="text-align:center; vertical-align:middle; ">4</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/line.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="上司へ展開">
                             </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">B-1</option>
-                                    <option value="stop">B-2</option>
-                                    <option value="input">B-3</option>
-                                    <option value="process">B-4</option>
-                                    <option value="decision">B-5</option>
-                                    <option value="output" selected>B-6</option>
-                                    <option value="text">B-7</option>
-                                    <option value="down">B-8</option>
-                                    <option value="up">B-9</option>
-                                    <option value="left">B-10</option>
-                                    <option value="right">B-11</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output" selected>C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/process_symbol.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="内容確認作業">
                             </td>
                         </tr>
 
+                        <!-- 5 -->
                         <tr>
-                            <td>13</td>
-                            <td>
+                            <td style="text-align:center; vertical-align:middle; ">5</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/line.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="承認会議実施する">
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/uptoleft.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="修正内容を協議する">
+                            </td>
+                        </tr>
 
+                        <!-- 6 -->
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle; ">6</td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/downtoright.png" />
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="判定会議">
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/condition.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="再確認が必要">
                             </td>
                             <td>
+                            </td>
+                        </tr>
+
+                        <!-- 7 -->
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle; ">7</td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
                                 <img src="/static/img/png/parallelogram.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="再確認業務を行う">
                             </td>
-                            <td>
-                                <img src="/static/img/png/line.png" style="margin-left:40px;">
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/line.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="作業の発注を行う">
                             </td>
-                            <td>
-
-                            </td>
+                            <td></td>
                         </tr>
 
+                        <!-- 8 -->
                         <tr>
-                            <td>14</td>
-                            <td>
-
+                            <td style="text-align:center; vertical-align:middle; ">8</td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/c7.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="">
                             </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">B-1</option>
-                                    <option value="stop">B-2</option>
-                                    <option value="input">B-3</option>
-                                    <option value="process">B-4</option>
-                                    <option value="decision">B-5</option>
-                                    <option value="output">B-6</option>
-                                    <option value="text" selected>B-7</option>
-                                    <option value="down">B-8</option>
-                                    <option value="up">B-9</option>
-                                    <option value="left">B-10</option>
-                                    <option value="right">B-11</option>
-                                </select>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/c8.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="">
                             </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text" selected>C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
-                            </td>
+                            <td></td>
                         </tr>
 
+                        <!-- 9 -->
                         <tr>
-                            <td>15</td>
-                            <td>
-
+                            <td style="text-align:center; vertical-align:middle; ">9</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center; vertical-align:middle; ">
+                                <img src="/static/img/png/stop.png">
+                                <input type="text" name=""
+                                    style="background-color: #cccccc6b; height: 30px; margin-top: 5px; text-align:center; color: brown;"
+                                    value="終了">
                             </td>
-                            <td>
-                                <img src="/static/img/png/c7.png" style="margin-left:40px">
-                            </td>
-                            <td>
-                                <img src="/static/img/png/c8.png" style="margin-left:40px">
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>16</td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">B-1</option>
-                                    <option value="stop">B-2</option>
-                                    <option value="input">B-3</option>
-                                    <option value="process">B-4</option>
-                                    <option value="decision">B-5</option>
-                                    <option value="output">B-6</option>
-                                    <option value="text">B-7</option>
-                                    <option value="down" selected>B-8</option>
-                                    <option value="up">B-9</option>
-                                    <option value="left">B-10</option>
-                                    <option value="right">B-11</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down" selected>C-8</option>
-                                    <option value="up">C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>17</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <img src="/static/img/png/stop.png" style="margin-left:40px">
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>18</td>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <select class='form-control'>
-                                    <option value="d-1">C-1</option>
-                                    <option value="stop">C-2</option>
-                                    <option value="input">C-3</option>
-                                    <option value="process">C-4</option>
-                                    <option value="decision">C-5</option>
-                                    <option value="output">C-6</option>
-                                    <option value="text">C-7</option>
-                                    <option value="down">C-8</option>
-                                    <option value="up" selected>C-9</option>
-                                    <option value="left">C-10</option>
-                                    <option value="right">C-11</option>
-                                </select>
-                            </td>
-                            <td>
-
-                            </td>
+                            <td></td>
                         </tr>
 
                     </table>
                 </div>
+
                 <div class="col-sm-6">
                     <div class="container-fluid">
+                        <!-- Comment -->
+                        <!-- 1 -->
+                        <div class="container" id="container_1" style="border: 2px solid black;width: 850px;">
+                            <table class="table" id="table_1">
+                                <tr>
+                                    <td style="width: 200px;">
+                                        <p>位置</p>
+                                        <select class='form-control' style="background-color:yellow;">
+                                            <option value="d-1" selected>C-1</option>
+                                            <option value="stop">C-2</option>
+                                            <option value="input">C-3</option>
+                                            <option value="process">C-4</option>
+                                            <option value="decision">C-5</option>
+                                            <option value="output">C-6</option>
+                                            <option value="text">C-7</option>
+                                            <option value="down">C-8</option>
+                                            <option value="up">C-9</option>
+                                            <option value="left">C-10</option>
+                                            <option value="right">C-11</option>
+                                        </select>
+                                    </td>
+                                    <td style="width:300px">
+                                        <p>見出し</p>
+                                        <input type="text" class="form-control" style="height:35px;" value="開始" />
+                                    </td>
+                                    <td>
+                                        <p>&nbsp;</p>
+                                        <button type="button" class="btn btn-primary">削除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <p>説明</p>
+                                        <textarea style="width:763px;height: 100px;">RPAライセンス手配の作業開始</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <p>例外時の作業項目</p>
+                                        <select class='form-control' style="width:763px;">
+                                            <option value="000"></option>
+                                            <option value="001" selected>●●対応</option>
+                                            <option value="002">●●対応</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>操作対象等</p>
+                                        <select class='form-control'>
+                                            <option value="5min">基幹システム</option>
+                                            <option value="10min">メール</option>
+                                            <option value="15min">ミーテイング</option>
+                                            <option value="20min">資料作成</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="1.5" rowspan="2">
+                                        <p>補足説明, 参考資料等</p>
+                                        <textarea
+                                            style="width:600px;height: 130px;">準備作業（見積依頼書の書式入手）&#10;相手先連結済み</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>作業時間</p>
+                                        <select class='form-control'>
+                                            <option value="5min">5分</option>
+                                            <option value="10min">10分</option>
+                                            <option value="15min">15分</option>
+                                            <option value="20min">20分</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="glyphicon glyphicon-plus" id="show_btn"
+                                style="margin-left: -25px;margin-bottom: -15px;" onclick="show_hide_div_1()" />
+                        </div>
+
+                        <!-- 2 -->
+                        <hr style="height: 3px; background-color: red;">
+                        <div class="container" style="border: 2px solid black;width: 850px;">
+                            <table class="table" id="table_2">
+                                <tr>
+                                    <td>
+                                        <p>位置</p>
+                                        <select class='form-control' style="background-color:yellow;">
+                                            <option value="stop">C-2</option>
+                                            <option value="input">C-3</option>
+                                            <option value="process">C-4</option>
+                                            <option value="decision">C-5</option>
+                                            <option value="output">C-6</option>
+                                            <option value="text">C-7</option>
+                                            <option value="down">C-8</option>
+                                            <option value="up">C-9</option>
+                                            <option value="left">C-10</option>
+                                            <option value="right">C-11</option>
+                                        </select>
+                                    </td>
+                                    <td style="width:300px">
+                                        <p>見出し</p>
+                                        <input type="text" class="form-control" style="height:35px;" value="見積依頼を実施" />
+                                    </td>
+                                    <td>
+                                        <p>&nbsp;</p>
+                                        <button type="button" class="btn btn-primary">削除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <p>説明</p>
+                                        <textarea
+                                            style="width:763px;height: 100px;">見積依頼署を作成して、業者にメールで依頼する。&#10;見積依頼書は「」にあるフォーマットを使用する。</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <p>例外時の作業項目</p>
+                                        <select class='form-control' style="width:763px;">
+                                            <option value="000"></option>
+                                            <option value="001" selected>●●対応</option>
+                                            <option value="002">●●対応</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>操作対象等</p>
+                                        <select class='form-control'>
+                                            <option value="5min">基幹システム</option>
+                                            <option value="10min">メール</option>
+                                            <option value="15min">ミーテイング</option>
+                                            <option value="20min">資料作成</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="1.5" rowspan="2">
+                                        <p>補足説明, 参考資料等</p>
+                                        <textarea
+                                            style="width:600px;height: 130px;">準備作業（見積依頼書の書式入手）&#10;相手先連結済み</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>作業時間</p>
+                                        <select class='form-control'>
+                                            <option value="5min">5分</option>
+                                            <option value="10min">10分</option>
+                                            <option value="15min">15分</option>
+                                            <option value="20min">20分</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="glyphicon glyphicon-plus" id="show_btn"
+                                style="margin-left: -25px;margin-bottom: -15px;" onclick="show_hide_div_2()" />
+                        </div>
+
+                        <!-- 3 -->
+                        <hr style="height: 3px; background-color: red;">
+                        <div class="container" style="border: 2px solid black;width: 850px;">
+                            <table class="table" id="table_3">
+                                <tr>
+                                    <td>
+                                        <p>位置</p>
+                                        <select class='form-control' style="background-color:yellow;">
+                                            <option value="d-1">C-4</option>
+                                            <option value="stop">C-2</option>
+                                            <option value="input" selected>C-3</option>
+                                            <option value="process">C-4</option>
+                                            <option value="decision">C-5</option>
+                                            <option value="output">C-6</option>
+                                            <option value="text">C-7</option>
+                                            <option value="down">C-8</option>
+                                            <option value="up">C-9</option>
+                                            <option value="left">C-10</option>
+                                            <option value="right">C-11</option>
+                                        </select>
+                                    </td>
+                                    <td style="width:300px;">
+                                        <p>見出し</p>
+                                        <input type="text" class="form-control" style="height:35px;" value="見積書の内容判定" />
+                                    </td>
+                                    <td>
+                                        <p>&nbsp;</p>
+                                        <button type="button" class="btn btn-primary">削除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <textarea
+                                            style="width:763px;height: 100px;">オーダー番号を確認したり、物件のステータスを設定したりする</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <p>例外時の作業項目</p>
+                                        <select class='form-control' style="width:763px;">
+                                            <option value="000"></option>
+                                            <option value="001" selected>●●対応</option>
+                                            <option value="002">●●対応</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>操作対象等</p>
+                                        <select class='form-control'>
+                                            <option value="5min">基幹システム</option>
+                                            <option value="10min">メール</option>
+                                            <option value="15min">ミーテイング</option>
+                                            <option value="20min">資料作成</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="1.5" rowspan="2">
+                                        <p>補足説明, 参考資料等</p>
+                                        <textarea style="width:600px;height: 130px;"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>作業時間</p>
+                                        <select class='form-control'>
+                                            <option value="5min">5分</option>
+                                            <option value="10min">10分</option>
+                                            <option value="15min">15分</option>
+                                            <option value="20min">20分</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="glyphicon glyphicon-plus" id="show_btn"
+                                style="margin-left: -25px;margin-bottom: -15px;" onclick="show_hide_div_3()" />
+                        </div>
+
+                        <!-- 4 -->
+                        <hr style="height: 3px; background-color: red;">
+                        <div class="container" style="border: 2px solid black;width: 850px;">
+                            <table class="table" id="table_4">
+                                <tr>
+                                    <td>
+                                        <p>位置</p>
+                                        <select class='form-control' style="background-color:yellow;">
+                                            <option value="d-1">C-1</option>
+                                            <option value="stop">C-2</option>
+                                            <option value="input">C-3</option>
+                                            <option value="process" selected>C-4</option>
+                                            <option value="decision">C-5</option>
+                                            <option value="output">C-6</option>
+                                            <option value="text">C-7</option>
+                                            <option value="down">C-8</option>
+                                            <option value="up">C-9</option>
+                                            <option value="left">C-10</option>
+                                            <option value="right">C-11</option>
+                                        </select>
+                                    </td>
+                                    <td style="width:300px;">
+                                        <p>見出し</p>
+                                        <input type="text" class="form-control" style="height:35px;"
+                                            value="見積設計情報登録の判断" />
+                                    </td>
+                                    <td>
+                                        <p>&nbsp;</p>
+                                        <button type="button" class="btn btn-primary">削除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <textarea
+                                            style="width:600px;height: 100px;">物件ステータスが「設計依頼」になっていることを確認</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <p>例外時の作業項目</p>
+                                        <select class='form-control' style="width:763px;">
+                                            <option value="000"></option>
+                                            <option value="001" selected>●●対応</option>
+                                            <option value="002">●●対応</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>操作対象等</p>
+                                        <select class='form-control'>
+                                            <option value="5min">基幹システム</option>
+                                            <option value="10min">メール</option>
+                                            <option value="15min">ミーテイング</option>
+                                            <option value="20min">資料作成</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="1.5" rowspan="2">
+                                        <p>補足説明, 参考資料等</p>
+                                        <textarea style="width:600px;height: 130px;"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>作業時間</p>
+                                        <select class='form-control'>
+                                            <option value="5min">5分</option>
+                                            <option value="10min">10分</option>
+                                            <option value="15min">15分</option>
+                                            <option value="20min">20分</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <button class="glyphicon glyphicon-plus" id="show_btn"
+                                style="margin-left: -25px;margin-bottom: -15px;" onclick="show_hide_div_4()" />
+                        </div>
+
+                        <!-- 5 -->
+                        <hr style="height: 3px; background-color: red;">
+                        <div class="container" style="border: 2px solid black;width: 850px;">
+                            <table class="table" id="table_5">
+                                <tr>
+                                    <td>
+                                        <p>位置</p>
+                                        <select class='form-control' style="background-color:yellow;">
+                                            <option value="d-1">D-1</option>
+                                            <option value="stop">D-2</option>
+                                            <option value="input">D-3</option>
+                                            <option value="process" selected>D-4</option>
+                                            <option value="decision">D-5</option>
+                                            <option value="output">D-6</option>
+                                            <option value="text">D-7</option>
+                                            <option value="down">D-8</option>
+                                            <option value="up">D-9</option>
+                                            <option value="left">D-10</option>
+                                            <option value="right">D-11</option>
+                                        </select>
+                                    </td>
+                                    <td style="width:300px;">
+                                        <p>見出し</p>
+                                        <input type="text" class="form-control" style="height:35px;"
+                                            value="RPAライセンス手配の作業開始" />
+                                    </td>
+                                    <td>
+                                        <p>&nbsp;</p>
+                                        <button type="button" class="btn btn-primary">削除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <textarea style="width:600px;height: 100px;">スタート</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="3">
+                                        <p>例外時の作業項目</p>
+                                        <select class='form-control' style="width:763px;">
+                                            <option value="000"></option>
+                                            <option value="001" selected>●●対応</option>
+                                            <option value="002">●●対応</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>操作対象等</p>
+                                        <select class='form-control'>
+                                            <option value="5min">基幹システム</option>
+                                            <option value="10min">メール</option>
+                                            <option value="15min">ミーテイング</option>
+                                            <option value="20min">資料作成</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="1.5" rowspan="2">
+                                        <p>補足説明, 参考資料等</p>
+                                        <textarea
+                                            style="width:600px;height: 130px;">準備作業（見積依頼書の書式入手）&#10;相手先連結済み</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1.5">
+                                        <p>作業時間</p>
+                                        <select class='form-control'>
+                                            <option value="5min">5分</option>
+                                            <option value="10min">10分</option>
+                                            <option value="15min">15分</option>
+                                            <option value="20min">20分</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <button class="glyphicon glyphicon-plus" id="show_btn"
+                                style="margin-left: -25px;margin-bottom: -15px;" onclick="show_hide_div_5()" />
+                        </div>
+
+                        <hr style="height: 3px; background-color: blue;">
                         <table class="table">
-
                             <tr>
                                 <td>
-                                    <select class='form-control'>
-                                        <option value="d-1" selected>C-1</option>
-                                        <option value="stop">C-2</option>
-                                        <option value="input">C-3</option>
-                                        <option value="process">C-4</option>
-                                        <option value="decision">C-5</option>
-                                        <option value="output">C-6</option>
-                                        <option value="text">C-7</option>
-                                        <option value="down">C-8</option>
-                                        <option value="up">C-9</option>
-                                        <option value="left">C-10</option>
-                                        <option value="right">C-11</option>
-                                    </select>
+                                    <button type="button" class="btn btn-danger">項目追加</button>
                                 </td>
-                                <td>
-                                    <input type="text" class="form-control" style="height:35px;"
-                                        value="RPAライセンス手配の作業開始" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">削除</button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <textarea style="width:600px;height: 100px;">スタート</textarea>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <select class='form-control'>
-                                        <option value="stop">C-2</option>
-                                        <option value="input">C-3</option>
-                                        <option value="process">C-4</option>
-                                        <option value="decision">C-5</option>
-                                        <option value="output">C-6</option>
-                                        <option value="text">C-7</option>
-                                        <option value="down">C-8</option>
-                                        <option value="up">C-9</option>
-                                        <option value="left">C-10</option>
-                                        <option value="right">C-11</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" style="height:35px;" value="ベンダーからの見積取得" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">削除</button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <textarea style="width:600px;height: 100px;">見積依頼署を作成して、業者にメールで依頼する。
-                                見積依頼書は「」にあるフォーマットを使用する</textarea>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" value="基幹システム" style="height:30px;">
-                                </td>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" name="" value="５分" style="height:30px;">
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <select class='form-control'>
-                                        <option value="d-1">C-4</option>
-                                        <option value="stop">C-2</option>
-                                        <option value="input" selected>C-3</option>
-                                        <option value="process">C-4</option>
-                                        <option value="decision">C-5</option>
-                                        <option value="output">C-6</option>
-                                        <option value="text">C-7</option>
-                                        <option value="down">C-8</option>
-                                        <option value="up">C-9</option>
-                                        <option value="left">C-10</option>
-                                        <option value="right">C-11</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" style="height:35px;"
-                                        value="物件状態確認（オーダー番号,物件ステータス)" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">削除</button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <textarea
-                                        style="width:600px;height: 100px;">オーダー番号を確認したり、物件のステータスを設定したりする</textarea>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" value="基幹システム" style="height:30px;">
-                                </td>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" name="" value="５分" style="height:30px;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <select class='form-control'>
-                                        <option value="d-1">C-1</option>
-                                        <option value="stop">C-2</option>
-                                        <option value="input">C-3</option>
-                                        <option value="process" selected>C-4</option>
-                                        <option value="decision">C-5</option>
-                                        <option value="output">C-6</option>
-                                        <option value="text">C-7</option>
-                                        <option value="down">C-8</option>
-                                        <option value="up">C-9</option>
-                                        <option value="left">C-10</option>
-                                        <option value="right">C-11</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" style="height:35px;" value="見積設計情報登録の判断" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">削除</button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <textarea style="width:600px;height: 100px;">物件ステータスが「設計依頼」になっていることを確認</textarea>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" value="基幹システム" style="height:30px;">
-                                </td>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" name="" value="５分" style="height:30px;">
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <select class='form-control'>
-                                        <option value="d-1">D-1</option>
-                                        <option value="stop">D-2</option>
-                                        <option value="input">D-3</option>
-                                        <option value="process" selected>D-4</option>
-                                        <option value="decision">D-5</option>
-                                        <option value="output">D-6</option>
-                                        <option value="text">D-7</option>
-                                        <option value="down">D-8</option>
-                                        <option value="up">D-9</option>
-                                        <option value="left">D-10</option>
-                                        <option value="right">D-11</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" style="height:35px;"
-                                        value="RPAライセンス手配の作業開始" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-primary">削除</button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                                    <textarea style="width:600px;height: 100px;">スタート</textarea>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" value="基幹システム" style="height:30px;">
-                                </td>
-                                <td colspan="1.5">
-                                    <input type="text" class="form-control" name="" value="５分" style="height:30px;">
-                                </td>
-                            </tr>
-
-
-                            <tr>
                                 <td></td>
                                 <td></td>
-                                <td>
-                                    <button type="submit" class="btn btn-danger">項目追加</button>
-                                </td>
                             </tr>
                             <tr></tr>
                         </table>
                     </div>
                 </div>
             </div>
+
 
         </div>
     </div><br>
@@ -799,7 +698,101 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="static/js/processDiagramDetail.js?　p=(new Date()).getTime()　"></script>
+    <script type="text/javascript">
+        var flag_1 = true;
+        function show_hide_div_1() {
 
+            if (flag_1 == true) {
+                $("#table_1").hide();
+                flag_1 = false;
+            } else {
+                $("#table_1").show();
+                flag_1 = true;
+            }
+        }
+
+        var flag_2 = true;
+        function show_hide_div_2() {
+
+            if (flag_2 == true) {
+                $("#table_2").hide();
+                flag_2 = false;
+            } else {
+                $("#table_2").show();
+                flag_2 = true;
+            }
+        }
+
+
+        var flag_3 = true;
+        function show_hide_div_3() {
+
+            if (flag_3 == true) {
+                $("#table_3").hide();
+                flag_3 = false;
+            } else {
+                $("#table_3").show();
+                flag_3 = true;
+            }
+        }
+
+        var flag_4 = true;
+        function show_hide_div_4() {
+
+            if (flag_4 == true) {
+                $("#table_4").hide();
+                flag_4 = false;
+            } else {
+                $("#table_4").show();
+                flag_4 = true;
+            }
+        }
+
+        var flag_5 = true;
+        function show_hide_div_5() {
+
+            if (flag_5 == true) {
+                $("#table_5").hide();
+                flag_5 = false;
+            } else {
+                $("#table_5").show();
+                flag_5 = true;
+            }
+        }
+
+
+
+        $('#processDiagram1').on('change', function () {
+            console.log(this.value);
+            var code = this.value;
+            if (code == "start") {
+                alert(code);
+                var diagram_detail = document.getElementById("diagramDetail");
+                var img = document.createElement("img");
+                img.src = "start_symbol.png";
+                diagram_detail.appendChild(img);
+                console.log("appendChild success...")
+
+            }
+
+        });
+
+
+        $('#processDiagram2').on('change', function () {
+            console.log(this.value);
+            var code = this.value;
+            if (code == "down") {
+                alert(code);
+                var diagram_detail = document.getElementById("diagramDetail");
+                var img = document.createElement("img");
+                img.src = "down_arrow.png";
+                diagram_detail.appendChild(img);
+                console.log("appendChild success...")
+
+            }
+
+        });
+    </script>
 </body>
 
 </html>
