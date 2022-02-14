@@ -1,2 +1,0 @@
-# V01_ProcessVisualizationChart
-プロセス可視化チャート
