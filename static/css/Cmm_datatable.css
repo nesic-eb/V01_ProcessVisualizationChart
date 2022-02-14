@@ -1,0 +1,13 @@
+table.dataTable thead tr {
+    background-color: rgb(66, 192, 192);
+    text-align: center;
+}
+
+table.dataTable thead th {
+    text-align: center;
+}
+
+.panel_width{
+    width : 90%;
+    margin-left : 40px;
+}

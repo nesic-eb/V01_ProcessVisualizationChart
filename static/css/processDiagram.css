@@ -1,0 +1,81 @@
+/*
+// =============================================================================
+// 画面名：Process Diagram
+// 
+// -----------------------------------------------------------------------------
+// （ファイル整形）Visual Studio Code : Shift + Alt + f 
+// =============================================================================
+*/
+
+.select2-container--default .select2-selection--single{
+    border: none;
+}
+
+.select2-search__field {
+    display:none;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+  white-space: break-spaces!important;
+}
+
+.select2-center-option,
+.select2-selection__choice {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.select2-center-option img {
+  width: 50px;
+  max-width: 100%;
+  height: auto;
+  margin-right: 5px;
+}
+
+.select2-selection__arrow {
+    height: 40px !important;
+}
+
+#start{
+    margin-left: 33px;
+}
+
+
+input[type=text] {
+  height: 25px !important;
+  background-color: #cccccc6b;
+  margin-top: 5px;
+  width: 220px;
+}
+
+button[type=submit] {
+  width: 100px;
+  
+}
+
+#btn_initialize {
+  margin-top: 8px;
+  background-color:#ffcc80;
+  height: 45px;
+  border: none;
+
+}
+
+#btn_update {
+  margin-top: 20px;
+  margin-left: 440px;
+  height: 35px;
+}
+
+
+#btn_Back {
+  margin-top: 20px;
+  /* margin-left: 175px; */
+  height: 35px;
+}
+
+
+
+
+
