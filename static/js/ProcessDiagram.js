@@ -17,6 +17,33 @@ console.log("■ セッション情報 -- ProcessDiagram.js --------");
 // ##################################################################################################
 /* functin以外の処理を記述 */
 
+var getUrlParameter = function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1),
+    sURLVariables = sPageURL.split('&'),
+    sParameterName,
+    i;
+
+  for (i = 0; i < sURLVariables.length; i++) {
+    sParameterName = sURLVariables[i].split('=');
+
+    if (sParameterName[0] === sParam) {
+      return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+    }
+  }
+  return false;
+};
+
+// var classification = getUrlParameter("classification");
+// console.log("classification = " + classification)
+// var workitem = getUrlParameter("workitem");
+// console.log("workitem = " + workitem)
+// var workitem_id = workitem.split("/")
+// workitem_id = workitem_id[0]
+// var procedure_name = getUrlParameter("procedure_name");
+// console.log("workitem_name = " + procedure_name)
+// $("#process_ProcedureName").html(procedure_name)
+
+
 $(document).ready(function () {
   function custom_template(obj) {
     var data = $(obj.element).data();

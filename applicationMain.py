@@ -40,6 +40,7 @@ from collections import Counter
 import CmnFunction
 
 from ProcessChartMain import ProcessChartMain_api  # プロセス可視化チャートサービス
+from ProcessChartCmn00 import ProcessChartCmn00_api
 
 
 # Const
@@ -70,6 +71,7 @@ app.config['JSON_AS_ASCII'] = False
 
 
 app.register_blueprint(ProcessChartMain_api)
+app.register_blueprint(ProcessChartCmn00_api)
 
 # ========================================================
 
