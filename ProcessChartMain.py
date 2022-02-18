@@ -7,6 +7,7 @@
 // （ファイル整形）Visual Studio Code : Shift + Alt + f
 // =============================================================================
 '''
+from typing import Container
 import requests
 import json
 from configparser import ConfigParser
@@ -30,6 +31,7 @@ from configparser import ConfigParser
 import base64
 from requests_toolbelt import MultipartEncoder
 from datetime import datetime
+from collections import Counter
 
 import Menu_CreateWorkItemData
 
@@ -234,50 +236,74 @@ def getAllProcessCheckData():
                                            'uid=' +
                                            app_section.get('DB_USER_ID')+';'
                                            'pwd='+app_section.get('DB_PASSWORD')+';')
-        logging.info(
-            "Database connection successfully in getAllProcessCheckData function.....")
 
         processCheck_allselect_query = \
             " SELECT " \
             "   ct.Classification_Code , " \
             "   ct.Classification_Name , " \
-            "   pt.Work_Item_ID , " \
+            "   pt.WorkItemID , " \
             "   wt.Work_Item_Name , " \
-            "   pt.Work_Name, " \
-            "   ISNULL(pt.Created_By, '-') as Create_user , " \
-            "   ISNULL(pt.Create_Date, '-') as Create_Date " \
+            "   pt.ProcessProcedureName, " \
+            "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
+            "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
+            "   pt.ProcessProcedureID " \
             " FROM " \
-            "   ProcessCheckIndex_TBL AS pt , " \
+            "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
             "   Classification_Master_TBL AS ct  " \
             " WHERE " \
-            "   pt.Organization_Code_1 = '" + org1 + "' " \
-            "   AND pt.Organization_Code_2 = '" + org2 + "' " \
-            "   AND pt.Work_Item_ID = wt.Work_Item_ID " \
-            "   AND pt.Organization_Code_1 = wt.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = wt.Organization_Code_2 " \
+            "   pt.OrganizationCode1 = '" + org1 + "' " \
+            "   AND pt.OrganizationCode2 = '" + org2 + "' " \
+            "   AND pt.WorkItemID = wt.Work_Item_ID " \
+            "   AND pt.OrganizationCode1 = wt.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = wt.Organization_Code_2 " \
             "   AND wt.Classification_Code = ct.Classification_Code " \
-            "   AND pt.Organization_Code_1 = ct.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = ct.Organization_Code_2 " \
-            " ORDER by pt.work_item_id "
+            "   AND pt.OrganizationCode1 = ct.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = ct.Organization_Code_2 " \
+            " ORDER by pt.WorkItemID "
 
         processCheck_cursor = processCheck_conn.cursor()
         processCheck_cursor.execute(processCheck_allselect_query)
 
+        topjson = []
+        statusJson = Counter()
+        processCheck_data = []
+
         for x in processCheck_cursor:
-            processCheck_data.append(
-                x[0] + "/" + x[1] + " | " + x[2] + "/" + x[3] + " | "+x[4] + " | "+x[5] + " | " + x[6])
-        return jsonify(processCheck_data)
+            wkChartKind = x[7].split('_')
+            dataList = {}
+            dataList['Classification'] = x[0] + "/" + x[1].strip()
+            dataList['WorkItem'] = x[2] + "/" + x[3]
+            dataList['procedure_name'] = x[4]
+            dataList['CreateMailAddress'] = x[5]
+            dataList['CreateDateTime'] = x[6]
+            dataList['ProcessProcedureID'] = x[7]
+            dataList['Chart_Kind'] = wkChartKind[0]
 
-    except:
-        return "NULL"
+            processCheck_data.append(dataList)
 
+        # 持ち帰り
+        statusJson['status'] = "OK"
+        statusJson['data'] = processCheck_data
+
+    except Exception as e:
+        statusJson['status'] = "NG"
+        print("getAllProcessCheckData select error  " + e.args)
+
+    # end
+    finally:
+        topjson.append(statusJson)
+
+        print(json.dumps(topjson, indent=2, ensure_ascii=False))
+
+        return jsonify(topjson)
 
 # ========================================================================
 # プロセス確認に登録しているデータを取得する。
-#
+#　「分類コードを選択した場合」
 #
 # ------------------------------------------------------
+
 
 @ProcessChartMain_api.route("/getProcessCheckDataByClassification/", methods=['POST'])
 def getProcessCheckDataByClassification():
@@ -286,9 +312,10 @@ def getProcessCheckDataByClassification():
 
     try:
         classification_code = flask.request.form['classification_code']
-        print("classification_code = ", classification_code)
         org1 = flask.request.form['org1']
         org2 = flask.request.form['org2']
+
+        print("classification_code = ", classification_code)
         print("org1 = ", org1)
         print("org2 = ", org2)
 
@@ -302,48 +329,73 @@ def getProcessCheckDataByClassification():
                                            'uid=' +
                                            app_section.get('DB_USER_ID')+';'
                                            'pwd='+app_section.get('DB_PASSWORD')+';')
-        logging.info(
-            "Database connection successfully in getProcessCheckDataByClassification function.....")
 
-        processCheck_select_query = \
+        processCheck_allselect_query = \
             " SELECT " \
             "   ct.Classification_Code , " \
             "   ct.Classification_Name , " \
-            "   pt.Work_Item_ID , " \
+            "   pt.WorkItemID , " \
             "   wt.Work_Item_Name , " \
-            "   pt.Work_Name , " \
-            "   ISNULL(pt.Created_By, '-') as Create_user , " \
-            "   ISNULL(pt.Create_Date, '-') as Create_Date " \
+            "   pt.ProcessProcedureName, " \
+            "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
+            "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
+            "   pt.ProcessProcedureID " \
             " FROM " \
-            "   ProcessCheckIndex_TBL AS pt , " \
+            "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
             "   Classification_Master_TBL AS ct  " \
             " WHERE " \
-            "   pt.Organization_Code_1 = '" + org1 + "' " \
-            "   AND pt.Organization_Code_2 = '" + org2 + "' " \
-            "   AND pt.Work_Item_ID = wt.Work_Item_ID " \
-            "   AND pt.Organization_Code_1 = wt.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = wt.Organization_Code_2 " \
+            "   pt.OrganizationCode1 = '" + org1 + "' " \
+            "   AND pt.OrganizationCode2 = '" + org2 + "' " \
+            "   AND pt.WorkItemID = wt.Work_Item_ID " \
+            "   AND pt.OrganizationCode1 = wt.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = wt.Organization_Code_2 " \
             "   AND wt.Classification_Code = '" + classification_code + "' " \
             "   AND wt.Classification_Code = ct.Classification_Code " \
-            "   AND pt.Organization_Code_1 = ct.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = ct.Organization_Code_2 " \
-            " ORDER by work_item_id "
+            "   AND pt.OrganizationCode1 = ct.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = ct.Organization_Code_2 " \
+            " ORDER by pt.WorkItemID "
+
         processCheck_cursor = processCheck_conn.cursor()
-        processCheck_cursor.execute(processCheck_select_query)
+        processCheck_cursor.execute(processCheck_allselect_query)
+
+        topjson = []
+        statusJson = Counter()
+        processCheck_data = []
 
         for x in processCheck_cursor:
-            processCheck_data.append(
-                x[0] + "/" + x[1] + " | " + x[2] + "/" + x[3] + " | "+x[4] + " | "+x[5] + " | " + x[6])
-        return jsonify(processCheck_data)
+            wkChartKind = x[7].split('_')
+            dataList = {}
+            dataList['Classification'] = x[0] + "/" + x[1].strip()
+            dataList['WorkItem'] = x[2] + "/" + x[3]
+            dataList['procedure_name'] = x[4]
+            dataList['CreateMailAddress'] = x[5]
+            dataList['CreateDateTime'] = x[6]
+            dataList['ProcessProcedureID'] = x[7]
+            dataList['Chart_Kind'] = wkChartKind[0]
 
-    except:
-        return "NULL"
+            processCheck_data.append(dataList)
+
+        # 持ち帰り
+        statusJson['status'] = "OK"
+        statusJson['data'] = processCheck_data
+
+    except Exception as e:
+        statusJson['status'] = "NG"
+        print("getProcessCheckDataByClassification select error  " + e.args)
+
+    # end
+    finally:
+        topjson.append(statusJson)
+
+        print(json.dumps(topjson, indent=2, ensure_ascii=False))
+
+        return jsonify(topjson)
 
 
 # ========================================================================
 # プロセス確認に登録しているデータを取得する。
-#
+#　「分類コード、作業項目を選択した場合」
 #
 # ------------------------------------------------------
 
@@ -354,11 +406,13 @@ def getProcessCheckDataByWorkItemID():
 
     try:
         workitem_id = flask.request.form['workitem_id']
-        print("WorkItem ID = ", workitem_id)
         classification_code = flask.request.form['classification_code']
-        print("classification_code = ", classification_code)
+
         org1 = flask.request.form['org1']
         org2 = flask.request.form['org2']
+
+        print("WorkItem ID = ", workitem_id)
+        print("classification_code = ", classification_code)
         print("org1 = ", org1)
         print("org2 = ", org2)
 
@@ -372,45 +426,69 @@ def getProcessCheckDataByWorkItemID():
                                            'uid=' +
                                            app_section.get('DB_USER_ID')+';'
                                            'pwd='+app_section.get('DB_PASSWORD')+';')
-        logging.info(
-            "Database connection successfully in getProcessCheckDataByWorkItemID function.....")
 
-        processCheck_select_query = \
+        processCheck_allselect_query = \
             " SELECT " \
             "   ct.Classification_Code , " \
             "   ct.Classification_Name , " \
-            "   pt.Work_Item_ID , " \
+            "   pt.WorkItemID , " \
             "   wt.Work_Item_Name , " \
-            "   pt.Work_Name , " \
-            "   ISNULL(pt.Created_By, '-') as Create_user , " \
-            "   ISNULL(pt.Create_Date, '-') as Create_Date " \
+            "   pt.ProcessProcedureName, " \
+            "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
+            "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
+            "   pt.ProcessProcedureID " \
             " FROM " \
-            "   ProcessCheckIndex_TBL AS pt , " \
+            "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
             "   Classification_Master_TBL AS ct  " \
             " WHERE " \
-            "   pt.Organization_Code_1 = '" + org1 + "' " \
-            "   AND pt.Organization_Code_2 = '" + org2 + "' " \
-            "   AND pt.Work_Item_ID = '" + workitem_id + "' " \
-            "   AND pt.Work_Item_ID = wt.Work_Item_ID " \
-            "   AND pt.Organization_Code_1 = wt.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = wt.Organization_Code_2 " \
+            "   pt.OrganizationCode1 = '" + org1 + "' " \
+            "   AND pt.OrganizationCode2 = '" + org2 + "' " \
+            "   AND pt.WorkItemID = '" + workitem_id + "' " \
+            "   AND pt.WorkItemID = wt.Work_Item_ID " \
+            "   AND pt.OrganizationCode1 = wt.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = wt.Organization_Code_2 " \
             "   AND wt.Classification_Code = '" + classification_code + "' " \
             "   AND wt.Classification_Code = ct.Classification_Code " \
-            "   AND pt.Organization_Code_1 = ct.Organization_Code_1 " \
-            "   AND pt.Organization_Code_2 = ct.Organization_Code_2 " \
-            " ORDER by work_item_id "
+            "   AND pt.OrganizationCode1 = ct.Organization_Code_1 " \
+            "   AND pt.OrganizationCode2 = ct.Organization_Code_2 " \
+            " ORDER by pt.WorkItemID "
 
         processCheck_cursor = processCheck_conn.cursor()
-        processCheck_cursor.execute(processCheck_select_query)
+        processCheck_cursor.execute(processCheck_allselect_query)
+
+        topjson = []
+        statusJson = Counter()
+        processCheck_data = []
 
         for x in processCheck_cursor:
-            processCheck_data.append(
-                x[0] + "/" + x[1] + " | " + x[2] + "/" + x[3] + " | "+x[4] + " | "+x[5] + " | " + x[6])
-        return jsonify(processCheck_data)
+            wkChartKind = x[7].split('_')
+            dataList = {}
+            dataList['Classification'] = x[0] + "/" + x[1].strip()
+            dataList['WorkItem'] = x[2] + "/" + x[3]
+            dataList['procedure_name'] = x[4]
+            dataList['CreateMailAddress'] = x[5]
+            dataList['CreateDateTime'] = x[6]
+            dataList['ProcessProcedureID'] = x[7]
+            dataList['Chart_Kind'] = wkChartKind[0]
 
-    except:
-        return "NULL"
+            processCheck_data.append(dataList)
+
+        # 持ち帰り
+        statusJson['status'] = "OK"
+        statusJson['data'] = processCheck_data
+
+    except Exception as e:
+        statusJson['status'] = "NG"
+        print("getProcessCheckDataByWorkItemID select error  " + e.args)
+
+    # end
+    finally:
+        topjson.append(statusJson)
+
+        print(json.dumps(topjson, indent=2, ensure_ascii=False))
+
+        return jsonify(topjson)
 
 
 # ========================================================================
@@ -425,24 +503,30 @@ def registerProcessCheckData():
     logger.info("Start the function registerProcessCheckData.....")
 
     messageList = []
+
     classification_code = flask.request.form['classification_code']
     workitem_id = flask.request.form['workitem_id']
     workName = flask.request.form['workName']
     org1 = flask.request.form['org1']
     org2 = flask.request.form['org2']
-    user_name = flask.request.form['user_name']
+    user_emal = flask.request.form['user_emal']
+    chartkind = flask.request.form['chartkind']
 
     now = datetime.now()
     # dd/mm/YY H:M:S
     dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
 
+    wkProcessProcedureID = chartkind + "_" + now.strftime("%Y%m%d%H%M%S%f")
+    wkChartDesignCode = "DesignCode_" + now.strftime("%Y%m%d%H%M%S")
+
     try:
-        insertconn = pyodbc.connect('DRIVER={SQL Server};'
+        selectconn = pyodbc.connect('DRIVER={SQL Server};'
                                     'Server='+app_section.get('IP')+';'
                                     'Database='+app_section.get('DATABASE')+';'
                                     'uid='+app_section.get('DB_USER_ID')+';'
                                     'pwd='+app_section.get('DB_PASSWORD')+';')
-        selectconn = pyodbc.connect('DRIVER={SQL Server};'
+
+        insertconn = pyodbc.connect('DRIVER={SQL Server};'
                                     'Server='+app_section.get('IP')+';'
                                     'Database='+app_section.get('DATABASE')+';'
                                     'uid='+app_section.get('DB_USER_ID')+';'
@@ -455,13 +539,16 @@ def registerProcessCheckData():
 
             # 同じプロセス手順名が存在するかを確認する
             select_conn_process_cursor = selectconn.cursor()
+
             select_query = " SELECT " \
-                "   COUNT(Work_Name) " \
+                "   COUNT(ProcessProcedureName) " \
                 " FROM " \
-                "   ProcessCheckIndex_TBL " \
-                " WHERE Work_Name = '" + workName + "'" \
-                " AND Organization_Code_1 = '" + org1 + "'" \
-                " AND Organization_Code_2 = '" + org2 + "'"
+                "   ProcessChartData_TBL " \
+                " WHERE ProcessProcedureName = '" + workName + "'" \
+                " AND WorkItemID = '" + workitem_id + "'" \
+                " AND OrganizationCode1 = '" + org1 + "'" \
+                " AND OrganizationCode2 = '" + org2 + "'"
+
             select_conn_process_cursor.execute(select_query)
 
             same_flag = True
@@ -471,7 +558,7 @@ def registerProcessCheckData():
 
             if same_flag == False:
                 messageList.append("Error")
-                messageList.append("同じプロセス手順名が登録されています。")
+                messageList.append("既に、同じ名称が登録されています。")
                 return jsonify(messageList)
 
             if same_flag == True:
@@ -479,27 +566,38 @@ def registerProcessCheckData():
                 # Insert
                 insert_query = \
                     " INSERT INTO " \
-                    "  ProcessCheckIndex_TBL " \
-                    "  ( Work_Name, Organization_Code_1, Organization_Code_2, Work_Item_ID, Total_Time, " \
-                    "      Working_Frequency, Worker_Count, Create_Date, Created_By, Modify_date, Modified_By) " \
+                    "  ProcessChartData_TBL " \
+                    "  ( ProcessProcedureID, ProcessProcedureName, ClassificationCode, WorkItemID, " \
+                    "    OrganizationCode1, OrganizationCode2, PermissionFlag, ChangeProhibitionflag, " \
+                    "    WorkFrequency, NumberOfWorkers, TotalWorkingTime, ColumnNumber, RowsNumber, " \
+                    "    CreateMailAddress, CreateDateTime, UpdateMailAddress, UpdateDateTime, ChartDesignCode) " \
                     "  VALUES ( " \
+                    "'" + wkProcessProcedureID + "', " \
                     "'" + workName + "', " \
+                    "'" + classification_code + "', " \
+                    "'" + workitem_id + "', " \
                     "'" + org1 + "', " \
                     "'" + org2 + "', " \
-                    "'" + workitem_id + "', " \
+                    "'0', " \
+                    "'0', " \
+                    "'0', " \
+                    "'0', " \
                     "'0.0' , " \
-                    " NULL , " \
-                    " NULL , " \
+                    "'8' , " \
+                    "'8' , " \
+                    "'" + user_emal + "' , " \
                     "'" + dt_string + "' , " \
-                    "'" + user_name + "' , " \
                     " NULL , " \
-                    " NULL ) "
+                    " NULL , " \
+                    "'" + wkChartDesignCode + "' ) "
 
                 try:
                     insert_processdata_cursor = insertconn.cursor()
                     insert_processdata_cursor.execute(insert_query)
                     insertconn.commit()
+
                 except Exception as e:
+                    insertconn.rollback()
                     messageList.append("Error")
                     messageList.append("Insert Error（内部エラー）")
                     return jsonify(messageList)

@@ -20,6 +20,9 @@ $('#org2').val(org2);
 console.log("org1 = " + org1);
 console.log("org2 = " + org2);
 
+// パラメータから取得すること！！
+var user_name = ""
+var user_emal = "fujii.kyoichi.za@nesic.com"
 
 // ##################################################################################################
 // ##################################################################################################
@@ -74,21 +77,45 @@ function CreateProcessdataTable() {
     },
     dataType: 'json',
     success: function (response) {
+      // JSONのキーからの取得
+      var jsonObj = JSON.stringify(response);
+      var jsonData = JSON.parse(jsonObj)
+
+      // Debug ---------------------------
+      console.log(jsonData); // 確認用
+
+      var jsonStatus = jsonData[0].status
+      console.log("jsonStatus=" + jsonStatus);
+
+      for (var i = 0; i < jsonData[0].data.length; i++) {
+        var wkData = jsonData[0].data[i]
+        console.log("Classification=" + wkData.Classification);
+        console.log("WorkItem=" + wkData.WorkItem);
+        console.log("procedure_name=" + wkData.procedure_name);
+        console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+        console.log("CreateDateTime=" + wkData.CreateDateTime);
+        console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+        console.log("Chart_Kind=" + wkData.Chart_Kind);
+      }
+      // Debug ---------------------------
+
       var dataSet = [];
 
       // add response data in array
-      for (var i = 0; i < response.length; i++) {
-        const row_array = []
-        var temp = response[i].split("|")
-        row_array[0] = parseInt(i) + 1
-        row_array[1] = temp[0]
-        row_array[2] = temp[1]
-        row_array[3] = temp[2]
-        row_array[4] = temp[3]
-        row_array[5] = temp[4]
-        dataSet.push(row_array)
-      }
-      //console.log("Data set in process = " + dataSet);
+      for (var i = 0; i < jsonData[0].data.length; i++) {
+        const row_array = [];
+        var wkData = jsonData[0].data[i];
+
+        row_array[0] = parseInt(i) + 1;
+        row_array[1] = wkData.Classification;
+        row_array[2] = wkData.WorkItem;
+        row_array[3] = wkData.procedure_name;
+        row_array[4] = wkData.CreateMailAddress;
+        row_array[5] = wkData.CreateDateTime;
+        row_array[6] = wkData.ProcessProcedureID;
+
+        dataSet.push(row_array);
+      };
 
       //Create datatable
       $('#processCheckdata').DataTable({
@@ -102,8 +129,8 @@ function CreateProcessdataTable() {
           { title: "作成日" },
            /* DELETE */ {
             mRender: function (data, type, row) {
-
-              return '<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + '" class="btn btn-primary">変更</a>' +
+              return '<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "&ProcessProcedureID=" + row[6] +
+                '" class="btn btn-primary">変更</a>' +
                 '&nbsp;<button class="btn btn-primary" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\')">削除</button>'
             }
           },
@@ -140,7 +167,7 @@ function CreateProcessdataTable() {
 
 
 // ==================================================
-// 分析情報選択
+// 分析情報選択時に該当する情報を取得する
 // 
 // ==================================================
 
@@ -168,26 +195,50 @@ $('#classification_code').on('change', function () {
       },
       dataType: 'json',
       success: function (response) {
+        // JSONのキーからの取得
+        var jsonObj = JSON.stringify(response);
+        var jsonData = JSON.parse(jsonObj)
+
+        // Debug ---------------------------
+        console.log(jsonData); // 確認用
+
+        var jsonStatus = jsonData[0].status
+        console.log("jsonStatus=" + jsonStatus);
+
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          var wkData = jsonData[0].data[i]
+          console.log("Classification=" + wkData.Classification);
+          console.log("WorkItem=" + wkData.WorkItem);
+          console.log("procedure_name=" + wkData.procedure_name);
+          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateDateTime=" + wkData.CreateDateTime);
+          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          console.log("Chart_Kind=" + wkData.Chart_Kind);
+        }
+        // Debug ---------------------------
+
         var dataSet = [];
 
         // add response data in array
-        for (var i = 0; i < response.length; i++) {
-          const row_array = []
-          var temp = response[i].split("|")
-          row_array[0] = parseInt(i) + 1
-          row_array[1] = temp[0]
-          row_array[2] = temp[1]
-          row_array[3] = temp[2]
-          row_array[4] = temp[3]
-          row_array[5] = temp[4]
-          dataSet.push(row_array)
-        }
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          const row_array = [];
+          var wkData = jsonData[0].data[i];
+
+          row_array[0] = parseInt(i) + 1;
+          row_array[1] = wkData.Classification;
+          row_array[2] = wkData.WorkItem;
+          row_array[3] = wkData.procedure_name;
+          row_array[4] = wkData.CreateMailAddress;
+          row_array[5] = wkData.CreateDateTime;
+          ;
+          dataSet.push(row_array);
+        };
 
         bTable = $('#processCheckdata').dataTable();
         bTable.fnClearTable();
         if (dataSet.length != 0) {
           bTable.fnAddData(dataSet);
-        }
+        };
 
       },
       error: function (response) {
@@ -223,7 +274,7 @@ $('#classification_code').on('change', function () {
 
 
 // ==================================================
-//作業項目情報選択
+// 作業項目情報選択時に該当する情報を取得する
 // 
 // ==================================================
 $('#workitemID').on('change', function () {
@@ -247,26 +298,50 @@ $('#workitemID').on('change', function () {
       },
       dataType: 'json',
       success: function (response) {
+        // JSONのキーからの取得
+        var jsonObj = JSON.stringify(response);
+        var jsonData = JSON.parse(jsonObj)
+
+        // Debug ---------------------------
+        console.log(jsonData); // 確認用
+
+        var jsonStatus = jsonData[0].status
+        console.log("jsonStatus=" + jsonStatus);
+
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          var wkData = jsonData[0].data[i]
+          console.log("Classification=" + wkData.Classification);
+          console.log("WorkItem=" + wkData.WorkItem);
+          console.log("procedure_name=" + wkData.procedure_name);
+          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateDateTime=" + wkData.CreateDateTime);
+          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          console.log("Chart_Kind=" + wkData.Chart_Kind);
+        }
+        // Debug ---------------------------
+
         var dataSet = [];
 
         // add response data in array
-        for (var i = 0; i < response.length; i++) {
-          const row_array = []
-          var temp = response[i].split("|")
-          row_array[0] = parseInt(i) + 1
-          row_array[1] = temp[0]
-          row_array[2] = temp[1]
-          row_array[3] = temp[2]
-          row_array[4] = temp[3]
-          row_array[5] = temp[4]
-          dataSet.push(row_array)
-        }
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          const row_array = [];
+          var wkData = jsonData[0].data[i];
+
+          row_array[0] = parseInt(i) + 1;
+          row_array[1] = wkData.Classification;
+          row_array[2] = wkData.WorkItem;
+          row_array[3] = wkData.procedure_name;
+          row_array[4] = wkData.CreateMailAddress;
+          row_array[5] = wkData.CreateDateTime;
+
+          dataSet.push(row_array);
+        };
 
         bTable = $('#processCheckdata').dataTable();
         bTable.fnClearTable();
         if (dataSet.length != 0) {
           bTable.fnAddData(dataSet);
-        }
+        };
 
       },
       error: function (response) {
@@ -292,27 +367,51 @@ $('#workitemID').on('change', function () {
       },
       dataType: 'json',
       success: function (response) {
+        // JSONのキーからの取得
+        var jsonObj = JSON.stringify(response);
+        var jsonData = JSON.parse(jsonObj)
+
+        // Debug ---------------------------
+        console.log(jsonData); // 確認用
+
+        var jsonStatus = jsonData[0].status
+        console.log("jsonStatus=" + jsonStatus);
+
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          var wkData = jsonData[0].data[i]
+          console.log("Classification=" + wkData.Classification);
+          console.log("WorkItem=" + wkData.WorkItem);
+          console.log("procedure_name=" + wkData.procedure_name);
+          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateDateTime=" + wkData.CreateDateTime);
+          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          console.log("Chart_Kind=" + wkData.Chart_Kind);
+        }
+        // Debug ---------------------------
+
         var dataSet1 = [];
 
         // add response data in array
-        for (var i = 0; i < response.length; i++) {
-          const row_array = []
-          var temp = response[i].split("|")
-          row_array[0] = parseInt(i) + 1
-          row_array[1] = temp[0]
-          row_array[2] = temp[1]
-          row_array[3] = temp[2]
-          row_array[4] = temp[3]
-          row_array[5] = temp[4]
-          dataSet1.push(row_array)
-        }
+        for (var i = 0; i < jsonData[0].data.length; i++) {
+          const row_array = [];
+          var wkData = jsonData[0].data[i];
+
+          row_array[0] = parseInt(i) + 1;
+          row_array[1] = wkData.Classification;
+          row_array[2] = wkData.WorkItem;
+          row_array[3] = wkData.procedure_name;
+          row_array[4] = wkData.CreateMailAddress;
+          row_array[5] = wkData.CreateDateTime;
+
+          dataSet1.push(row_array);
+        };
 
         //console.log("Data Set = " + dataSet1)
         oTable = $('#processCheckdata').dataTable();
         oTable.fnClearTable();
         if (dataSet1.length != 0) {
           oTable.fnAddData(dataSet1);
-        }
+        };
       },
       error: function (response) {
       }
@@ -338,8 +437,12 @@ $('#workitemID').on('change', function () {
   }
 });
 
+// ==================================================
+// 登録を行う
+//
+//
+// ==================================================
 
-// 登録
 $('#btn_register').click(function (e) {
   e.preventDefault();
   var classification_code = $('#classification_code').val();
@@ -349,17 +452,19 @@ $('#btn_register').click(function (e) {
   workitem_id = workitem_id.split("/");
 
   var workName = $('#work_name').val();
+  var chartkind = $('#chart_kind').val();
 
   $.ajax({
     url: '/registerProcessCheckData/',
     type: 'POST',
     data: {
-      classification_code: classification_code[0],
+      classification_code: classification_code[0].trim(),
       workitem_id: workitem_id[0].trim(),
       workName: workName,
       org1: org1,
       org2: org2,
-      user_name: user_name
+      user_emal: user_emal,
+      chartkind: chartkind
     },
     dataType: 'json',
     success: function (response) {
