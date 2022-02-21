@@ -129,12 +129,16 @@ function CreateProcessdataTable() {
           { title: "作成日" },
            /* DELETE */ {
             mRender: function (data, type, row) {
-              return '<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "&ProcessProcedureID=" + row[6] +
-                '" class="btn btn-primary">変更</a>' +
-                '&nbsp;<button class="btn btn-primary" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\')">削除</button>'
-            }
+              return '<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "&ProcessProcedureID=" + row[6] + "&Browsing=1" +
+                '" class="btn btn-primary">&nbsp;&nbsp;内容表示&nbsp;&nbsp;</a>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\')">削除</button>' +
+                '&nbsp;&nbsp;&nbsp;<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "& ProcessProcedureID=" + row[6] + "&Browsing=0" +
+                '" class="btn btn-primary">変更</a>'
+            }, "width": "20%"
           },
         ],
+        "displayLength": 25,
+        "pageLength": 25,
         "dom": 'lp<t>frti',
         "ordering": false,
         "bSortable": false,
@@ -147,7 +151,7 @@ function CreateProcessdataTable() {
           "sInfoEmpty": " 0 件中 0 から 0 まで表示",
           "sInfoFiltered": "（全 _MAX_ 件より抽出）",
           "sInfoPostFix": "",
-          "sSearch": "検索:",
+          "sSearch": "検索：",
           "sUrl": "",
           "oPaginate": {
             "sFirst": "先頭",
@@ -485,10 +489,12 @@ $('#btn_register').click(function (e) {
 // 
 // ==================================================
 
-function DeleteAction(work_name, workitem) {
+function DeleteAction(work_name, workitem, processProcedureID) {
   var workName = work_name.trim();
-  var workitem_id = workitem.split("/");
   var result = window.confirm(workName + 'を削除します。よろしいでしょうか？');
+
+  var workitem_id = workitem.split("/");
+
   if (result == true) {
     $.ajax({
       url: '/deleteProcessCheckData/',
@@ -497,7 +503,8 @@ function DeleteAction(work_name, workitem) {
         workName: workName,
         workitem_id: workitem_id[0].trim(),
         org1: org1,
-        org2: org2
+        org2: org2,
+        processProcedureID: processProcedureID
       },
       success: function (response) {
         window.location.reload();
