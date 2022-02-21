@@ -40,6 +40,29 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/comboTreePlugin.js') }} "></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ProcessCheck.css') }}">
+    <style>
+        #child1 {
+            /* background-color: lightblue; */
+        }
+
+        #child2 {
+            /* background-color: lightgreen; */
+        }
+
+        @media (min-width: 400px) {
+            #parent {
+                display: flex;
+            }
+
+            #child1 {
+                flex-grow: 1;
+            }
+
+            #child2 {
+                flex-grow: 1;
+            }
+        }
+    </style>
 </head>
 
 <body onload="getProcessCheckInfo()">
@@ -58,69 +81,66 @@
             <div class="l-header--org">組織名:{{org_name}}</div>
         </div>
         </div>
-
     </header>
+
     <form>
-        <div class="l-content">
-            <div class="l-content__block">
-                <div class="l-content__item--title">
-                    <h3 class="l-content__heading--title">プロセス可視化チャート</h3>
+        <div class="l-content__block" style="margin:30px;">
+            <div class=" l-content__item--title">
+                <h3 class="l-content__heading--title">プロセス可視化チャート</h3>
+            </div>
+        </div>
+
+        <div id="parent" style="margin:30px;">
+            <div id="child1">
+                <div style="text-align: left;">
+                    <label>分類:</label>
+                    <select style="width: 300px;" id='classification_code' name='classification_code'>
+                        <option>Select</option>
+                    </select>
+                </div>
+
+                <br>
+                <div style="text-align: left;">
+                    <label>作業項目:</label>
+                    <div style="width: 400px;">
+                        <input type="text" id="workitemID" autocomplete="off" name="workitemID" />
+                    </div>
+
                 </div>
             </div>
-            <br>
-            <div class="container-fluid">
-                <div class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <div class="col-sm-2"></div>
-                        <label class="control-label col-sm-2">分類:</label>
-                        <div class="col-sm-4">
-                            <select class='form-control' id='classification_code' name='classification_code'>
-                                <option>Select</option>
-                            </select>
-                        </div>
-                        <div class="col-sm-3"></div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="col-sm-2"></div>
-                        <label class="control-label col-sm-2">作業項目:</label>
-                        <div class="col-sm-4">
-                            <input type="text" id="workitemID" autocomplete="off" name="workitemID" />
-                        </div>
-                        <div class="col-sm-3"></div>
+            <div style="width: 60%;" id="child2">
+                <div style="text-align: left;">
+                    <label>チャート種別：</label>
+                    <div style="width: 600px;">
+                        <select style="width: 300px;" id='chart_kind' name='chart_kind'>
+                            <option selected>FlowChart</option>
+                        </select>
+                        <span>
                     </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-2"></div>
-                        <label class="control-label col-sm-2">作業名</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="work_name" name="work_name">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-2"></div>
-                        <label class="control-label col-sm-2">チャート種別</label>
-                        <div class="col-sm-4">
-                            <select class='form-control' id='chart_kind' name='chart_kind'>
-                                <option selected>FlowChart</option>
-                            </select>
-                        </div>
-                        <div class="col-sm-1">
-                            <button type="submit" id="btn_register" class="btn btn-primary">登録</button>
-                        </div>
-                    </div>
-
-                    <input id="org1" name="org1" type="hidden" value="">
-                    <input id="org2" name="org2" type="hidden" value="">
                 </div>
+                <br>
+                <div style="text-align: left;">
+                    <label>作業名：</label>
+                    <div style="width: 600px;">
+                        <input style="width: 400px;" type="text" class="form-control" id="work_name" name="work_name">
+                        <span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="submit" id="btn_register" class="btn btn-primary"
+                                style="margin-top: -10px;">新規登録</button>
+                        </span>
+                    </div>
+                </div>
+                <input id="org1" name="org1" type="hidden" value="">
+                <input id="org2" name="org2" type="hidden" value="">
             </div>
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="l-content__box currentmonthinputlist__box">
-                        <table id="processCheckdata" class="display" class="cell-border"></table>
-                    </div>
-                </div>
+        </div>
+
+        <hr style="margin:30px; width:95%">
+
+        <div style="margin:30px;">
+            <div class="l-content__box currentmonthinputlist__box">
+                <table id="processCheckdata" class="display" class="cell-border"></table>
             </div>
         </div>
     </form>

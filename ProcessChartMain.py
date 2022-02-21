@@ -247,6 +247,15 @@ def getAllProcessCheckData():
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
             "   pt.ProcessProcedureID " \
+            "     , ( " \
+            " select " \
+            " Surname + ' ' + name " \
+            " from " \
+            "  Person_Master_TBL " \
+            " where " \
+            "  Mail_address = pt.CreateMailAddress " \
+            "  and Principal_business_concurrent_service_code = '0' " \
+            " ) as usrname " \
             " FROM " \
             "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
@@ -275,7 +284,8 @@ def getAllProcessCheckData():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-            dataList['CreateMailAddress'] = x[5]
+          #  dataList['CreateMailAddress'] = x[5]
+            dataList['CreateMailAddress'] = x[8]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
             dataList['Chart_Kind'] = wkChartKind[0]
@@ -340,6 +350,15 @@ def getProcessCheckDataByClassification():
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
             "   pt.ProcessProcedureID " \
+            "     , ( " \
+            " select " \
+            " Surname + ' ' + name " \
+            " from " \
+            "  Person_Master_TBL " \
+            " where " \
+            "  Mail_address = pt.CreateMailAddress " \
+            "  and Principal_business_concurrent_service_code = '0' " \
+            " ) as usrname " \
             " FROM " \
             "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
@@ -369,7 +388,8 @@ def getProcessCheckDataByClassification():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-            dataList['CreateMailAddress'] = x[5]
+          #  dataList['CreateMailAddress'] = x[5]
+            dataList['CreateMailAddress'] = x[8]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
             dataList['Chart_Kind'] = wkChartKind[0]
@@ -437,6 +457,15 @@ def getProcessCheckDataByWorkItemID():
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
             "   pt.ProcessProcedureID " \
+            "     , ( " \
+            " select " \
+            " Surname + ' ' + name " \
+            " from " \
+            "  Person_Master_TBL " \
+            " where " \
+            "  Mail_address = pt.CreateMailAddress " \
+            "  and Principal_business_concurrent_service_code = '0' " \
+            " ) as usrname " \
             " FROM " \
             "   ProcessChartData_TBL AS pt , " \
             "   Workitem_Master_TBL AS wt , " \
@@ -467,7 +496,8 @@ def getProcessCheckDataByWorkItemID():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-            dataList['CreateMailAddress'] = x[5]
+          #  dataList['CreateMailAddress'] = x[5]
+            dataList['CreateMailAddress'] = x[8]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
             dataList['Chart_Kind'] = wkChartKind[0]
@@ -623,38 +653,108 @@ def deleteProcessCheckData():
     logger.info(
         "start the function deleteProcessCheckData ")
 
-    delete_processCheck_conn = pyodbc.connect('DRIVER={SQL Server};'
-                                              'Server=' +
-                                              app_section.get('IP')+';'
-                                              'Database=' +
-                                              app_section.get('DATABASE')+';'
-                                              'uid=' +
-                                              app_section.get('DB_USER_ID')+';'
-                                              'pwd='+app_section.get('DB_PASSWORD')+';')
-
     try:
+        select_processCheck_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                                  'Server=' +
+                                                  app_section.get('IP')+';'
+                                                  'Database=' +
+                                                  app_section.get(
+                                                      'DATABASE')+';'
+                                                  'uid=' +
+                                                  app_section.get(
+                                                      'DB_USER_ID')+';'
+                                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        delete_processCheck_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                                  'Server=' +
+                                                  app_section.get('IP')+';'
+                                                  'Database=' +
+                                                  app_section.get(
+                                                      'DATABASE')+';'
+                                                  'uid=' +
+                                                  app_section.get(
+                                                      'DB_USER_ID')+';'
+                                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+
         workName = flask.request.form['workName']
-        print("Procedure delete = ", workName)
         workitem_id = flask.request.form['workitem_id']
-        print("workitem_id delete = ", workitem_id)
         org1 = flask.request.form['org1']
         org2 = flask.request.form['org2']
+        processProcedureID = flask.request.form['processProcedureID']
 
-        delete_cursor = delete_processCheck_conn.cursor()
+        print("Procedure delete = ", workName)
+        print("workitem_id delete = ", workitem_id)
+        print("processProcedureID delete = ", processProcedureID)
 
-        delete_processCheck_query = \
-            "Delete from " \
-            " ProcessCheckIndex_TBL " \
+        select_cursor = select_processCheck_conn.cursor()
+
+        # 統一キーを取得する
+        chartDesignCode = ""
+        select_query = \
+            "SELECT " \
+            "  ISNULL(ChartDesignCode, '') as ChartDesignCode" \
+            " FROM " \
+            "  ProcessChartData_TBL " \
             " WHERE " \
-            " Work_Name = '"+workName+"' " \
-            " And Work_Item_ID = '" + workitem_id + "' " \
-            " And Organization_Code_1 = '" + org1 + "' " \
-            " And Organization_Code_2 = '" + org2 + "' "
+            "  ProcessProcedureName = '" + workName + "' " \
+            " And ProcessProcedureID = '" + processProcedureID + "' " \
+            " And OrganizationCode1 = '" + org1 + "' " \
+            " And OrganizationCode2 = '" + org2 + "' "
 
-        delete_cursor.execute(delete_processCheck_query)
-        delete_processCheck_conn.commit()
+        select_cursor.execute(select_query)
+
+        for x in select_cursor:
+            if x[0] != "":
+                chartDesignCode = x[0]
+
+        if chartDesignCode != "":
+            delete_cursor = delete_processCheck_conn.cursor()
+
+            try:
+                # 1. 親データ
+                delete_processCheck_query = \
+                    "Delete from " \
+                    " ProcessChartData_TBL " \
+                    " WHERE " \
+                    " ProcessProcedureName = '" + workName + "' " \
+                    " And ProcessProcedureID = '" + processProcedureID + "' " \
+                    " And OrganizationCode1 = '" + org1 + "' " \
+                    " And OrganizationCode2 = '" + org2 + "' "
+
+                delete_cursor.execute(delete_processCheck_query)
+
+                # 2. デザインテーブル
+                delete_processCheck_query = \
+                    "Delete from " \
+                    " ChartDesign_TBL " \
+                    " WHERE " \
+                    " ChartDesignCode = '" + chartDesignCode + "' " \
+
+                delete_cursor.execute(delete_processCheck_query)
+
+                # 3. コメントテーブル
+                delete_processCheck_query = \
+                    "Delete from " \
+                    " ChartComment_TBL " \
+                    " WHERE " \
+                    " ChartDesignCode = '" + chartDesignCode + "' " \
+
+                delete_cursor.execute(delete_processCheck_query)
+
+                # 削除成功
+                delete_processCheck_conn.commit()
+
+            except Exception as e:
+                # 削除失敗
+                delete_processCheck_conn.rollback()
+                return "fail to deleteProcessCheckData delete.."
 
         return "success delete"
 
     except:
-        return "fail to delete.."
+        return "fail to deleteProcessCheckData delete.."
+
+    # end
+    finally:
+        delete_processCheck_conn.close()
+        select_cursor.close()
