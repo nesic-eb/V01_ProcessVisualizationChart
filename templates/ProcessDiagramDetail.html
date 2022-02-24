@@ -23,6 +23,83 @@
     <script src="{{ url_for('static', filename='js/jquery.matchHeight.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/processDiagramDetail.css') }}">
+
+    <script type="text/javascript">
+        // クリックイベント時
+        var x, y
+        window.addEventListener("click", function (event) {
+            // x座標
+            x = event.screenX;
+            // y座標
+            y = event.screenY;
+
+            console.log("x座標 : " + x);
+            console.log("y座標 : " + y);
+        });
+
+        function showModal(targetWin, dataId) {
+            if (targetWin == "EdithWindow") {
+                //var categoryWord = encodeURI(document.getElementById("searchCategory").value);
+                //var searchWord = encodeURI(document.getElementById("searchString").value);
+                var openWindow = window.open("./gotoProcessEditWindow", null,
+                    'top=' + y + 'px,left=' + x +
+                    'px,width=800px,height=600px,toolbar=yes,menubar=yes,scrollbars=yes');
+
+                // 親画面にシェードをかける処理を実施
+                screenLock();
+
+                // 間隔で子画面の状態を監視
+                var interval = setInterval(function () {
+                    // 子画面が閉じていたら
+                    if (!openWindow || openWindow.closed) {
+                        // 親画面のシェードを外す処理
+                        screenUnLock()
+
+                        // Intervalを破棄
+                        clearInterval(interval);
+
+                        // ★★★元画面を再表示★★★
+
+                    } else {
+                        // 子画面にフォーカスを当てる
+                        openWindow.blur();
+                        window.focus();
+                        window.blur();
+                        openWindow.focus();
+                    }
+                },
+                    500);
+            };
+        };
+
+        /**
+         * ScreenLook
+         */
+        function screenLock() {
+            var element = document.createElement('div');
+            element.id = "screenLock";
+
+            element.style.height = '100%';
+            element.style.left = '0px';
+            element.style.position = 'fixed';
+            element.style.top = '0px';
+            element.style.width = '100%';
+            element.style.zIndex = '9999';
+            element.style.opacity = '0.5';
+            element.style.backgroundColor = '#999999';
+
+            var objBody = document.getElementsByTagName("body").item(0);
+            objBody.appendChild(element);
+        }
+
+        /**
+         * ScreenUnLook
+         */
+        function screenUnLock() {
+            var screenLock = document.getElementById("screenLock");
+            screenLock.parentNode.removeChild(screenLock);
+        }
+    </script>
 </head>
 
 <body class="l-main__block--common">

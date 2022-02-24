@@ -107,7 +107,7 @@ def start_tornado(app, port=app_section.get('HTTP_LISTEN_PORT')):
 
 
 # ========================================================================
-# プロセス可視化チャート画面を表示する
+# プロセス可視化チャートメイン画面を表示する
 #
 # ------------------------------------------------------
 @app.route("/")
@@ -119,6 +119,7 @@ def index():
 # プロセスチャート画面を表示する
 #
 # ------------------------------------------------------
+
 @app.route("/goToProcessDiagram")
 def goToProcessDiagram():
     logger.info("goToProcessDiagram .....")
@@ -133,6 +134,17 @@ def goToProcessDiagram():
 def goToProcessDiagramDetail():
     logger.info("goToProcessDiagramDetail .....")
     return render_template("ProcessDiagramDetail.html")
+
+# ========================================================================
+# プロセスチャートの詳細画面を表示する
+#
+# ------------------------------------------------------
+
+
+@app.route("/gotoProcessEditWindow")
+def gotoProcessEditWindow():
+    logger.info("gotoProcessEditWindow .....")
+    return render_template("ProcessEditWindow.html")
 
 
 # ############################################################################################################
