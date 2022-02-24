@@ -11,6 +11,7 @@
     <!-- ★ ############################################### -->
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css"
         rel="stylesheet">
@@ -18,10 +19,10 @@
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/processDiagramDetail.css') }}">
     <script src="{{ url_for('static', filename='js/function.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.matchHeight.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/processDiagramDetail.css') }}">
 </head>
 
 <body class="l-main__block--common">
@@ -43,514 +44,107 @@
     <div class="l-content">
         <div class="container-fluid">
             <div class="row">
-                <h2>Process Detail Diagram</h2>
+                <h2>プロセス可視化チャート　詳細表示</h2>
             </div><br>
             <div class="row">
-                <div class="col-sm-3">
-                    <button class="btn btn-primary">表示</button>
-                </div>
-                <div class="col-sm-3">
-                    <a href="/goToProcessDiagram"><button type="submit" id="btn_design"
-                            class="btn btn-primary">Design</button></a>
-                </div>
-                <div class="col-sm-3">
-                    <button type="submit" id="btn_description" class="btn btn-primary">説明文一括登録</button>
-                </div>
-                <div class="col-sm-3">
-                    <button class="btn btn-primary">登録</button>
-                    &nbsp;&nbsp;&nbsp;
-                    <button class="btn btn-primary">登録（未使用コメントを削除する）</button>
-                </div>
-            </div><br>
+                <table>
+                    <tr>
+                        <td style="width: 300px;">
+                            <a href="/goToProcessDiagram"><button type="submit" id="btn_design" class="btn btn-primary"
+                                    style="width: 200px;height: 35px;">チャートデザインに戻る</button></a>
+                        </td>
+                        <td style="width: 300px;">
+                            <button class="btn btn-primary" style="width: 80px;height: 35px;">出力</button>
+                        </td>
+                        <td style="width: 300px;">
+                            <button class="btn btn-primary" style="width: 80px;height: 35px;">保存</button>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <br>
 
+            <!--
+
+            -->
             <div class="row">
                 <div class="col-sm-6">
                     <table>
                         <tr>
-                            <td style="width: 80px;">
+                            <td style="width: 100px;">
                                 <P>合計時間：</P>
                             </td>
                             <td style="width: 100px;">
-                                <input type="text" class="form-control" style="height:35px; text-align: right;"
-                                    value="25" />
-                            </td>
-                            <td style="width: 30px;">
-                                <P>&nbsp;分</P>
+                                <input type="text" class="form-control" title="sumHounr" id="sumHounr"
+                                    style="margin-left: -10px; width: 60px;height:35px; text-align: right;" value="" />
+                                <span>&nbsp;分</span>
                             </td>
 
-                            <td style="width: 10px;"></td>
-                            <td style="width: 80px;">
-                                <P>
-                                    作業頻度：
-                                </P>
-                            </td>
                             <td style="width: 100px;">
-                                <input type="text" class="form-control" style="height:35px; text-align: right;"
-                                    value="2回" />
+                                <P>作業頻度：</P>
                             </td>
-                            <td style="width: 30px;">
-                                <P>&nbsp;月</P>
+                            <td style="width: 120px;">
+                                <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
+                                    style="margin-left: -10px;width: 60px;height:35px; text-align: right;" value="" />
+                                <span>&nbsp;回／月</span>
                             </td>
 
-                            <td style="width: 10px;"></td>
-                            <td style="width: 80px;">
+                            <td style="width: 100px;">
                                 <P>作業人数：</P>
                             </td>
-                            <td style="width: 100px;">
-                                <input type="text" class="form-control" style="height:35px; text-align: right;"
-                                    value="２" />
+                            <td style="width: 120px;">
+                                <input type="text" class="form-control" title="NumberOfWorkers" id="NumberOfWorkers"
+                                    style="margin-left: -10px;width: 60px;height:35px; text-align: right;" value="" />
+                                <span>&nbsp;人</span>
                             </td>
-                            <td style="width: 30px;">
-                                <P>&nbsp;人</P>
+                        </tr>
+                    </table>
+                    <table>
+                        <tr>
+                            <td style="width: 40px;">
+                                <input type="checkbox" id="PermissionFlag" name="subscribe" value=""
+                                    style="margin-top: -9px; margin-left: 18px;">
+                            </td>
+                            <td style="width: 180px;">
+                                <label style="margin-left: -30px; margin-top: -2px;">外部閲覧を禁止する</label>
+                            </td>
+                            <td style=" width: 40px;">
+                                <input type="checkbox" id="ChangeProhibitionFlag" name="subscribe" value=""
+                                    style="margin-top: -9px; margin-left: 18px;">
+                            </td>
+                            <td style="width: 280px;">
+                                <label style="margin-left: -30px; margin-top: -2px;">変更を禁止する（作成者のみ可）</label>
                             </td>
                         </tr>
                     </table>
 
-                    <hr style="height: 3px; background-color: blue">
+                    <hr style="height: 2px; background-color: rgb(200, 200, 200)">
 
-                    <table border="1" class="table" id="left_table">
-                        <!-- <tr>
-                            <th style="text-align: center; width: 40px;">No.</th>
-                            <th style="text-align: center; width: 40px;">A</th>
-                            <th style="text-align: center; width: 140px;">B</th>
-                            <th style="text-align: center; width: 140px;">C</th>
-                            <th style="text-align: center; width: 140px;">D</th>
-                        </tr> -->
-
-                    </table>
+                    <!-- 画面：左側要素のエリア -->
+                    <br>
+                    <div id="l_wrapper" style="width: 100%;">
+                        <div id="left_table_Div">
+                        </div>
+                        <br />
+                    </div>
                 </div>
 
-                <div class="col-sm-6">
-                    <div class="container-fluid" id="container_1">
+                <div class="col-sm-6" id="r_wrapper">
+                    <!-- 画面：右側要素のエリア -->
+                    <div class="container-fluid" id="container_top">
                         <!-- Comment -->
                         <!-- 1 -->
-                        
-
-                        <hr style="height: 3px; background-color: blue;">
-                        <table class="table">
-                            <tr>
-                                <td>
-                                    <button type="button" class="btn btn-danger">項目追加</button>
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr></tr>
-                        </table>
                     </div>
                 </div>
             </div>
-
-
         </div>
-    </div><br>
-
+    </div>
+    <br>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
     <script type="text/javascript" src="static/js/processDiagramDetail.js?　p=(new Date()).getTime()　"></script>
-    <script type="text/javascript">
-    
-    function createLeftTable(rows,column,design){
-        var left_table = document.getElementById("left_table");
-        for(var j=0;j<=rows;j++){
-            var tr = document.createElement("tr");
-            for(var i=0;i<column;i++){
-                var chr = "";
-                if(j==0){
-                    var th = document.createElement("th");
-                    th.setAttribute("style","text-align: center; width: 40px;");
-                    if(i==0){
-                        var node = document.createTextNode("No.");
-                        th.appendChild(node)
-                    }else{
-                        chr = String.fromCharCode(64 + i);
-                        var node =  document.createTextNode(chr);
-                        th.appendChild(node)
-                    }
-                    tr.appendChild(th);
-                
-                }else{
-                    chr = String.fromCharCode(64 + i);
-                    var td = document.createElement("td");
-                    td.setAttribute("style","text-align:center; vertical-align:middle;");
-                    td.setAttribute("id",chr+"_"+j)
-                    if(i==0){
-                        var node = document.createTextNode(j);
-                        td.appendChild(node);
-                    }
-                
-                    tr.appendChild(td);
-                }
-                
-            }
-           
-            left_table.appendChild(tr)
-
-
-        }
-        console.log("design in function = "+design);  
-        for(var a=0;a<design.length;a++){
-            var Block =  design[a].Block;
-            var LocationInfo = Block.LocationInfo;
-            console.log("LocationInfo = "+LocationInfo);
-            var location_id = document.getElementById(LocationInfo);
-
-            var ImageName = Block.ImageName;
-            console.log("ImageName = "+ImageName);
-            var CommentCode = Block.CommentCode;
-            console.log("CommentCode="+CommentCode);
-            var Heading = Block.Heading;
-            console.log("Heading = "+Heading);
-            var Explanation = Block.Explanation;
-            console.log("Explanation="+Explanation);
-
-            var image = document.createElement("img");
-            image.setAttribute("src","static/img/"+ImageName+".png");
-            image.setAttribute("style","margin-left: -20px;");
-            location_id.appendChild(image);
-
-            var text_box = document.createElement("input");
-            text_box.setAttribute("type","text");
-            text_box.setAttribute("style","background-color:  wheat; height: 30px; margin-top: 5px; text-align:center; color: brown;");
-            text_box.setAttribute("readonly","true");
-            text_box.setAttribute("value",Heading);
-            location_id.appendChild(text_box);
-
-            var a_link = document.createElement("a")
-            a_link.setAttribute("href","JavaScript:showModal('EdithWindow', '"+LocationInfo+"')");
-            a_link.setAttribute("id",LocationInfo);
-            a_link.setAttribute("name",LocationInfo);
-            location_id.appendChild(a_link);
-
-            var img_edit = document.createElement("img");
-            img_edit.setAttribute("src","static/img/editData.png");
-            img_edit.setAttribute("style","width: 20px;");
-            img_edit.setAttribute("name",LocationInfo)
-            location_id.appendChild(img_edit);
-
-            
-            
-            }
-        
-    }
-
-    function rightTableCreate(){
-        var tr = document.getElementById("tr");
-
-        var container_id = document.getElementById("container_1");
-        for(var i=1;i<6;i++){
-            var container = document.createElement("div");
-            container.setAttribute("class","container");
-            container.setAttribute("style","border: 2px solid black;width: 850px;");
-
-            var tbl = document.createElement("table");
-            tbl.class = "table"
-
-            var tr1 = document.createElement("tr");
-
-            var td1 = document.createElement("td");
-            td1.setAttribute("style", "width: 200px;");
-
-            
-
-            var p1 = document.createElement("p");
-            var node = document.createTextNode("位置")
-            p1.appendChild(node);;
-            td1.appendChild(p1);
-
-            var select = document.createElement("select");
-            select.setAttribute("class","form-control")
-            select.setAttribute("style","background-color:yellow;");
-            var option_value = ["C-1","C-2","C-3","C-4","C-5","C-6","C-7","C-8","C-9","C-10"]
-            for(var j=0;j<option_value.length;j++){
-                var option = document.createElement("option");
-                option.text = option_value[j];
-                select.add(option);
-            }
-            td1.appendChild(select);
-
-            var td2 = document.createElement("td");
-            td2.setAttribute("style", "width: 300px;");
-
-            var p2 = document.createElement("p");
-            var node2 = document.createTextNode("見出し")
-            p2.appendChild(node2);;
-            td2.appendChild(p2);
-
-            
-
-            var text_box = document.createElement("input");
-            text_box.setAttribute("type","text");
-            text_box.setAttribute("style","height:35px;");
-            text_box.setAttribute("class","form-control");
-            text_box.setAttribute("value","開始");
-            td2.appendChild(text_box);
-
-            var td3 = document.createElement("td");
-
-            var p3 = document.createElement("p")
-            var node3 = document.createTextNode("");
-            p3.appendChild(node3);
-            td3.appendChild(p3);
-
-
-            var button = document.createElement("button");
-            var node = document.createTextNode("削除")
-            button.setAttribute("type","button");
-            button.setAttribute("class","btn btn-primary");
-            button.setAttribute("value","");
-            button.appendChild(node)
-            
-            td3.appendChild(button);
-
-            tr1.appendChild(td1);
-            tr1.appendChild(td2);
-            tr1.appendChild(td3);
-
-            tbl.appendChild(tr1)
-
-            var tr2 = document.createElement("tr");
-            var td1 = document.createElement("td");
-            td1.setAttribute("colspan","3");
-            var p = document.createElement("p")
-            var node4 = document.createTextNode("説明")
-            p.appendChild(node4);
-            td1.appendChild(p)
-
-            var textarea = document.createElement("textarea");
-            textarea.setAttribute("style","width:763px;height: 100px;");
-            textarea.setAttribute("value","RPAライセンス手配の作業開始");
-
-            td1.appendChild(textarea)
-            tr2.appendChild(td1);
-            tbl.appendChild(tr2)
-
-            var tr3 = document.createElement("tr");
-            var td = document.createElement("td");
-            td.setAttribute("colspan","3");
-            var p = document.createElement("p")
-            var node4 = document.createTextNode("例外時の作業項目")
-            p.appendChild(node4);
-            td.appendChild(p);
-
-            var select = document.createElement("select");
-            select.setAttribute("class","form-control")
-            select.setAttribute("style","width:763px");
-            var option_value = ["●●対応","●●対応","●●対応","●●対応","●●対応","●●対応"]
-            for(var j=0;j<option_value.length;j++){
-                var option = document.createElement("option");
-                option.text = option_value[j];
-                select.add(option);
-            }
-
-            td.appendChild(select);
-            tr3.appendChild(td);
-            tbl.appendChild(tr3)
-
-            var tr4 = document.createElement("tr");
-            var td = document.createElement("td");
-            td.setAttribute("colspan","1.5");
-            var p = document.createElement("p")
-            var node4 = document.createTextNode("操作対象等")
-            p.appendChild(node4);
-
-            td.appendChild(p);
-
-            var select = document.createElement("select");
-            select.setAttribute("class","form-control");
-            var option_value = ["基幹システム","メール","ミーテイング","資料作成"]
-            for(var j=0;j<option_value.length;j++){
-                var option = document.createElement("option");
-                option.text = option_value[j];
-                select.add(option);
-            }
-
-            td.appendChild(select);
-            tr4.appendChild(td);
-
-            var td = document.createElement("td");
-            td.setAttribute("colspan","1.5");
-            td.setAttribute("rowspan","2");
-            var p = document.createElement("p")
-            var node4 = document.createTextNode("補足説明, 参考資料等")
-            p.appendChild(node4);
-            td.appendChild(p);
-
-            var textarea = document.createElement("textarea");
-            textarea.setAttribute("style","width:600px;height: 130px;");
-            textarea.setAttribute("value","準備作業（見積依頼書の書式入手）&#10;相手先連結済み");
-
-            td.appendChild(textarea);
-
-            tr4.appendChild(td);
-            tbl.appendChild(tr4)
-
-            var tr5 = document.createElement("tr");
-            var td = document.createElement("td");
-            td.setAttribute("colspan","1.5");
-            var p = document.createElement("p")
-            var node4 = document.createTextNode("作業時間")
-            p.appendChild(node4);
-            td.appendChild(p);
-
-            var select = document.createElement("select");
-            select.setAttribute("class","form-control");
-            var option_value = ["5分","10分","15分","20分"]
-            for(var j=0;j<option_value.length;j++){
-                var option = document.createElement("option");
-                option.text = option_value[j];
-                select.add(option);
-            }
-
-            td.appendChild(select);
-            tr5.appendChild(td);
-
-            tbl.appendChild(tr5);
-            container.appendChild(tbl);
-
-            var btn = document.createElement("button");
-
-            btn.setAttribute("class","glyphicon glyphicon-plus");
-            btn.setAttribute("id","show_btn");
-            btn.setAttribute("style","margin-left: -25px;margin-bottom: -15px;");
-            btn.setAttribute("onclick","show_hide_div_4()");
-            container.appendChild(btn);
-
-            container_id.appendChild(container);
-            
-        }
-    }
-
-// A $( document ).ready() block.
-$( document ).ready(function() {
-    console.log( "ready!" );
-    var chartDesignCode = "DesignCode_20220214135920";
-    $.ajax({
-                url: '/getProcessChartDrawingData/',
-                type: 'POST',
-                data: {
-                    chartDesignCode:chartDesignCode
-                    },
-                dataType: 'json',
-                success:function(response){
-                  console.log("REACh")
-                  var result = JSON.stringify(response)
-                  var data = response[0].Data
-                  console.log("data = "+JSON.stringify(data))
-                  var Num = response[0].Num
-                  console.log("Num = "+JSON.stringify(Num))
-                  var design = response[0].design
-                  console.log("design = "+JSON.stringify(design))
-
-                  var RowsNumber = data[0].RowsNumber
-                  console.log("rows = "+RowsNumber)
-                  var ColumnNumber = data[0].ColumnNumber
-                  console.log("column = "+ColumnNumber);
-                  
-                  
-                  createLeftTable(RowsNumber,ColumnNumber,design);
-                }
-            });
-});
-        var flag_1 = true;
-        function show_hide_div_1() {
-
-            if (flag_1 == true) {
-                $("#table_1").hide();
-                flag_1 = false;
-            } else {
-                $("#table_1").show();
-                flag_1 = true;
-            }
-        }
-
-        var flag_2 = true;
-        function show_hide_div_2() {
-
-            if (flag_2 == true) {
-                $("#table_2").hide();
-                flag_2 = false;
-            } else {
-                $("#table_2").show();
-                flag_2 = true;
-            }
-        }
-
-
-        var flag_3 = true;
-        function show_hide_div_3() {
-
-            if (flag_3 == true) {
-                $("#table_3").hide();
-                flag_3 = false;
-            } else {
-                $("#table_3").show();
-                flag_3 = true;
-            }
-        }
-
-        var flag_4 = true;
-        function show_hide_div_4() {
-
-            if (flag_4 == true) {
-                $("#table_4").hide();
-                flag_4 = false;
-            } else {
-                $("#table_4").show();
-                flag_4 = true;
-            }
-        }
-
-        var flag_5 = true;
-        function show_hide_div_5() {
-
-            if (flag_5 == true) {
-                $("#table_5").hide();
-                flag_5 = false;
-            } else {
-                $("#table_5").show();
-                flag_5 = true;
-            }
-        }
-
-
-
-        $('#processDiagram1').on('change', function () {
-            console.log(this.value);
-            var code = this.value;
-            if (code == "start") {
-                alert(code);
-                var diagram_detail = document.getElementById("diagramDetail");
-                var img = document.createElement("img");
-                img.src = "start_symbol.png";
-                diagram_detail.appendChild(img);
-                console.log("appendChild success...")
-
-            }
-
-        });
-
-
-        $('#processDiagram2').on('change', function () {
-            console.log(this.value);
-            var code = this.value;
-            if (code == "down") {
-                alert(code);
-                var diagram_detail = document.getElementById("diagramDetail");
-                var img = document.createElement("img");
-                img.src = "down_arrow.png";
-                diagram_detail.appendChild(img);
-                console.log("appendChild success...")
-
-            }
-
-        });
-
-        
-
-    </script>
 </body>
 
 </html>
