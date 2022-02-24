@@ -237,14 +237,15 @@ function createLeftTable(rows, column, design) {
         a_link.setAttribute("title", "editLink");
         a_link.setAttribute("id", LocationInfo);
         a_link.setAttribute("name", LocationInfo);
-        location_id.appendChild(a_link);
 
         var img_edit = document.createElement("img");
         img_edit.setAttribute("src", "static/img/flowChartImg/editData.png");
         img_edit.setAttribute("title", "edit");
         img_edit.setAttribute("style", "width: 20px;");
         img_edit.setAttribute("name", LocationInfo)
-        location_id.appendChild(img_edit);
+        a_link.appendChild(img_edit);
+
+        location_id.appendChild(a_link);
     }
 };
 
