@@ -6,7 +6,7 @@
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
 // =============================================================================
 */
-body{
+body {
   text-align: left !important;
 }
 
@@ -20,12 +20,30 @@ input[type=text] {
 button[type=submit] {
   width: 100px;
   height: 40px;
-  
 }
-
 
 #btn_description {
   width: 130px;
 }
 
+/* 画面：左側のサイズ */
+#l_wrapper {
+  height: auto;
+  width: 110%;
+  overflow-y: scroll;
+}
 
+/* 画面：右側のサイズ */
+#r_wrapper {
+  height: auto;
+  width: 45%;
+  /* overflow-y: scroll; */
+}
+
+/* チャート枠の罫線 */
+.l-border {
+  border-top: solid 1px #acacac6b;
+  border-right: solid 1px #acacac6b;
+  border-left: solid 1px #acacac6b;
+  border-bottom: solid 1px #acacac6b;
+}
