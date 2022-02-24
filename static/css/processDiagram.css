@@ -44,13 +44,15 @@
 h3{
   border: 1px solid;
   margin-top: 25px;
+  text-align: left;
 }
+
 
 input[type=text] {
   height: 25px !important;
   background-color: #cccccc6b;
   margin-top: 5px;
-  width: 220px;
+  width: 210px;
 }
 
 button[type=submit] {
@@ -58,17 +60,16 @@ button[type=submit] {
   
 }
 
-#btn_initialize {
+/* #btn_initialize {
   margin-top: 24px;
   background-color:#ffcc80;
   height: 45px;
   border: none;
 
-}
+} */
 
 #btn_update {
   margin-top: 37px;
-  margin-left: 440px;
   height: 35px;
 }
 
