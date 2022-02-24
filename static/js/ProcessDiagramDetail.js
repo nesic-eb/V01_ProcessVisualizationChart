@@ -217,9 +217,9 @@ function createLeftTable(rows, column, design) {
 
         // 選択画像
         var image = document.createElement("img");
-        image.setAttribute("src", "static/img/flowChartImg/" + ImageName + ".png");
+        image.setAttribute("src", "static/img/flowChartImg/" + ImageName + ".svg");
         image.setAttribute("title", "images");
-        image.setAttribute("style", "width: 60%; margin-left: -20px; margin-top: 2px;");
+        image.setAttribute("style", "width: 90%; margin-left: -20px; margin-top: 2px;");
         location_id.appendChild(image);
         location_id.appendChild(br);
 
@@ -239,7 +239,7 @@ function createLeftTable(rows, column, design) {
         a_link.setAttribute("name", LocationInfo);
 
         var img_edit = document.createElement("img");
-        img_edit.setAttribute("src", "static/img/flowChartImg/editData.png");
+        img_edit.setAttribute("src", "static/img/flowChartImg/editData.svg");
         img_edit.setAttribute("title", "edit");
         img_edit.setAttribute("style", "width: 20px;");
         img_edit.setAttribute("name", LocationInfo)
