@@ -212,6 +212,16 @@ function createLeftTable(rows, column, design) {
         console.log("Heading = " + Heading);
         var Explanation = Block.Explanation;
         console.log("Explanation=" + Explanation);
+        var Efficiency = Block.Efficiency;
+        console.log("Efficiency="+Efficiency)
+        var OperationTarget = Block.OperationTarget;
+        console.log("OperationTarget = "+OperationTarget);
+        var WorkingHour = Block.WorkingHour;
+        console.log("WorkingHour = "+WorkingHour);
+        var ExceptionWork = Block.ExceptionWork;
+        console.log("ExceptionWork = "+ExceptionWork);
+        var SupplementComment = Block.SupplementComment;
+        console.log("SupplementComment = "+SupplementComment)
 
         var br = document.createElement("br");
 
@@ -233,7 +243,7 @@ function createLeftTable(rows, column, design) {
 
         // 編集アイコン
         var a_link = document.createElement("a")
-        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "')");
+        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','"+CommentCode+"','"+Heading+"','"+Explanation+"','"+Efficiency+"','"+OperationTarget+"','"+WorkingHour+"','"+ExceptionWork+"','"+SupplementComment+"')");
         a_link.setAttribute("title", "editLink");
         a_link.setAttribute("id", LocationInfo);
         a_link.setAttribute("name", LocationInfo);

@@ -37,11 +37,13 @@
             console.log("y座標 : " + y);
         });
 
-        function showModal(targetWin, dataId) {
+        function showModal(targetWin, dataId,CommentCode,Heading,Explanation,Efficiency,OperationTarget,WorkingHour,ExceptionWork,SupplementComment) {
+            console.log("targetWin = "+targetWin)
+            console.log("dataId = "+dataId)
             if (targetWin == "EdithWindow") {
                 //var categoryWord = encodeURI(document.getElementById("searchCategory").value);
                 //var searchWord = encodeURI(document.getElementById("searchString").value);
-                var openWindow = window.open("./gotoProcessEditWindow", null,
+                var openWindow = window.open("./gotoProcessEditWindow?dataId="+dataId+"?CommentCode="+CommentCode+"?Heading="+Heading+"?Explanation="+Explanation+"?Efficiency="+Efficiency+"?OperationTarget="+OperationTarget+"?WorkingHour="+WorkingHour+"?ExceptionWork="+ExceptionWork+"?SupplementComment="+SupplementComment+"", null,
                     'top=' + y + 'px,left=' + x +
                     'px,width=800px,height=600px,toolbar=yes,menubar=yes,scrollbars=yes');
 
