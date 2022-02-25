@@ -158,6 +158,22 @@
             </tr>
         </table>
     </div>
+    <script>
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+            function(m,key,value) {
+            vars[key] = value;
+            });
+            return vars;
+        }
+        var dataID = getUrlVars()["dataId"];
+        console.log("dataID = "+dataID)
+        var CommentCode = getUrlVars()["CommentCode"];
+        console.log("CommentCode = "+CommentCode)
+        $("#location_id").text(dataID)
+    
+    </script>
 
 </body>
 
