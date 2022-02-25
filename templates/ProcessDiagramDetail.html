@@ -37,15 +37,28 @@
             console.log("y座標 : " + y);
         });
 
+<<<<<<< HEAD
+        function showModal(targetWin, dataId, CommentCode, Heading, Explanation, Efficiency, OperationTarget, WorkingHour, ExceptionWork, SupplementComment) {
+            console.log("targetWin = " + targetWin)
+            console.log("dataId = " + dataId)
+=======
         function showModal(targetWin, dataId,CommentCode,Heading,Explanation,Efficiency,OperationTarget,WorkingHour,ExceptionWork,SupplementComment) {
             console.log("targetWin = "+targetWin)
             console.log("dataId = "+dataId)
+>>>>>>> 162d93adaaa3de01da5277f1d9922416c89c6c17
             if (targetWin == "EdithWindow") {
+                // コメント開く
+                TargetOpenComment(dataId)
+
                 //var categoryWord = encodeURI(document.getElementById("searchCategory").value);
                 //var searchWord = encodeURI(document.getElementById("searchString").value);
+<<<<<<< HEAD
+                var openWindow = window.open("./gotoProcessEditWindow?dataId=" + dataId + "?CommentCode=" + CommentCode + "?Heading=" + Heading + "?Explanation=" + Explanation + "?Efficiency=" + Efficiency + "?OperationTarget=" + OperationTarget + "?WorkingHour=" + WorkingHour + "?ExceptionWork=" + ExceptionWork + "?SupplementComment=" + SupplementComment + "", null,
+=======
                 var openWindow = window.open("./gotoProcessEditWindow?dataId="+dataId+"?CommentCode="+CommentCode+"?Heading="+Heading+"?Explanation="+Explanation+"?Efficiency="+Efficiency+"?OperationTarget="+OperationTarget+"?WorkingHour="+WorkingHour+"?ExceptionWork="+ExceptionWork+"?SupplementComment="+SupplementComment+"", null,
+>>>>>>> 162d93adaaa3de01da5277f1d9922416c89c6c17
                     'top=' + y + 'px,left=' + x +
-                    'px,width=800px,height=600px,toolbar=yes,menubar=yes,scrollbars=yes');
+                    'px,width=800px,height=660px,toolbar=yes,menubar=yes,scrollbars=yes');
 
                 // 親画面にシェードをかける処理を実施
                 screenLock();
@@ -121,7 +134,7 @@
     </header>
 
     <div class="l-content">
-        <div class="container-fluid">
+        <div class="container-fluid" style="margin-left: -30px;">
             <div class="row">
                 <h2>プロセス可視化チャート　詳細表示</h2>
             </div><br>
@@ -129,19 +142,74 @@
                 <table>
                     <tr>
                         <td style="width: 300px;">
-                            <a href="/goToProcessDiagram"><button type="submit" id="btn_design" class="btn btn-primary"
+                            <a href="/gotoProcessDiagram"><button type="submit" id="btn_design" class="btn btn-primary"
                                     style="width: 200px;height: 35px;">チャートデザインに戻る</button></a>
                         </td>
                         <td style="width: 300px;">
                             <button class="btn btn-primary" style="width: 80px;height: 35px;">出力</button>
                         </td>
-                        <td style="width: 300px;">
-                            <button class="btn btn-primary" style="width: 80px;height: 35px;">保存</button>
-                        </td>
                         <td></td>
                     </tr>
                 </table>
+
+                <br>
+                <hr style="height: 1px; background-color: rgb(200, 200, 200)">
+
+                <table style="margin-top: 5px;">
+                    <tr>
+                        <td style="width: 55px;">
+                            <P>合計時間：</P>
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="text" class="form-control" title="TotalWorkingTime" id="TotalWorkingTime"
+                                style="margin-left: -10px; width: 60px;height:35px; text-align: right;" readonly
+                                value="" />
+                            <span>&nbsp;h</span>
+                        </td>
+
+                        <td style="width: 55px;">
+                            <P>作業頻度：</P>
+                        </td>
+                        <td style="width: 120px;">
+                            <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
+                                style="margin-left: -10px;width: 60px;height:35px; text-align: right; background-color: white;"
+                                value="" />
+                            <span>&nbsp;回／月</span>
+                        </td>
+
+                        <td style="width: 55px;">
+                            <P>作業人数：</P>
+                        </td>
+                        <td style="width: 120px;">
+                            <input type="text" class="form-control" title="NumberOfWorkers" id="NumberOfWorkers"
+                                style="margin-left: -10px;width: 60px;height:35px; text-align: right; background-color: white;"
+                                value="" />
+                            <span>&nbsp;人</span>
+                        </td>
+
+                        <!-- 外部閲覧を禁止する -->
+                        <td style="width: 150px;">
+                            <input type="checkbox" id="PermissionFlag" name="PermissionFlag" value=""
+                                style="margin-top: 0px;">
+                            <span style="margin-left: 6px; margin-top: -6px;">外部閲覧を禁止する</span>
+                        </td>
+
+                        <!-- 変更を禁止する -->
+                        <td style="width: 280px;">
+                            <input type="checkbox" id="ChangeProhibitionFlag" name="ChangeProhibitionFlag" value=""
+                                style="margin-top: 0px;">
+                            <span style="margin-left: 6px; margin-top: -6px;">変更を禁止する（作成者のみ可）</span>
+                        </td>
+
+                        <td style="width: 100px;">
+                            <button class="btn btn-primary" style="width: 80px; height: 30px;"
+                                onclick="SaveToProcessChartDataTBL()">保存</button>
+                        </td>
+                    </tr>
+                </table>
+                <hr style=" height: 1px; background-color: rgb(200, 200, 200)">
             </div>
+
             <br>
 
             <!--
@@ -149,60 +217,8 @@
             -->
             <div class="row">
                 <div class="col-sm-6">
-                    <table>
-                        <tr>
-                            <td style="width: 100px;">
-                                <P>合計時間：</P>
-                            </td>
-                            <td style="width: 100px;">
-                                <input type="text" class="form-control" title="sumHounr" id="sumHounr"
-                                    style="margin-left: -10px; width: 60px;height:35px; text-align: right;" value="" />
-                                <span>&nbsp;分</span>
-                            </td>
-
-                            <td style="width: 100px;">
-                                <P>作業頻度：</P>
-                            </td>
-                            <td style="width: 120px;">
-                                <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
-                                    style="margin-left: -10px;width: 60px;height:35px; text-align: right;" value="" />
-                                <span>&nbsp;回／月</span>
-                            </td>
-
-                            <td style="width: 100px;">
-                                <P>作業人数：</P>
-                            </td>
-                            <td style="width: 120px;">
-                                <input type="text" class="form-control" title="NumberOfWorkers" id="NumberOfWorkers"
-                                    style="margin-left: -10px;width: 60px;height:35px; text-align: right;" value="" />
-                                <span>&nbsp;人</span>
-                            </td>
-                        </tr>
-                    </table>
-                    <table>
-                        <tr>
-                            <td style="width: 40px;">
-                                <input type="checkbox" id="PermissionFlag" name="subscribe" value=""
-                                    style="margin-top: -9px; margin-left: 18px;">
-                            </td>
-                            <td style="width: 180px;">
-                                <label style="margin-left: -30px; margin-top: -2px;">外部閲覧を禁止する</label>
-                            </td>
-                            <td style=" width: 40px;">
-                                <input type="checkbox" id="ChangeProhibitionFlag" name="subscribe" value=""
-                                    style="margin-top: -9px; margin-left: 18px;">
-                            </td>
-                            <td style="width: 280px;">
-                                <label style="margin-left: -30px; margin-top: -2px;">変更を禁止する（作成者のみ可）</label>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <hr style="height: 2px; background-color: rgb(200, 200, 200)">
-
                     <!-- 画面：左側要素のエリア -->
-                    <br>
-                    <div id="l_wrapper" style="width: 100%;">
+                    <div id="l_wrapper" style="width: 104%;">
                         <div id="left_table_Div">
                         </div>
                         <br />
@@ -212,6 +228,17 @@
                 <div class="col-sm-6" id="r_wrapper">
                     <!-- 画面：右側要素のエリア -->
                     <div class="container-fluid" id="container_top">
+                        <table>
+                            <tr>
+                                <td style="width: 100px;">
+                                    <button class="btn btn-success" style="width: 80px;height: 28px;"
+                                        onclick="AllCloseComment()">全閉</button>&nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-success" style="width: 80px;height: 28px;"
+                                        onclick="AllOpenComment()">全開</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <br>
                         <!-- Comment -->
                         <!-- 1 -->
                     </div>

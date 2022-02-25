@@ -246,7 +246,8 @@ def getAllProcessCheckData():
             "   pt.ProcessProcedureName, " \
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
-            "   pt.ProcessProcedureID " \
+            "   pt.ProcessProcedureID, " \
+            "   ISNULL(pt.ChartDesignCode, '') as ChartDesignCode " \
             "     , ( " \
             " select " \
             " Surname + ' ' + name " \
@@ -285,9 +286,11 @@ def getAllProcessCheckData():
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
           #  dataList['CreateMailAddress'] = x[5]
-            dataList['CreateMailAddress'] = x[8]
+            dataList['CreateMailAddress'] = x[9]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
+            dataList['ChartDesignCode'] = x[8]
+
             dataList['Chart_Kind'] = wkChartKind[0]
 
             processCheck_data.append(dataList)
