@@ -121,6 +121,8 @@ def getchartDesignCode():
         # チャート情報
         for x in select_conn_cursor:
             ChartDesignCodeList.append(x[13])
+            ChartDesignCodeList.append(x[11])
+            ChartDesignCodeList.append(x[12])
 
         select_conn_cursor.close()
 

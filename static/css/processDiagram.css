@@ -17,6 +17,7 @@
 
 .select2-container .select2-selection--multiple .select2-selection__rendered {
   white-space: break-spaces!important;
+  margin-top: 10px;
 }
 
 .select2-center-option,
@@ -35,6 +36,7 @@
 
 .select2-selection__arrow {
     height: 40px !important;
+    margin-top: 11px;
 }
 
 #start{
@@ -51,22 +53,19 @@ h3{
 input[type=text] {
   height: 25px !important;
   background-color: #cccccc6b;
-  margin-top: 5px;
-  width: 210px;
+  margin-top: 10px;
+  width: 220px;
 }
 
 button[type=submit] {
-  width: 100px;
+  width: 90px;
   
 }
 
-/* #btn_initialize {
-  margin-top: 24px;
-  background-color:#ffcc80;
-  height: 45px;
-  border: none;
+#processChart_container {
+  margin-left: -13px;
 
-} */
+} 
 
 #btn_update {
   margin-top: 37px;
