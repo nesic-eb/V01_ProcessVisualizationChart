@@ -321,13 +321,13 @@ def getProcessChartDrawingData():
             "  de.LocationInfo, " \
             "  de.ImageName, " \
             "  de.CommentCode, " \
-            "  co.Heading, " \
-            "  co.Explanation, " \
-            "  co.Efficiency, " \
-            "  co.OperationTarget, " \
-            "  co.WorkingHour, " \
-            "  co.ExceptionWork, " \
-            "  co.SupplementComment " \
+            "  ISNULL(co.Heading, '') as Heading, " \
+            "  ISNULL(co.Explanation, '') as Explanation, " \
+            "  ISNULL(co.Efficiency, '') as Efficiency, " \
+            "  ISNULL(co.OperationTarget,'') as OperationTarget, " \
+            "  ISNULL(co.WorkingHour, '') as WorkingHour, " \
+            "  ISNULL(co.ExceptionWork,'') as ExceptionWork, " \
+            "  ISNULL(co.SupplementComment, '') as SupplementComment " \
             "FROM " \
             "    ChartDesign_TBL as de, " \
             "    ChartComment_TBL as co " \
@@ -415,14 +415,14 @@ def getProcessChartCommentDataAll():
         select_query = \
             "SELECT " \
             "  co.CommentCode, " \
-            "  co.Heading, " \
-            "  co.Explanation, " \
-            "  co.Efficiency, " \
-            "  co.OperationTarget, " \
-            "  co.WorkingHour, " \
-            "  co.ExceptionWork, " \
-            "  co.SupplementComment, " \
-            "  co.ChartDesignCode " \
+            "  ISNULL(co.Heading, '') as Heading, " \
+            "  ISNULL(co.Explanation, '') as Explanation, " \
+            "  ISNULL(co.Efficiency, '') as Efficiency, " \
+            "  ISNULL(co.OperationTarget,'') as OperationTarget, " \
+            "  ISNULL(co.WorkingHour, '') as WorkingHour, " \
+            "  ISNULL(co.ExceptionWork,'') as ExceptionWork, " \
+            "  ISNULL(co.SupplementComment, '') as SupplementComment " \
+            "  ISNULL(co.ChartDesignCode, '') as ChartDesignCode " \
             "FROM " \
             "  ChartComment_TBL as co " \
             "WHERE " \
@@ -512,13 +512,13 @@ def getProcessChartCommentData():
             "  de.LocationInfo, " \
             "  de.ImageName, " \
             "  de.CommentCode, " \
-            "  co.Heading, " \
-            "  co.Explanation, " \
-            "  co.Efficiency, " \
-            "  co.OperationTarget, " \
-            "  co.WorkingHour, " \
-            "  co.ExceptionWork, " \
-            "  co.SupplementComment " \
+            "  ISNULL(co.Heading, '') as Heading, " \
+            "  ISNULL(co.Explanation, '') as Explanation, " \
+            "  ISNULL(co.Efficiency, '') as Efficiency, " \
+            "  ISNULL(co.OperationTarget,'') as OperationTarget, " \
+            "  ISNULL(co.WorkingHour, '') as WorkingHour, " \
+            "  ISNULL(co.ExceptionWork,'') as ExceptionWork, " \
+            "  ISNULL(co.SupplementComment, '') as SupplementComment " \
             "FROM " \
             "    ChartDesign_TBL as de, " \
             "    ChartComment_TBL as co " \
