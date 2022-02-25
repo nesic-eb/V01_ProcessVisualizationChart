@@ -13,6 +13,13 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessDiagram.js --------");
 
+console.log(sessionStorage.getItem("email"));
+console.log(sessionStorage.getItem("org1"));
+console.log(sessionStorage.getItem("org2"));
+console.log(sessionStorage.getItem("ProcessProcedureID"));
+console.log(sessionStorage.getItem("ProcessProcedureName"));
+console.log(sessionStorage.getItem("ChartDesignCode"));
+
 // ##################################################################################################
 // ##################################################################################################
 /* functin以外の処理を記述 */
@@ -45,8 +52,8 @@ var classification = getUrlParameter("classification");
 console.log("classification = " + classification)
 var workitem = getUrlParameter("workitem");
 console.log("workitem = " + workitem)
-var workitem_id = workitem.split("/")
-workitem_id = workitem_id[0]
+//var workitem_id = workitem.split("/")
+//workitem_id = workitem_id[0]
 var procedure_name = getUrlParameter("procedure_name");
 console.log("workitem_name = " + procedure_name)
 $("#process_ProcedureName").html(procedure_name)

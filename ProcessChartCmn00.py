@@ -263,18 +263,18 @@ def getProcessChartDrawingData():
             " SELECT " \
             "  ProcessProcedureID ," \
             "  ProcessProcedureName ," \
-            "  ClassificationCode ," \
-            "  WorkItemID ," \
-            "  OrganizationCode1 ," \
-            "  OrganizationCode2 ," \
-            "  PermissionFlag ," \
-            "  ChangeProhibitionFlag ," \
-            "  WorkFrequency ," \
-            "  NumberOfWorkers ," \
-            "  TotalWorkingTime ," \
-            "  ColumnNumber ," \
-            "  RowsNumber ," \
-            "  ChartDesignCode " \
+            "  ISNULL(ClassificationCode,'') as ClassificationCode," \
+            "  ISNULL(WorkItemID,'') as WorkItemID," \
+            "  ISNULL(OrganizationCode1,'') as OrganizationCode1," \
+            "  ISNULL(OrganizationCode2,'') as OrganizationCode2," \
+            "  ISNULL(PermissionFlag,'') as PermissionFlag," \
+            "  ISNULL(ChangeProhibitionFlag,'') as ChangeProhibitionFlag," \
+            "  ISNULL(WorkFrequency,'') as WorkFrequency," \
+            "  ISNULL(NumberOfWorkers,'') as NumberOfWorkers," \
+            "  ISNULL(TotalWorkingTime,'') as TotalWorkingTime," \
+            "  ISNULL(ColumnNumber,'6') as ColumnNumber," \
+            "  ISNULL(RowsNumber,'6') as RowsNumber," \
+            "  ISNULL(ChartDesignCode,'') as ChartDesignCode " \
             " FROM " \
             "   ProcessChartData_TBL " \
             " WHERE " \
@@ -287,8 +287,13 @@ def getProcessChartDrawingData():
         dataListData = []
         dataCnt = 0
 
+        chartType = ""
+
         # チャート情報
         for x in select_conn_cursor:
+            wkChartType = x[0].split('_')
+            chartType = wkChartType[0]
+
             ChartType = Counter()
             ChartType['ProcessProcedureID'] = x[0]
             ChartType['ProcessProcedureName'] = x[1]
@@ -312,6 +317,8 @@ def getProcessChartDrawingData():
         dataList['Num'] = format(dataCnt, '03')
         dataList['Data'] = dataListData
 
+        print("chartType = " + chartType)
+
         # ---------------------------------------
         # プロセス可視化チャート図情報を取得する
         # ---------------------------------------
@@ -327,14 +334,17 @@ def getProcessChartDrawingData():
             "  ISNULL(co.OperationTarget,'') as OperationTarget, " \
             "  ISNULL(co.WorkingHour, '') as WorkingHour, " \
             "  ISNULL(co.ExceptionWork,'') as ExceptionWork, " \
-            "  ISNULL(co.SupplementComment, '') as SupplementComment " \
+            "  ISNULL(co.SupplementComment, '') as SupplementComment, " \
+            "  (select ImageFileName from ChartImage_Master_TBL where ChartKind = '" + chartType + "' and ImageName = de.ImageName) as ImageFileName, " \
+            "  SUBSTRING(de.LocationInfo, 1, 1) as ColumnName, " \
+            "  SUBSTRING(de.LocationInfo, 3, 7) as RowsNo " \
             "FROM " \
             "    ChartDesign_TBL as de, " \
             "    ChartComment_TBL as co " \
             "WHERE " \
             "   de.ChartDesignCode = '" + chartDesignCode + "'" \
             "   AND co.CommentCode = de.CommentCode " \
-            "Order by de.LocationInfo "
+            "Order by RowsNo, ColumnName "
 
         select_conn_cursor.execute(select_query)
 
@@ -348,6 +358,7 @@ def getProcessChartDrawingData():
             design['ChartDesignCode'] = x[0]
             design['LocationInfo'] = x[1]
             design['ImageName'] = x[2]
+            design['ImageFileName'] = x[11]
             design['CommentCode'] = x[3]
             # Comment
             design['Heading'] = x[4]

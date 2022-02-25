@@ -12,6 +12,18 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessDiagramDetail.js --------");
 
+console.log(sessionStorage.getItem("email"));
+console.log(sessionStorage.getItem("org1"));
+console.log(sessionStorage.getItem("org2"));
+console.log(sessionStorage.getItem("ProcessProcedureID"));
+console.log(sessionStorage.getItem("ProcessProcedureName"));
+console.log(sessionStorage.getItem("ChartDesignCode"));
+
+console.log("■ ---------------------------------------------");
+
+var G_COMMENT_MAX = 0
+var G_WORKTIME_TOTAL = 0
+
 // ##################################################################################################
 // ##################################################################################################
 /* functin以外の処理を記述 */
@@ -19,7 +31,7 @@ console.log("■ セッション情報 -- ProcessDiagramDetail.js --------");
 // A $( document ).ready() block.
 $(document).ready(function () {
 
-    console.log("ready!");
+    console.log("---- ready! -----------------------------------------------");
     var chartDesignCode = "DesignCode_20220214135920";
 
     $.ajax({
@@ -53,13 +65,13 @@ $(document).ready(function () {
             // 画面上部の値
             // ---------------------------
             // 合計時間
-            document.getElementById("sumHounr").value = data[0].TotalWorkingTime;
+            document.getElementById("TotalWorkingTime").value = data[0].TotalWorkingTime;
             // 作業頻度
             document.getElementById("WorkFrequency").value = data[0].WorkFrequency;
             // 作業人数
-            document.getElementById("NumberOfWorkers").value = data[0].WorkFrequency;
+            document.getElementById("NumberOfWorkers").value = data[0].NumberOfWorkers;
             // 外部閲覧を禁止する
-            if (data[0].WorkFrequency == "0") {
+            if (data[0].PermissionFlag == "0") {
                 document.getElementById("PermissionFlag").checked = false;
             }
             else {
@@ -95,6 +107,65 @@ $(document).ready(function () {
 // ##################################################################################################
 /* function の処理を記述 */
 
+/**
+ * 数値チェック関数
+ * 入力値が数値 (符号あり小数 (- のみ許容)) であることをチェックする
+ * [引数]   numVal: 入力値
+ * [返却値] true:  数値
+ *          false: 数値以外
+ */
+function isNumber(numVal) {
+    // チェック条件パターン
+    var pattern = /^[-]?([1-9]\d*|0)(\.\d+)?$/;
+    // 数値チェック
+    return pattern.test(numVal);
+}
+
+// ----------------------------------------------
+// コメントをすべて閉じる
+// ----------------------------------------------
+function AllCloseComment() {
+    for (i = 0; i < G_COMMENT_MAX; i++) {
+        var openStatusName = "OpenStatus_" + String(1);
+
+        // 閉じる
+        var tablename = "#table_" + String(i)
+        $(tablename).hide();
+        document.getElementById(openStatusName).value = "0";
+    };
+};
+
+// ----------------------------------------------
+// コメントをすべて開く
+// ----------------------------------------------
+function AllOpenComment() {
+    for (i = 0; i < G_COMMENT_MAX; i++) {
+        var openStatusName = "OpenStatus_" + String(1);
+
+        // 開く
+        var tablename = "#table_" + String(i);
+        $(tablename).show();
+        document.getElementById(openStatusName).value = "1";
+    };
+};
+
+// ----------------------------------------------
+// 選択したコメントを開く
+// ----------------------------------------------
+function TargetOpenComment(targetComment) {
+    for (i = 0; i < G_COMMENT_MAX; i++) {
+        var terget = "Comment_" + String(i);
+        const getLocationInfo = document.getElementById(terget).value;
+        if (getLocationInfo == targetComment) {
+            var openStatusName = "OpenStatus_" + String(1);
+            // 開く
+            var tablename = "#table_" + String(i);
+            $(tablename).show();
+            document.getElementById(openStatusName).value = "1";
+        };
+    };
+};
+
 // ----------------------------------------------
 // 画面：チャート図形枠の最大幅を取得する
 // ----------------------------------------------
@@ -125,6 +196,27 @@ function imgTableWidth(design) {
     }
 
     return widthMax;
+};
+
+// ----------------------------------------------
+// 画面：指定カラムの画像あり／無しを求める
+// ----------------------------------------------
+function checkImgTd(column, design) {
+    var checkflg = false;
+
+    var checkColumn = String.fromCharCode(64 + column);
+    for (var a = 0; a < design.length; a++) {
+        var Block = design[a].Block;
+        var wkColumn = Block.LocationInfo.split('_')
+
+        if (checkColumn == wkColumn[0]) {
+            // あった
+            checkflg = true;
+            break;
+        }
+    }
+
+    return checkflg;
 };
 
 // ----------------------------------------------
@@ -176,7 +268,13 @@ function createLeftTable(rows, column, design) {
                 }
                 else {
                     // 枠
+                    var checkflg = checkImgTd(i, design);
+                    if (checkflg == true) {
+                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 140px; height: 30px;");
+                    }
+                    else {
                     td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 30px;");
+                    }
                     td.style.backgroundColor = "#ffffff";
                 }
                 td.setAttribute("id", chr + "_" + j)
@@ -196,7 +294,9 @@ function createLeftTable(rows, column, design) {
     // 親DIVにtableを追加
     left_table.append(mainTable)
 
-    console.log("design in function = " + design);
+    G_COMMENT_MAX = design.length;
+
+    console.log("design in G_COMMENT_MAX = " + G_COMMENT_MAX);
 
     for (var a = 0; a < design.length; a++) {
         var Block = design[a].Block;
@@ -205,6 +305,7 @@ function createLeftTable(rows, column, design) {
         var location_id = document.getElementById(LocationInfo);
 
         var ImageName = Block.ImageName;
+        var ImageFileName = Block.ImageFileName;
         console.log("ImageName = " + ImageName);
         var CommentCode = Block.CommentCode;
         console.log("CommentCode=" + CommentCode);
@@ -212,28 +313,38 @@ function createLeftTable(rows, column, design) {
         console.log("Heading = " + Heading);
         var Explanation = Block.Explanation;
         console.log("Explanation=" + Explanation);
+        var Efficiency = Block.Efficiency;
+        console.log("Efficiency="+Efficiency)
+        var OperationTarget = Block.OperationTarget;
+        console.log("OperationTarget = "+OperationTarget);
+        var WorkingHour = Block.WorkingHour;
+        console.log("WorkingHour = "+WorkingHour);
+        var ExceptionWork = Block.ExceptionWork;
+        console.log("ExceptionWork = "+ExceptionWork);
+        var SupplementComment = Block.SupplementComment;
+        console.log("SupplementComment = "+SupplementComment)
 
         var br = document.createElement("br");
 
         // 選択画像
         var image = document.createElement("img");
-        image.setAttribute("src", "static/img/flowChartImg/" + ImageName + ".svg");
+        image.setAttribute("src", "static/img/" + ImageFileName);
         image.setAttribute("title", "images");
-        image.setAttribute("style", "width: 90%; margin-left: -20px; margin-top: 2px;");
+        image.setAttribute("style", "width: 85%; margin-top: 2px;");
         location_id.appendChild(image);
         location_id.appendChild(br);
 
         // 説明
         var text_box = document.createElement("input");
         text_box.setAttribute("type", "text");
-        text_box.setAttribute("style", "background-color: wheat; width: 160px; height: 30px; margin-top: 5px; text-align:center; color: brown;");
+        text_box.setAttribute("style", "background-color: wheat; width: 180px; height: 30px; margin-top: 5px; text-align:center; color: brown;");
         text_box.setAttribute("readonly", "true");
         text_box.setAttribute("value", Heading);
         location_id.appendChild(text_box);
 
         // 編集アイコン
         var a_link = document.createElement("a")
-        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "')");
+        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','"+CommentCode+"','"+Heading+"','"+Explanation+"','"+Efficiency+"','"+OperationTarget+"','"+WorkingHour+"','"+ExceptionWork+"','"+SupplementComment+"')");
         a_link.setAttribute("title", "editLink");
         a_link.setAttribute("id", LocationInfo);
         a_link.setAttribute("name", LocationInfo);
@@ -241,7 +352,7 @@ function createLeftTable(rows, column, design) {
         var img_edit = document.createElement("img");
         img_edit.setAttribute("src", "static/img/flowChartImg/editData.svg");
         img_edit.setAttribute("title", "edit");
-        img_edit.setAttribute("style", "width: 20px;");
+        img_edit.setAttribute("style", "width: 20px; margin-top: -30px; margin-left: -20px;");
         img_edit.setAttribute("name", LocationInfo)
         a_link.appendChild(img_edit);
 
@@ -332,6 +443,7 @@ function rightTableCreate(design) {
             text_box.setAttribute("type", "text");
             text_box.setAttribute("style", "background-color: yellow; width: 180px; height: 30px; margin-top: 5px; text-align:left;");
             text_box.setAttribute("readonly", "true");
+            text_box.setAttribute("id", "Comment_" + String(i));
             text_box.setAttribute("value", LocationInfo);
             td1.appendChild(text_box);
 
@@ -485,7 +597,7 @@ function rightTableCreate(design) {
             var td1 = document.createElement("td");
             td1.setAttribute("colspan", "1.5");
             var p = document.createElement("p")
-            var node4 = document.createTextNode("作業時間")
+            var node4 = document.createTextNode("作業時間（分）")
             p.appendChild(node4);
             td1.appendChild(p);
 
@@ -495,6 +607,11 @@ function rightTableCreate(design) {
             text_box.setAttribute("class", "form-control");
             text_box.setAttribute("readonly", "true");
             text_box.setAttribute("value", WorkingHourInfo);
+            // 合計時間
+            if (isNumber(WorkingHourInfo) == true) {
+                G_WORKTIME_TOTAL = G_WORKTIME_TOTAL + Number(WorkingHourInfo);
+            }
+
             td1.appendChild(text_box);
             tr5.appendChild(td1);
 
@@ -537,8 +654,77 @@ function rightTableCreate(design) {
 
         // 親に追加
         container_top.append(container_id);
+
+        // 画面上部へデータを設定する
+        // 合計時間
+        var wknum = G_WORKTIME_TOTAL / 60.0;
+        document.getElementById("TotalWorkingTime").value = wknum.toFixed(2);
+
     } // end loop
 
 };
+
+// ###################################################################################
+// ###################################################################################
+// ###################################################################################
+
+// ----------------------------------------------
+// 保存（ProcessChartDataTBL）
+// ----------------------------------------------
+function SaveToProcessChartDataTBL() {
+    // 外部閲覧を禁止する
+    var wkPermissionFlag = document.getElementById("PermissionFlag").checked;
+
+    // 変更を禁止する
+    var wkChangeProhibitionflag = document.getElementById("ChangeProhibitionFlag").checked;
+
+    // 合計時間
+    var wkTotalWorkingTime = document.getElementById("TotalWorkingTime").value;
+
+    // 作業頻度
+    var wkWorkFrequency = document.getElementById("WorkFrequency").value;
+    if (isNumber(wkWorkFrequency) == false) {
+        alert("作業頻度は、数値で入力してください。");
+        returnm;
+    }
+    // 作業人数
+    var wkNumberOfWorkers = document.getElementById("NumberOfWorkers").value;
+    if (isNumber(wkNumberOfWorkers) == false) {
+        alert("作業人数は、数値で入力してください。");
+        returnm;
+    }
+
+    var email = sessionStorage.getItem("email");
+    var org1 = sessionStorage.getItem("org1");
+    var org2 = sessionStorage.getItem("org2");
+    var processProcedureID = sessionStorage.getItem("ProcessProcedureID");
+    var processProcedureName = sessionStorage.getItem("ProcessProcedureName");
+    var chartDesignCode = sessionStorage.getItem("ChartDesignCode");
+
+    // 更新
+    $.ajax({
+        url: '/setProcessChartTblData/',
+        type: 'POST',
+        data: {
+            email: email,
+            org1: org1,
+            org2: org2,
+            processProcedureID: processProcedureID,
+            processProcedureName: processProcedureName,
+            chartDesignCode: chartDesignCode,
+            permissionFlag: wkPermissionFlag,
+            changeProhibitionFlag: wkChangeProhibitionflag,
+            totalWorkingTime: wkTotalWorkingTime,
+            workFrequency: wkWorkFrequency,
+            numberOfWorkers: wkNumberOfWorkers
+        },
+        dataType: 'json',
+        success: function (response) {
+
+        }
+    });
+};
+
+
 
 
