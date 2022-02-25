@@ -14,15 +14,19 @@ console.log("■ セッション情報 -- ProcessCheck.js --------");
 
 var org1 = '50';
 var org2 = '05';
+var user_name = ""
+var user_emal = "fujii.kyoichi.za@nesic.com"
+
+// セッション情報作成
+sessionStorage.setItem("email", "");
+sessionStorage.setItem("org1", "");
+sessionStorage.setItem("org2", "");
+sessionStorage.setItem("ProcessProcedureID", "");
+sessionStorage.setItem("ProcessProcedureName", "");
+sessionStorage.setItem("ChartDesignCode", "");
 
 $('#org1').val(org1);
 $('#org2').val(org2);
-console.log("org1 = " + org1);
-console.log("org2 = " + org2);
-
-// パラメータから取得すること！！
-var user_name = ""
-var user_emal = "fujii.kyoichi.za@nesic.com"
 
 // ##################################################################################################
 // ##################################################################################################
@@ -95,6 +99,7 @@ function CreateProcessdataTable() {
         console.log("CreateMailAddress=" + wkData.CreateMailAddress);
         console.log("CreateDateTime=" + wkData.CreateDateTime);
         console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+        console.log("ChartDesignCode=" + wkData.ChartDesignCode);
         console.log("Chart_Kind=" + wkData.Chart_Kind);
       }
       // Debug ---------------------------
@@ -113,6 +118,7 @@ function CreateProcessdataTable() {
         row_array[4] = wkData.CreateMailAddress;
         row_array[5] = wkData.CreateDateTime;
         row_array[6] = wkData.ProcessProcedureID;
+        row_array[7] = wkData.ChartDesignCode;
 
         dataSet.push(row_array);
       };
@@ -129,7 +135,7 @@ function CreateProcessdataTable() {
           { title: "作成日" },
            /* DELETE */ {
             mRender: function (data, type, row) {
-              return '<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "&ProcessProcedureID=" + row[6] + "&Browsing=1" +
+              return '<a href="javascript:DispChartAction(\'' + row[3] + '\',\'' + row[6] + '\',\'' + row[7] + '\');"' +
                 '" class="btn btn-primary">&nbsp;&nbsp;内容表示&nbsp;&nbsp;</a>' +
                 '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\')">削除</button>' +
                 '&nbsp;&nbsp;&nbsp;<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "& ProcessProcedureID=" + row[6] + "&Browsing=0" +
@@ -483,6 +489,23 @@ $('#btn_register').click(function (e) {
   });
 });
 
+// ==================================================
+// 表示を行う
+//
+// ==================================================
+
+function DispChartAction(processProcedureName, processProcedureID, chartDesignCode) {
+  // 選択した情報をセッション情報へ
+  sessionStorage.setItem("email", user_emal);
+  sessionStorage.setItem("org1", org1);
+  sessionStorage.setItem("org2", org2);
+  sessionStorage.setItem("ProcessProcedureID", processProcedureID);
+  sessionStorage.setItem("ProcessProcedureName", processProcedureName);
+  sessionStorage.setItem("ChartDesignCode", chartDesignCode);
+
+  // 画面に遷移する
+  location.href = "../gotoProcessDiagram"
+};
 
 // ==================================================
 // 削除を行う
@@ -511,5 +534,5 @@ function DeleteAction(work_name, workitem, processProcedureID) {
       }//end of success
 
     });//end of ajax
-  }
-}
+  };
+};
