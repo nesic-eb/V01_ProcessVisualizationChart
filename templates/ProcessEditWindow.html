@@ -56,8 +56,11 @@
         <br />
         <table style="margin-top: -12px;">
             <tr>
-                <th style="width: 400px;">
-                    <p style="margin-top: 10px;">位置：{{dataID}}</p>
+                <th style="width: 50px;">
+                    <p style="margin-top: 10px;">位置：</p>
+                </th>
+                <th style="width: 300px;">
+                    <label id="location_id"></label>
                 </th>
                 <th style="width: 150px;">
                     <button type="button" class="btn btn-primary" style="height:35px;"
@@ -158,6 +161,22 @@
             </tr>
         </table>
     </div>
+    <script>
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
+            function(m,key,value) {
+            vars[key] = value;
+            });
+            return vars;
+        }
+        var dataID = getUrlVars()["dataId"];
+        console.log("dataID = "+dataID)
+        var CommentCode = getUrlVars()["CommentCode"];
+        console.log("CommentCode = "+CommentCode)
+        $("#location_id").text(dataID)
+    
+    </script>
 
 </body>
 
