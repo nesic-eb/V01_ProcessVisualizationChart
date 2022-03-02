@@ -18,6 +18,7 @@
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/ProcessCheckEditWindow.js') }}"></script>
     <script type="text/javascript">
         var url = new URL(window.location.href);
         var params = url.searchParams;
@@ -42,10 +43,6 @@
             var parentWindowObject = window.opener;
         }
 
-        function buttonClick() {
-            alert('Click');
-            window.close();
-        }
     </script>
 
 </head>
@@ -77,28 +74,26 @@
             <tr>
                 <td colspan="2">
                     <p>コメントID</p>
-                    <select class='form-control'>
-                        <option value="0000">新規作成</option>
-                        <option value="0001">PCONTENT_JOB002</option>
-                        <option value="0002" selected>PCONTENT_START_C1</option>
-                        <option value="0003">PCONTENT_REMARK</option>
-                        <option value="0004">PCONTENT_JOB001</option>
+                    <select class='form-control' id="comment_code" onchange="commentCode_onchange()">
+                        <option value="0000">新規作成</option>                        
                     </select>
                 </td>
                 <td colspan="2">
                     <p>コメントID（新規入力時）</p>
-                    <input type="text" class="form-control" style="height:35px;background-color:yellow;" readonly />
+                    <input type="text" id="new_comment_code" class="form-control" style="height:35px;background-color:yellow;" readonly />
                 </td>
                 <td>
                     <p>&nbsp;</p>
-                    <button type="button" class="btn btn-primary" style="height:35px;">クリア</button>
+                    <button type="button" class="btn btn-primary" style="height:35px;"
+                        onclick="clearData()">クリア</button>
+                    <!-- <button type="button" class="btn btn-primary" style="height:35px;"　onclick="clearData()">クリア</button> -->
                 </td>
             </tr>
 
             <tr>
                 <td colspan="5">
                     <p>見出し</p>
-                    <input type="text" class="form-control" style="width: 743px;height:35px;" value="開始" />
+                    <input type="text" class="form-control" style="width: 743px;height:35px;" value="" id="heading"/>
                 </td>
             </tr>
 
@@ -106,7 +101,7 @@
             <tr>
                 <td colspan="5">
                     <p>説明</p>
-                    <textarea style="width: 743px;height: 70px;">RPAライセンス手配の作業開始</textarea>
+                    <textarea id = "explaination" style="width: 743px;height: 70px;"></textarea>
                 </td>
             </tr>
 
@@ -116,16 +111,17 @@
             <tr style="line-height: 0;">
                 <td>
                     <p>効率可否</p>
-                    <select class='form-control'>
-                        <option value="ok">効率可－不可</option>
-                        <option value="ng">効率可－可能</option>
+                    <select class='form-control' id="efficiency"> 
+                        <option value="">Select</option>
+                        <option value="0">効率可－不可</option>
+                        <option value="1">効率可－可能</option>
                     </select>
                 </td>
 
                 <td colspan="3">
                     <p>例外時の作業項目</p>
-                    <select class='form-control' style="width: 543px;">
-                        <option value="000"></option>
+                    <select class='form-control' style="width: 543px;" id="ExceptionWork">
+                        <option value="">Select</option>
                         <option value="001" selected>●●対応</option>
                         <option value="002">●●対応</option>
                     </select>
@@ -135,46 +131,39 @@
             <tr>
                 <td width="200px">
                     <p>操作対象等</p>
-                    <select class='form-control'>
-                        <option value="5min">基幹システム</option>
-                        <option value="10min">メール</option>
-                        <option value="15min">ミーテイング</option>
-                        <option value="20min">資料作成</option>
+                    <select class='form-control' id="OperationTarget">
+                        <option value="">Select</option>
+                        <option value="基幹システム">基幹システム</option>
+                        <option value="メール">メール</option>
+                        <option value="ミーテイング">ミーテイング</option>
+                        <option value="資料作成">資料作成</option>
                     </select>
                 </td>
                 <td rowspan="2">
                     <p>補足説明, 参考資料等</p>
-                    <textarea style="width:543px;height: 130px;">準備作業（見積依頼書の書式入手）&#10;相手先連結済み</textarea>
+                    <textarea style="width:543px;height: 130px;" id="SupplementComment"></textarea>
                 </td>
             </tr>
 
             <tr>
                 <td>
                     <p>作業時間</p>
-                    <select class='form-control'>
-                        <option value="5min">5分</option>
-                        <option value="10min">10分</option>
-                        <option value="15min">15分</option>
-                        <option value="20min">20分</option>
+                    <select class='form-control' id="working_hour">
+                        <option value="">Select</option>
+                        <option value="5">5分</option>
+                        <option value="10">10分</option>
+                        <option value="15">15分</option>
+                        <option value="20">20分</option>
+                        <option value="25">25分</option>
+                        <option value="30">30分</option>
                     </select>
                 </td>
             </tr>
         </table>
     </div>
-    <script>
-        function getUrlVars() {
-            var vars = {};
-            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
-            function(m,key,value) {
-            vars[key] = value;
-            });
-            return vars;
-        }
-        var dataID = getUrlVars()["dataId"];
-        console.log("dataID = "+dataID)
-        var CommentCode = getUrlVars()["CommentCode"];
-        console.log("CommentCode = "+CommentCode)
-        $("#location_id").text(dataID)
+    <script type="text/javascript">
+
+  
     
     </script>
 

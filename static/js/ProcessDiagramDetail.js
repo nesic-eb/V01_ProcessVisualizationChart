@@ -297,7 +297,6 @@ function createLeftTable(rows, column, design) {
     G_COMMENT_MAX = design.length;
 
     console.log("design in G_COMMENT_MAX = " + G_COMMENT_MAX);
-
     for (var a = 0; a < design.length; a++) {
         var Block = design[a].Block;
         var LocationInfo = Block.LocationInfo;
