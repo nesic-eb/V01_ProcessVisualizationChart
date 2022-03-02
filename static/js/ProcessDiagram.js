@@ -52,53 +52,46 @@ function getProcessChartData() {
       console.log("Response!!" + response[0].Data.length);
 
       if (response[0].Data.length > 0) {
+        var colNum = response[0].Data[0].ColumnNumber;
+        var rowNum = response[0].Data[0].RowsNumber;
+        var design = response[0].design;
+        console.log("Design = " + design);
 
-        for (var i = 0; i < response[0].Data.length; i++) {
-          if (response[0].Data[i].ProcessProcedureID == ProcessProcedureID) {
-            var colNum = response[0].Data[0].ColumnNumber;
-            var rowNum = response[0].Data[0].RowsNumber;
-            var design = response[0].design;
-            console.log("Design = " + design);
+        var div = document.getElementById("processChart_container");
+        var table = document.createElement('table');
+        table.setAttribute('id', 'data_table');
+        table.setAttribute("border", "1")
+        div.appendChild(table);
+        var header = "<tr>";
 
-            var div = document.getElementById("processChart_container");
-            var table = document.createElement('table');
-            table.setAttribute('id', 'data_table');
-            table.setAttribute("border", "1")
-            div.appendChild(table);
-            var header = "<tr>";
-
-            for (var j = 0; j < colNum; j++) {
-              var chr = String.fromCharCode(64 + j)
-              console.log("Char = " + chr)
-              if (j == 0) {
-                header += "<th class='text-center' id='full_name'>No.</th>";
-              }
-              else {
-                header += "<th style='text-align: center;'>" +
-                  "<div><span style='margin-left: 70px;'>" + String.fromCharCode(64 + j) + "</span>" +
-                  "<a href='' id='A_Plus' name='A_Plus'><img style='margin-left: 60px;' src='/static/img/png/Plus.png' width='18px' alt='' name='A'></a>" +
-                  "<a href='' id='A_Minus' name='A_Minus'><img src='/static/img/png/Minus.png' width='18px' alt='' name='A'></a>" +
-                  "</div></th>"
-
-              }
-            }
-            header += "</tr>";
-            $('#data_table').append(header);
-
-            for (var k = 1; k <= rowNum; k++) {
-              var row = "<tr><td style='text-align: center;'><span>" + k + "</span>" +
-                "<a href='' id='1_Plus' name='1_Plus'><img style='margin-top: 10px;' src='/static/img/png/Plus.png' width='18px' alt='' name='Colum1'></a>" +
-                "<a href='' id='1_Minus' name='1_Minus'><img src='/static/img/png/Minus.png' width='18px' alt='' name='Colum1'></a>" +
-                "</td>"
-              for (var innerloop = 1; innerloop <= colNum - 1; innerloop++) {
-                row += "<td><select id='" + String.fromCharCode(64 + innerloop) + "_" + k + "' data-minimum-results-for-search='Infinity'>" +
-                  "</select><input type='text' name=''></td>"
-              }
-              row += "</tr>"
-              $('#data_table').append(row)
-            }
+        for (var j = 0; j < colNum; j++) {
+          var chr = String.fromCharCode(64 + j)
+          if (j == 0) {
+            header += "<th class='text-center' id='full_name'>No.</th>";
+          }
+          else {
+            header += "<th style='text-align: center;'>" +
+              "<div><span style='margin-left: 70px;'>" + chr + "</span>" +
+              "<a href='' id='" + chr + "_colPlus' name='" + chr + "_colPlus' onclick='PlusColumnAction(this)'><img style='margin-left: 60px;' src='/static/img/png/Plus.png' width='18px' alt='' name='A'></a>" +
+              "<a href='' id='" + chr + "_colMinus' name='" + chr + "_colMinus' onclick='MinusColumnAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='A'></a>" +
+              "</div></th>"
 
           }
+        }
+        header += "</tr>";
+        $('#data_table').append(header);
+
+        for (var k = 1; k <= rowNum; k++) {
+          var row = "<tr><td style='text-align: center;'><span>" + k + "</span>" +
+            "<a href='' id='" + chr + "_rowPlus' name='" + chr + "_rowPlus' onclick='PlusRowAction(this)'><img style='margin-top: 10px;' src='/static/img/png/Plus.png' width='18px' alt='' name='Colum1'></a>" +
+            "<a href='' id='" + chr + "_rowMinus' name='" + chr + "_rowMinus' onclick='MinusRowAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='Colum1'></a>" +
+            "</td>"
+          for (var innerloop = 1; innerloop <= colNum - 1; innerloop++) {
+            row += "<td><select id='" + String.fromCharCode(64 + innerloop) + "_" + k + "' data-minimum-results-for-search='Infinity'>" +
+              "</select><input type='text' name=''></td>"
+          }
+          row += "</tr>"
+          $('#data_table').append(row)
         }
 
         getProcessChartImageData(rowNum, colNum, design);
@@ -138,10 +131,11 @@ function getProcessChartData() {
                 header += "<th class='text-center' id='full_name'>No.</th>";
               }
               else {
+
                 header += "<th style='text-align: center;'>" +
                   "<div><span style='margin-left: 70px;'>" + String.fromCharCode(64 + j) + "</span>" +
-                  "<a href='' id='A_Plus' name='A_Plus'><img style='margin-left: 60px;' src='/static/img/png/Plus.png' width='18px' alt='' name='A'></a>" +
-                  "<a href='' id='A_Minus' name='A_Minus'><img src='/static/img/png/Minus.png' width='18px' alt='' name='A'></a>" +
+                  "<a href='' id='" + chr + "_colPlus' name='" + chr + "_colPlus' onclick='PlusColumnAction(this)'><img style='margin-left: 60px;' src='/static/img/png/Plus.png' width='18px' alt='' name='A'></a>" +
+                  "<a href='' id='" + chr + "_colMinus' name='" + chr + "_colMinus' onclick='MinusColumnAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='A'></a>" +
                   "</div></th>"
 
               }
@@ -151,8 +145,8 @@ function getProcessChartData() {
 
             for (var k = 1; k <= rowNum; k++) {
               var row = "<tr><td style='text-align: center;'><span>" + k + "</span>" +
-                "<a href='' id='1_Plus' name='1_Plus'><img style='margin-top: 10px;' src='/static/img/png/Plus.png' width='18px' alt='' name='Colum1'></a>" +
-                "<a href='' id='1_Minus' name='1_Minus'><img src='/static/img/png/Minus.png' width='18px' alt='' name='Colum1'></a>" +
+                "<a href='' id='" + chr + "_rowPlus' name='" + chr + "_rowPlus' onclick='PlusRowAction(this)'><img style='margin-top: 10px;' src='/static/img/png/Plus.png' width='18px' alt='' name='Colum1'></a>" +
+                "<a href='' id='" + chr + "_rowMinus' name='" + chr + "_rowMinus' onclick='MinusRowAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='Colum1'></a>" +
                 "</td>"
               for (var innerloop = 1; innerloop <= colNum - 1; innerloop++) {
                 row += "<td><select id='" + String.fromCharCode(64 + innerloop) + "_" + k + "' data-minimum-results-for-search='Infinity'>" +
@@ -190,6 +184,7 @@ function getProcessChartImageData(rowNum, colNum, design) {
     success: function (response) {
       //alert(response);
       var data_array = Object.values(response[0].Data)
+      console.log("Data array = " + data_array);
       var data_array_key = Object.keys(response[0].Data)
 
       for (var r = 1; r <= rowNum; r++) {
@@ -267,5 +262,82 @@ function getProcessChartImageData(rowNum, colNum, design) {
   });
 
 }
+
+
+function PlusColumnAction(el) {
+
+  var ids = el.getAttribute("id");
+  alert(ids);
+  console.log(ids);
+
+  var chartDesignCode = $('#chartDesignCode').val();
+  var updateType = "plus";
+  var LocationInfo = "D_1"
+
+  $.ajax({
+    url: '/getProcessChartColumnUpdate/',
+    type: 'POST',
+    data: {
+      chartDesignCode: chartDesignCode,
+      LocationInfo: LocationInfo,
+      updateType: updateType
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response[0].statsu == "OK") {
+        alert("Response Status !!" + response[0].statsu);
+        window.location.reload();
+      }
+
+      // const json_string = JSON.stringify(response, null, 2);
+
+      // console.log(json_string); // 確認用
+
+      // document.getElementById("textarea").value = json_string;
+    }
+
+  });
+
+}
+
+
+function MinusColumnAction(el) {
+
+  var ids = el.getAttribute("id");
+  alert(ids);
+  console.log(ids);
+
+  var chartDesignCode = $('#chartDesignCode').val();
+  var updateType = "minus";
+  var LocationInfo = "D_1"
+
+  $.ajax({
+    url: '/getProcessChartColumnUpdate/',
+    type: 'POST',
+    data: {
+      chartDesignCode: chartDesignCode,
+      LocationInfo: LocationInfo,
+      updateType: updateType
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response[0].statsu == "OK") {
+        alert("Response Status !!" + response[0].statsu);
+        window.location.reload();
+      }
+
+      // const json_string = JSON.stringify(response, null, 2);
+
+      // console.log(json_string); // 確認用
+
+      // document.getElementById("textarea").value = json_string;
+    }
+
+  });
+
+}
+
+
+
 
 
