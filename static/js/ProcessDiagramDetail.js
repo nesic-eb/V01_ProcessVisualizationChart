@@ -32,12 +32,15 @@ var G_WORKTIME_TOTAL = 0
 $(document).ready(function () {
 
     console.log("---- ready! -----------------------------------------------");
-    var chartDesignCode = "DesignCode_20220214135920";
+
+    var processProcedureID = sessionStorage.getItem("ProcessProcedureID");
+    var chartDesignCode = sessionStorage.getItem("ChartDesignCode");
 
     $.ajax({
         url: '/getProcessChartDrawingData/',
         type: 'POST',
         data: {
+            processProcedureID: processProcedureID,
             chartDesignCode: chartDesignCode
         },
         dataType: 'json',
@@ -273,7 +276,7 @@ function createLeftTable(rows, column, design) {
                         td.setAttribute("style", "text-align:center; vertical-align:middle; width: 140px; height: 30px;");
                     }
                     else {
-                    td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 30px;");
+                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 30px;");
                     }
                     td.style.backgroundColor = "#ffffff";
                 }
@@ -313,15 +316,15 @@ function createLeftTable(rows, column, design) {
         var Explanation = Block.Explanation;
         console.log("Explanation=" + Explanation);
         var Efficiency = Block.Efficiency;
-        console.log("Efficiency="+Efficiency)
+        console.log("Efficiency=" + Efficiency)
         var OperationTarget = Block.OperationTarget;
-        console.log("OperationTarget = "+OperationTarget);
+        console.log("OperationTarget = " + OperationTarget);
         var WorkingHour = Block.WorkingHour;
-        console.log("WorkingHour = "+WorkingHour);
+        console.log("WorkingHour = " + WorkingHour);
         var ExceptionWork = Block.ExceptionWork;
-        console.log("ExceptionWork = "+ExceptionWork);
+        console.log("ExceptionWork = " + ExceptionWork);
         var SupplementComment = Block.SupplementComment;
-        console.log("SupplementComment = "+SupplementComment)
+        console.log("SupplementComment = " + SupplementComment)
 
         var br = document.createElement("br");
 
@@ -343,7 +346,7 @@ function createLeftTable(rows, column, design) {
 
         // 編集アイコン
         var a_link = document.createElement("a")
-        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','"+CommentCode+"','"+Heading+"','"+Explanation+"','"+Efficiency+"','"+OperationTarget+"','"+WorkingHour+"','"+ExceptionWork+"','"+SupplementComment+"')");
+        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','" + CommentCode + "','" + Heading + "','" + Explanation + "','" + Efficiency + "','" + OperationTarget + "','" + WorkingHour + "','" + ExceptionWork + "','" + SupplementComment + "')");
         a_link.setAttribute("title", "editLink");
         a_link.setAttribute("id", LocationInfo);
         a_link.setAttribute("name", LocationInfo);

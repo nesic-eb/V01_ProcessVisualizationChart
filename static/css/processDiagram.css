@@ -7,17 +7,23 @@
 // =============================================================================
 */
 
-.select2-container--default .select2-selection--single{
-    border: none;
+h3 {
+  border: 1px solid;
+  margin-top: 25px;
+  text-align: left;
+}
+
+.select2-container--default .select2-selection--single {
+  border: none;
 }
 
 .select2-search__field {
-    display:none;
+  display: none;
 }
 
 .select2-container .select2-selection--multiple .select2-selection__rendered {
-  white-space: break-spaces!important;
-  margin-top: 10px;
+  white-space: break-spaces !important;
+  margin-top: 0px;
 }
 
 .select2-center-option,
@@ -30,55 +36,56 @@
 .select2-center-option img {
   width: 50px;
   max-width: 100%;
-  height: auto;
+  height: 80px;
   margin-right: 5px;
 }
 
 .select2-selection__arrow {
-    height: 40px !important;
-    margin-top: 11px;
+  height: 40px !important;
+  margin-top: -15px;
 }
 
-#start{
-    margin-left: 33px;
+#start {
+  margin-left: 33px;
 }
-
-h3{
-  border: 1px solid;
-  margin-top: 25px;
-  text-align: left;
-}
-
 
 input[type=text] {
   height: 25px !important;
   background-color: #cccccc6b;
-  margin-top: 10px;
-  width: 220px;
+  margin-top: 40px;
+  width: 80%
 }
 
 button[type=submit] {
   width: 90px;
-  
 }
 
 #processChart_container {
   margin-left: -13px;
-
-} 
+}
 
 #btn_update {
   margin-top: 37px;
   height: 35px;
 }
 
-
 #btn_Back {
   margin-top: 37px;
   height: 35px;
 }
 
+/* チャート枠の罫線 */
+.l-border {
+  height: 95px;
+  border-top: solid 1px #acacac6b;
+  border-right: solid 1px #acacac6b;
+  border-left: solid 1px #acacac6b;
+  border-bottom: solid 1px #acacac6b;
+}
 
-
-
-
+.t-border {
+  border-top: solid 1px #acacac6b;
+  border-right: solid 1px #acacac6b;
+  border-left: solid 1px #acacac6b;
+  border-bottom: solid 1px #acacac6b;
+}
