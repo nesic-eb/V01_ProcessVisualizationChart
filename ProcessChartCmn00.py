@@ -102,15 +102,19 @@ def getProcessChartImagesData():
         ChartType = Counter()
         ChartType['ChartType'] = FlowChart
 
-        wkData = Counter()
+        wkList = []
         dataCnt = 1
 
         # 全ての情報を一時保存する
         for x in select_conn_cursor:
-            wkData[x[0]] = x[1]
+            wkData = Counter()
+            wkData['name'] = x[0]
+            wkData['file'] = x[1]
+
+            wkList.append(wkData)
 
         ChartType['ChartType'] = FlowChart
-        ChartType['Data'] = wkData
+        ChartType['Data'] = wkList
 
         select_conn_cursor.close()
 
@@ -242,9 +246,11 @@ def getProcessChartListAll():
 def getProcessChartDrawingData():
 
     try:
+        processProcedureID = flask.request.form['processProcedureID']
         chartDesignCode = flask.request.form['chartDesignCode']
 
-        print(chartDesignCode)
+        print("processProcedureID = " + processProcedureID + "]")
+        print("chartDesignCode = [" + chartDesignCode + "]")
 
         # SQL
         select_conn = pyodbc.connect('DRIVER={SQL Server};'
@@ -276,9 +282,7 @@ def getProcessChartDrawingData():
             "  ISNULL(RowsNumber,'6') as RowsNumber," \
             "  ISNULL(ChartDesignCode,'') as ChartDesignCode " \
             " FROM " \
-            "   ProcessChartData_TBL " \
-            " WHERE " \
-            "   ChartDesignCode = '" + chartDesignCode + "'"
+            "   ProcessChartData_TBL "
 
         select_conn_cursor.execute(select_query)
 
@@ -291,28 +295,30 @@ def getProcessChartDrawingData():
 
         # チャート情報
         for x in select_conn_cursor:
-            wkChartType = x[0].split('_')
-            chartType = wkChartType[0]
+            if x[0] == processProcedureID:
+                if x[13] == chartDesignCode:
+                    wkChartType = x[0].split('_')
+                    chartType = wkChartType[0]
 
-            ChartType = Counter()
-            ChartType['ProcessProcedureID'] = x[0]
-            ChartType['ProcessProcedureName'] = x[1]
-            ChartType['ClassificationCode'] = x[2]
-            ChartType['WorkItemID'] = x[3]
-            ChartType['OrganizationCode1'] = x[4]
-            ChartType['OrganizationCode2'] = x[5]
-            ChartType['PermissionFlag'] = x[6]
-            ChartType['ChangeProhibitionFlag'] = x[7]
-            ChartType['WorkFrequency'] = x[8]
-            ChartType['NumberOfWorkers'] = x[9]
-            ChartType['TotalWorkingTime'] = x[10]
-            ChartType['ColumnNumber'] = x[11]
-            ChartType['RowsNumber'] = x[12]
-            ChartType['ChartDesignCode'] = x[13]
+                    ChartType = Counter()
+                    ChartType['ProcessProcedureID'] = x[0]
+                    ChartType['ProcessProcedureName'] = x[1]
+                    ChartType['ClassificationCode'] = x[2]
+                    ChartType['WorkItemID'] = x[3]
+                    ChartType['OrganizationCode1'] = x[4]
+                    ChartType['OrganizationCode2'] = x[5]
+                    ChartType['PermissionFlag'] = x[6]
+                    ChartType['ChangeProhibitionFlag'] = x[7]
+                    ChartType['WorkFrequency'] = x[8]
+                    ChartType['NumberOfWorkers'] = x[9]
+                    ChartType['TotalWorkingTime'] = x[10]
+                    ChartType['ColumnNumber'] = x[11]
+                    ChartType['RowsNumber'] = x[12]
+                    ChartType['ChartDesignCode'] = x[13]
 
-            dataListData.append(ChartType)
+                    dataListData.append(ChartType)
 
-            dataCnt = dataCnt + 1
+                    dataCnt = dataCnt + 1
 
         dataList['Num'] = format(dataCnt, '03')
         dataList['Data'] = dataListData

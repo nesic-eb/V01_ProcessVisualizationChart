@@ -137,9 +137,7 @@ function CreateProcessdataTable() {
             mRender: function (data, type, row) {
               return '<a href="javascript:DispChartAction(\'' + row[3] + '\',\'' + row[6] + '\',\'' + row[7] + '\');"' +
                 '" class="btn btn-primary">&nbsp;&nbsp;内容表示&nbsp;&nbsp;</a>' +
-                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\')">削除</button>' +
-                '&nbsp;&nbsp;&nbsp;<a href="../goToProcessDiagram?classification=' + row[1] + '&workitem=' + row[2] + '&procedure_name=' + row[3] + "& ProcessProcedureID=" + row[6] + "&Browsing=0" +
-                '" class="btn btn-primary">変更</a>'
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\')">削除</button>'
             }, "width": "20%"
           },
         ],
