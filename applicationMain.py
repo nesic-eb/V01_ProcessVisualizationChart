@@ -43,7 +43,7 @@ from ProcessChartCmn00 import ProcessChartCmn00_api
 from ProcessChartMain import ProcessChartMain_api  # プロセス可視化チャートサービス
 from ProcessDiagram import ProcessDiagram_api
 from ProcessDiagramDetail import ProcessDiagramDetail_api
-
+from ProcessEditWindow import ProcessEditWindow_api
 # Const
 # -----------------------------------------------------------------------------
 # Path: config - log
@@ -74,6 +74,7 @@ app.register_blueprint(ProcessChartCmn00_api)
 app.register_blueprint(ProcessChartMain_api)
 app.register_blueprint(ProcessDiagram_api)
 app.register_blueprint(ProcessDiagramDetail_api)
+app.register_blueprint(ProcessEditWindow_api)
 
 # ========================================================
 
