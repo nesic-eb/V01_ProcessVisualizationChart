@@ -47,6 +47,48 @@ $('#chartDesignCode').val(ChartDesignCode);
 /* function の処理を記述 */
 
 // ----------------------------------------------
+// 画面：指定カラムの画像あり／無しを求める
+// （画像名）
+// ----------------------------------------------
+function checkImgName(checkColumn, design) {
+  var checkName = "";
+
+  for (var a = 0; a < design.length; a++) {
+    var Block = design[a].Block;
+    var wkColumn = Block.LocationInfo;
+
+    if (checkColumn == wkColumn) {
+      // あった
+      checkName = Block.ImageName;
+      break;
+    }
+  }
+
+  return checkName;
+};
+
+// ----------------------------------------------
+// 画面：指定カラムの画像あり／無しを求める
+// （見出し）
+// ----------------------------------------------
+function checkMidashiText(checkColumn, design) {
+  var checkText = "";
+
+  for (var a = 0; a < design.length; a++) {
+    var Block = design[a].Block;
+    var wkColumn = Block.LocationInfo;
+
+    if (checkColumn == wkColumn) {
+      // あった
+      checkText = Block.Heading;
+      break;
+    }
+  }
+
+  return checkText;
+};
+
+// ----------------------------------------------
 // 画面表示時に枠情報などを作成する
 // (MAIN)
 // ----------------------------------------------
@@ -224,10 +266,34 @@ function onLoadProcessChartData() {
 
           {
             var select = document.createElement('select');
+            // 要素にクリックイベントを追加する
+            select.onchange = (function (num) {
+              return function () {
+                const midashi = document.getElementById(num + "_midashi");
+                midashi.value = "";
+
+                // if (status == "1") {
+                //   var tablename = "#table_" + String(num)
+                //   $(tablename).hide();
+                //   document.getElementById(openStatusName).value = "0";
+                // } else {
+                //   var tablename = "#table_" + String(num)
+                //   $(tablename).show();
+                //   document.getElementById(openStatusName).value = "1";
+                // }
+              }
+            })(String.fromCharCode(64 + innerloop) + "_" + k);
 
             select.setAttribute("id", String.fromCharCode(64 + innerloop) + "_" + k);
+            select.setAttribute("name", String.fromCharCode(64 + innerloop) + "_" + k + "_name");
             select.setAttribute("data-minimum-results-for-search", "Infinity");
             select.setAttribute('style', "margin-top: -60px;");
+
+            var imgSelectName = "";
+            var checkName = checkImgName(String.fromCharCode(64 + innerloop) + "_" + k, design);
+            if (checkName != "") {
+              imgSelectName = checkName;
+            }
 
             for (var a = 0; a < ImgDataList.length; a++) {
               console.log("name = " + ImgDataList[a].name);
@@ -235,27 +301,30 @@ function onLoadProcessChartData() {
 
               var option = document.createElement("option");
               option.value = ImgDataList[a].name;
-              option.setAttribute('data-img_src', "/static/img/" + ImgDataList[a].file);
+              if (checkName == ImgDataList[a].name) {
+                option.setAttribute('data-img_src', "/static/img/" + ImgDataList[a].file);
+                option.setAttribute('selected', true);
+              }
+              else {
+                option.setAttribute('data-img_src', "/static/img/" + ImgDataList[a].file);
+              }
               select.appendChild(option);
             }
           }
+
           tdi.appendChild(select);
 
-
-          //tdi.appendChild(p);
-
+          // 見出し
+          var checkText = checkMidashiText(String.fromCharCode(64 + innerloop) + "_" + k, design);
           var input = document.createElement('input');
+          input.setAttribute('id', String.fromCharCode(64 + innerloop) + "_" + k + "_midashi");
           input.setAttribute('type', "text");
+          input.setAttribute('style', "text-align:center; height: 25px;");
+          input.setAttribute('value', checkText);
           tdi.appendChild(input);
 
           tr.append(tdi);
-          // row += "<td><select id='" + String.fromCharCode(64 + innerloop) + "_" + k + "' =''>" +
-          //   "</select><input type='text' name=''></td>"
         }
-
-        // 画像情報を取得する
-        //  getProcessChartImageData(rowNum, colNum, design);
-
         // テーブルへ
         table.append(tr);
       }
@@ -294,181 +363,114 @@ function onLoadProcessChartData() {
       // $('.select2-container--default .select2-selection--single').css({ 'width': '220px' });
       // $('.select2-container--default .select2-selection--single').css({ 'margin-top': '10px' });
 
-
-      // else {
-      //   //chart Designcode is null
-      //   $.ajax({
-      //     url: '/getchartDesignCode/',
-      //     async: false,
-      //     type: 'POST',
-      //     data: {
-      //       process_procedureID: ProcessProcedureID,
-      //       process_ProcedureName: process_ProcedureName
-      //     },
-      //     dataType: 'json',
-      //     success: function (response) {
-
-      //       //if chartDesignCode is null
-      //       var colNum = response[0][1];
-      //       var rowNum = response[0][2];
-
-      //       console.log("col num = " + colNum);
-      //       console.log("row num = " + rowNum);
-
-      //       var div = document.getElementById("processChart_container");
-      //       var table = document.createElement('table');
-      //       table.setAttribute('id', 'data_table');
-      //       table.setAttribute("border", "1")
-      //       div.appendChild(table);
-      //       var header = "<tr>";
-
-      //       for (var j = 0; j < colNum; j++) {
-      //         var chr = String.fromCharCode(64 + j)
-      //         console.log("Char = " + chr)
-      //         if (j == 0) {
-      //           header += "<th class='text-center' id='full_name'>No.</th>";
-      //         }
-      //         else {
-
-      //           header += "<th style='text-align: center;'>" +
-      //             "<div><span style='margin-left: 70px;'>" + String.fromCharCode(64 + j) + "</span>" +
-      //             "<a href='' id='" + chr + "_colPlus' name='" + chr + "_colPlus' onclick='PlusColumnAction(this)'><img style='margin-left: 60px;' src='/static/img/png/Plus.png' width='18px' alt='' name='A'></a>" +
-      //             "<a href='' id='" + chr + "_colMinus' name='" + chr + "_colMinus' onclick='MinusColumnAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='A'></a>" +
-      //             "</div></th>"
-
-      //         }
-      //       }
-      //       header += "</tr>";
-      //       $('#data_table').append(header);
-
-      //       for (var k = 1; k <= rowNum; k++) {
-      //         var row = "<tr><td style='text-align: center;'><span>" + k + "</span>" +
-      //           "<a href='' id='" + chr + "_rowPlus' name='" + chr + "_rowPlus' onclick='PlusRowAction(this)'><img style='margin-top: 10px;' src='/static/img/png/Plus.png' width='18px' alt='' name='Colum1'></a>" +
-      //           "<a href='' id='" + chr + "_rowMinus' name='" + chr + "_rowMinus' onclick='MinusRowAction(this)'><img src='/static/img/png/Minus.png' width='18px' alt='' name='Colum1'></a>" +
-      //           "</td>"
-      //         for (var innerloop = 1; innerloop <= colNum - 1; innerloop++) {
-      //           row += "<td><select id='" + String.fromCharCode(64 + innerloop) + "_" + k + "' data-minimum-results-for-search='Infinity'>" +
-      //             "</select><input type='text' name=''></td>"
-      //         }
-      //         row += "</tr>"
-      //         $('#data_table').append(row)
-      //       }
-
-      //       var design = 0;
-
-      //       getProcessChartImageData(rowNum, colNum, design);
-
-      //     }
-
-      //  });
-      //}
     }
 
   });
 
 }
+
 
 
 //getProcessChartImagesData
-function getProcessChartImageData(rowNum, colNum, design) {
+// function getProcessChartImageData(rowNum, colNum, design) {
 
-  console.log("in get process chart image data = " + design);
+//   console.log("in get process chart image data = " + design);
 
-  // getProcessChartImagesData
-  $.ajax({
-    url: '/getProcessChartImagesData/',
-    type: 'POST',
-    data: {
-      ChartType: "FlowChart"
-    },
-    dataType: 'json',
-    success: function (response) {
-      //alert(response);
-      var data_array = Object.values(response[0].Data)
-      console.log("Data array = " + data_array);
-      var data_array_key = Object.keys(response[0].Data)
+//   // getProcessChartImagesData
+//   $.ajax({
+//     url: '/getProcessChartImagesData/',
+//     type: 'POST',
+//     data: {
+//       ChartType: "FlowChart"
+//     },
+//     dataType: 'json',
+//     success: function (response) {
+//       //alert(response);
+//       var data_array = Object.values(response[0].Data)
+//       console.log("Data array = " + data_array);
+//       var data_array_key = Object.keys(response[0].Data)
 
-      for (var r = 1; r <= rowNum; r++) {
-        for (var c = 1; c <= colNum - 1; c++) {
+//       for (var r = 1; r <= rowNum; r++) {
+//         for (var c = 1; c <= colNum - 1; c++) {
 
-          var char_val = String.fromCharCode(64 + c) + '_' + r;
-          $("#" + char_val).append("<option value=''></option>");
+//           var char_val = String.fromCharCode(64 + c) + '_' + r;
+//           $("#" + char_val).append("<option value=''></option>");
 
-          if (design.length > 0) {
-            for (var a = 0; a < design.length; a++) {
+//           if (design.length > 0) {
+//             for (var a = 0; a < design.length; a++) {
 
-              var Block = design[a].Block;
-              var LocationInfo = Block.LocationInfo;
-              var location_id = document.getElementById(LocationInfo);
-              var ImageName = Block.ImageName;
+//               var Block = design[a].Block;
+//               var LocationInfo = Block.LocationInfo;
+//               var location_id = document.getElementById(LocationInfo);
+//               var ImageName = Block.ImageName;
 
-              if (char_val == LocationInfo) {
-                console.log("char val = " + char_val);
-                console.log("Location info = " + LocationInfo);
-                $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/flowChartImg/" + ImageName + ".png' selected></option>");
-              }
-              else {
-                for (var i = 0; i < data_array.length; i++) {
-                  $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
+//               if (char_val == LocationInfo) {
+//                 console.log("char val = " + char_val);
+//                 console.log("Location info = " + LocationInfo);
+//                 $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/flowChartImg/" + ImageName + ".png' selected></option>");
+//               }
+//               else {
+//                 for (var i = 0; i < data_array.length; i++) {
+//                   $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
 
-                }
-              }
-            }
-          }
-          else {
-            for (var i = 0; i < data_array.length; i++) {
-              $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
+//                 }
+//               }
+//             }
+//           }
+//           else {
+//             for (var i = 0; i < data_array.length; i++) {
+//               $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
 
-            }
-          }
-        }
-      }
-
-
+//             }
+//           }
+//         }
+//       }
 
 
 
-      function custom_template(obj) {
-        var data = $(obj.element).data();
-        var text = $(obj.element).val();
 
-        if (text == "") {
-          template = $("<div style='width:100px;height:30px;margin-top:3px;'></div>");
-          return template;
-        }
-        else {
-          if (data && data['img_src']) {
-            img_src = data['img_src'];
-            template = $("<div><img src=\"" + img_src + "\" style=\"width:100px;height:40px;margin-left:36px;margin-top:3px;\"/></div>");
-            return template;
-          }
 
-        }
+//       function custom_template(obj) {
+//         var data = $(obj.element).data();
+//         var text = $(obj.element).val();
 
-      }
+//         if (text == "") {
+//           template = $("<div style='width:100px;height:30px;margin-top:3px;'></div>");
+//           return template;
+//         }
+//         else {
+//           if (data && data['img_src']) {
+//             img_src = data['img_src'];
+//             template = $("<div><img src=\"" + img_src + "\" style=\"width:100px;height:40px;margin-left:36px;margin-top:3px;\"/></div>");
+//             return template;
+//           }
 
-      var options = {
-        'templateSelection': custom_template,
-        'templateResult': custom_template,
-      }
+//         }
 
-      for (var r = 1; r <= rowNum; r++) {
-        for (var c = 1; c <= colNum - 1; c++) {
-          var char_val = String.fromCharCode(64 + c) + '_' + r;
-          $('#' + char_val).select2(options);
+//       }
 
-        }
-      }
+//       var options = {
+//         'templateSelection': custom_template,
+//         'templateResult': custom_template,
+//       }
 
-      $('.select2-container--default .select2-selection--single').css({ 'height': '45px' });
-      $('.select2-container--default .select2-selection--single').css({ 'width': '220px' });
-      $('.select2-container--default .select2-selection--single').css({ 'margin-top': '10px' });
+//       for (var r = 1; r <= rowNum; r++) {
+//         for (var c = 1; c <= colNum - 1; c++) {
+//           var char_val = String.fromCharCode(64 + c) + '_' + r;
+//           $('#' + char_val).select2(options);
 
-    }
+//         }
+//       }
 
-  });
+//       $('.select2-container--default .select2-selection--single').css({ 'height': '45px' });
+//       $('.select2-container--default .select2-selection--single').css({ 'width': '220px' });
+//       $('.select2-container--default .select2-selection--single').css({ 'margin-top': '10px' });
 
-}
+//     }
+
+//   });
+
+//}
 
 
 
