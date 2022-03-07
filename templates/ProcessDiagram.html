@@ -42,19 +42,21 @@
     </header>
 
     <!-- 画面-->
-    <div class="l-content">
+    <div class="l-content" style="margin-left: -30px;">
         <input type='hidden' name='chartDesignCode' id='chartDesignCode'>
 
         <div style="margin-left: -30px;">
-            <table style="width: 1000px; margin-top: 0px; margin-left: -30px;">
+            <table style="width: 100%; margin-top: 0px; margin-left: -30px;">
                 <tr>
                     <td style="width: 600px;">
-                        <input type='text' style="font-size: 30px;" name='process_ProcedureName'
-                            id='process_ProcedureName' value="aaaa">
+                        <input type='text' style="background-color: beige;" name='process_ProcedureName'
+                            id='process_ProcedureName' value="">
                     </td>
-                    <td>
-                        <a href="/goToProcessDiagramDetail"><button type="submit" id="btn_update"
+                    <td style="width: 200px;">
+                        <a href=" /goToProcessDiagramDetail"><button type="submit" id="btn_update"
                                 style="width: 200px; margin-top: 20px;" class="btn btn-primary">詳細画面を表示する</button></a>
+                    </td>
+                    <td style="width: 200px;">
                     </td>
                     <td>
                         <a href="/"><button type="submit" id="btn_Back" class="btn btn-primary"
@@ -86,9 +88,15 @@
                         <P style="margin-top: 4px;">作業頻度：</P>
                     </td>
                     <td style="width: 120px;">
-                        <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
-                            style="margin-left: 0px; margin-top: 0px;width: 60px; height:35px; text-align: right; background-color: white;"
-                            value="" />
+                        <select name="SelectWorkFrequency" id="SelectWorkFrequency"
+                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:25px; text-align: center;">
+                            <option value="WorkFrequency_01">1</option>
+                            <option value="WorkFrequency_02">2</option>
+                            <option value="WorkFrequency_03">3</option>
+                            <option value="WorkFrequency_05">5</option>
+                            <option value="WorkFrequency_07">7</option>
+                            <option value="WorkFrequency_10">10</option>
+                        </select>
                         <span>&nbsp;回／月</span>
                     </td>
 
@@ -99,9 +107,14 @@
                         <P style="margin-top: 4px;">作業人数：</P>
                     </td>
                     <td style="width: 120px;">
-                        <input type="text" class="form-control" title="NumberOfWorkers" id="NumberOfWorkers"
-                            style="margin-left: 0px; margin-top: 0px; width: 60px;height:35px; text-align: right; background-color: white;"
-                            value="" />
+                        <select name="SelectWorkNumberOfWorkers" id="SelectWorkNumberOfWorkers"
+                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:25px; text-align: center;">
+                            <option value="NumberOfWorkers_01">1</option>
+                            <option value="NumberOfWorkers_02">2</option>
+                            <option value="NumberOfWorkers_03">3</option>
+                            <option value="NumberOfWorkers_04">4</option>
+                            <option value="NumberOfWorkers_05">5</option>
+                        </select>
                         <span>&nbsp;人</span>
                     </td>
 
@@ -131,7 +144,7 @@
                         <P tyle="margin-top: 4px;">カラム数：</P>
                     </td>
                     <td style="width: 60px;">
-                        <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
+                        <input type="text" class="form-control" title="DiagramColumns" id="DiagramColumns"
                             style="margin-left: 0px; margin-top: 0px;width: 60px; height:35px; text-align: right; background-color: white;"
                             value="" />
                     </td>
@@ -141,11 +154,12 @@
                         <P tyle="margin-top: 4px;">行数：</P>
                     </td>
                     <td style="width: 60px;">
-                        <input type="text" class="form-control" title="WorkFrequency" id="WorkFrequency"
+                        <input type="text" class="form-control" title="DiagramRows" id="DiagramRows"
                             style="margin-left: 0px; margin-top: 0px;width: 60px; height:35px; text-align: right; background-color: white;"
                             value="" />
                     </td>
-
+                    <td style="width: 10px;">
+                    </td>
                     <td>
                         <button class="btn btn-success" style="width: 200px; height: 30px; margin-top: -10px;"
                             onclick="SaveToProcessChartDataTBL()">チャートデザイン保存</button>

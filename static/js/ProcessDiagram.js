@@ -13,7 +13,6 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessDiagram.js --------");
 
-
 var email = sessionStorage.getItem("email")
 var org1 = sessionStorage.getItem("org1")
 var org2 = sessionStorage.getItem("org2")
@@ -21,6 +20,7 @@ var ProcessProcedureID = sessionStorage.getItem("ProcessProcedureID")
 var ProcessProcedureName = sessionStorage.getItem("ProcessProcedureName")
 var ChartDesignCode = sessionStorage.getItem("ChartDesignCode")
 
+var G_WORKTIME_TOTAL = 0
 
 console.log("Email = " + email);
 console.log("Org1 = " + org1);
@@ -33,18 +33,26 @@ console.log("Chart Design Code = " + ChartDesignCode);
 // ##################################################################################################
 /* functin以外の処理を記述 */
 
-// 手順書名 
-$("#process_ProcedureName").html(ProcessProcedureName)
-
-// チャートデザインコード
+// チャートデザインコード（hiddin）
 $('#chartDesignCode').val(ChartDesignCode);
-
-
-
 
 // ##################################################################################################
 // ##################################################################################################
 /* function の処理を記述 */
+
+/**
+ * 数値チェック関数
+ * 入力値が数値 (符号あり小数 (- のみ許容)) であることをチェックする
+ * [引数]   numVal: 入力値
+ * [返却値] true:  数値
+ *          false: 数値以外
+ */
+function isNumber(numVal) {
+  // チェック条件パターン
+  var pattern = /^[-]?([1-9]\d*|0)(\.\d+)?$/;
+  // 数値チェック
+  return pattern.test(numVal);
+}
 
 // ----------------------------------------------
 // 画面：指定カラムの画像あり／無しを求める
@@ -60,6 +68,12 @@ function checkImgName(checkColumn, design) {
     if (checkColumn == wkColumn) {
       // あった
       checkName = Block.ImageName;
+      var WorkingHourInfo = Block.WorkingHour;
+
+      // 合計時間
+      if (isNumber(WorkingHourInfo) == true) {
+        G_WORKTIME_TOTAL = G_WORKTIME_TOTAL + Number(WorkingHourInfo);
+      }
       break;
     }
   }
@@ -125,12 +139,48 @@ function onLoadProcessChartData() {
     success: function (response) {
       console.log("Response!!" + response[0].Data.length);
 
-      //if (response[0].Data.length > 0) {
       var colNum = response[0].Data[0].ColumnNumber;
       var rowNum = response[0].Data[0].RowsNumber;
+      var blockData = response[0].Data[0];
       var design = response[0].design;
 
-      console.log("Design = " + design);
+      // console.log("Design = " + design);
+
+      // 画面上部へデータを設定する
+      {
+        // カラム数
+        document.getElementById("process_ProcedureName").value = blockData.ProcessProcedureName;
+
+        // 作業頻度
+        var opname = "WorkFrequency_" + String(('00' + Number(blockData.WorkFrequency)).slice(-2));
+        $("#SelectWorkFrequency option[value='" + opname + "']").prop('selected', true);
+
+        // 作業人数
+        var opname = "NumberOfWorkers_" + String(('00' + Number(blockData.NumberOfWorkers)).slice(-2));
+        $("#SelectWorkNumberOfWorkers option[value='" + opname + "']").prop('selected', true);
+
+        // 外部閲覧を禁止する
+        if (blockData.PermissionFlag == "0") {
+          document.getElementById("PermissionFlag").checked = false;
+        }
+        else {
+          document.getElementById("PermissionFlag").checked = true;
+        }
+
+        // 外部閲覧を禁止する
+        if (blockData.ChangeProhibitionFlag == "0") {
+          document.getElementById("ChangeProhibitionFlag").checked = false;
+        }
+        else {
+          document.getElementById("ChangeProhibitionFlag").checked = true;
+        }
+
+        // カラム数
+        document.getElementById("DiagramColumns").value = blockData.ColumnNumber;
+
+        // 行数
+        document.getElementById("DiagramRows").value = blockData.RowsNumber;
+      }
 
       // 枠（親DIV）
       var div = document.getElementById("processChart_container");
@@ -173,30 +223,40 @@ function onLoadProcessChartData() {
           span.innerHTML = chr + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
           div.appendChild(span);
 
-          // Plus
+          // Plus（カラム）
           {
             var aplus = document.createElement('a');
             aplus.setAttribute("href", "");
             aplus.setAttribute("id", chr + "_rowPlus");
             aplus.setAttribute("name", chr + "_rowPlus");
-            aplus.setAttribute("onclick", "PlusColumnAction(this)'>");
             var img = document.createElement('img');
             img.setAttribute("style", "margin-top: 0px; width: 18px;");
             img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
+            // 要素にクリックイベントを追加する
+            aplus.onclick = (function (num) {
+              return function () {
+                PlusMinusColumnAction(this, num, "plus");
+              }
+            })(j);
           }
           aplus.appendChild(img);
           div.appendChild(aplus);
 
-          // Minus
+          // Minus（カラム）
           {
             var aMinus = document.createElement('a');
             aMinus.setAttribute("href", "");
             aMinus.setAttribute("id", chr + "_rowMinus");
             aMinus.setAttribute("name", chr + "_rowMinus");
-            aMinus.setAttribute("onclick", "MinusColumnAction(this)'>");
             var img = document.createElement('img');
             img.setAttribute("style", "margin-top: 0px; width: 18px;");
             img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
+            // 要素にクリックイベントを追加する
+            aMinus.onclick = (function (num) {
+              return function () {
+                PlusMinusColumnAction(this, num, "Minus");
+              }
+            })(j);
           }
           aMinus.appendChild(img);
           div.appendChild(aMinus);
@@ -228,31 +288,41 @@ function onLoadProcessChartData() {
 
         var p = document.createElement('p');
 
-        // Plus
+        // Plus（行）
         {
           var aplus = document.createElement('a');
           aplus.setAttribute("href", "");
           aplus.setAttribute("id", chr + "_rowPlus");
           aplus.setAttribute("name", chr + "_rowPlus");
-          aplus.setAttribute("onclick", "PlusRowAction(this)'>");
           var img = document.createElement('img');
           img.setAttribute("style", "margin-top: 0px; width: 18px;");
           img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
+          // 要素にクリックイベントを追加する
+          aplus.onclick = (function (num) {
+            return function () {
+              PlusMinusRowsAction(this, num, "plus");
+            }
+          })(k);
         }
         aplus.appendChild(img);
         td.appendChild(aplus);
         td.append(p);
 
-        // Minus
+        // Minus（行）
         {
           var aMinus = document.createElement('a');
           aMinus.setAttribute("href", "");
           aMinus.setAttribute("id", chr + "_rowMinus");
           aMinus.setAttribute("name", chr + "_rowMinus");
-          aMinus.setAttribute("onclick", "PlusRowAction(this)'>");
           var img = document.createElement('img');
           img.setAttribute("style", "margin-top: -12px; width: 18px; margin-bottom: 3px");
           img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
+          // 要素にクリックイベントを追加する
+          aMinus.onclick = (function (num) {
+            return function () {
+              PlusMinusRowsAction(this, num, "Minus");
+            }
+          })(k);
         }
         aMinus.appendChild(img);
         td.appendChild(aMinus);
@@ -267,24 +337,13 @@ function onLoadProcessChartData() {
           {
             var select = document.createElement('select');
             // 要素にクリックイベントを追加する
-            select.onchange = (function (num) {
+            select.onchange = (function (location) {
               return function () {
-                const midashi = document.getElementById(num + "_midashi");
-                midashi.value = "";
-
-                // if (status == "1") {
-                //   var tablename = "#table_" + String(num)
-                //   $(tablename).hide();
-                //   document.getElementById(openStatusName).value = "0";
-                // } else {
-                //   var tablename = "#table_" + String(num)
-                //   $(tablename).show();
-                //   document.getElementById(openStatusName).value = "1";
-                // }
+                saveChartImg(this, location);
               }
             })(String.fromCharCode(64 + innerloop) + "_" + k);
 
-            select.setAttribute("id", String.fromCharCode(64 + innerloop) + "_" + k);
+            select.setAttribute("id", String.fromCharCode(64 + innerloop) + "_" + k + "_select");
             select.setAttribute("name", String.fromCharCode(64 + innerloop) + "_" + k + "_name");
             select.setAttribute("data-minimum-results-for-search", "Infinity");
             select.setAttribute('style', "margin-top: -60px;");
@@ -296,8 +355,8 @@ function onLoadProcessChartData() {
             }
 
             for (var a = 0; a < ImgDataList.length; a++) {
-              console.log("name = " + ImgDataList[a].name);
-              console.log("file = " + ImgDataList[a].file);
+              //console.log("name = " + ImgDataList[a].name);
+              //console.log("file = " + ImgDataList[a].file);
 
               var option = document.createElement("option");
               option.value = ImgDataList[a].name;
@@ -321,15 +380,28 @@ function onLoadProcessChartData() {
           input.setAttribute('type', "text");
           input.setAttribute('style', "text-align:center; height: 25px;");
           input.setAttribute('value', checkText);
-          tdi.appendChild(input);
+          input.onchange = (function (location) {
+            return function () {
+              saveChartComment(this, location);
+            }
+          })(String.fromCharCode(64 + innerloop) + "_" + k);
 
+          tdi.appendChild(input);
           tr.append(tdi);
         }
         // テーブルへ
         table.append(tr);
       }
 
-      //select.appendChild(input);
+      // 画面上部へデータを設定する
+      {
+        var wknum = G_WORKTIME_TOTAL / 60.0;
+        document.getElementById("TotalWorkingTime").value = wknum.toFixed(2);
+      }
+
+      // -------------------------------------------
+      // 画像選択に必要！！
+      // -------------------------------------------
       function custom_template(obj) {
         var data = $(obj.element).data();
         var text = $(obj.element).val();
@@ -354,7 +426,7 @@ function onLoadProcessChartData() {
 
       for (var r = 1; r <= rowNum; r++) {
         for (var c = 1; c <= colNum; c++) {
-          var char_val = String.fromCharCode(64 + c) + '_' + r;
+          var char_val = String.fromCharCode(64 + c) + '_' + r + "_select";
           $('#' + char_val).select2(options);
         }
       }
@@ -369,205 +441,242 @@ function onLoadProcessChartData() {
 
 }
 
+// ----------------------------------------------
+// 画面内容を保存する
+// ①画面上部を保存
+// ②デザイン情報を保存する
+// ③自画面を再表示する
+// ----------------------------------------------
+function SaveToProcessChartDataTBL() {
 
+  // 画面上部データ
+  {
+    // 名称
+    var processProcedureName = document.getElementById("process_ProcedureName").value
+    if (processProcedureName == "") {
+      alert("資料名が空白です。入力してください。");
+      return;
+    }
 
-//getProcessChartImagesData
-// function getProcessChartImageData(rowNum, colNum, design) {
+    // 作業頻度
+    var wkData = document.getElementById("SelectWorkFrequency").value;
+    wkData = wkData.split("_");
+    var selectWorkFrequency = Number(wkData[1]);
 
-//   console.log("in get process chart image data = " + design);
+    // 作業人数
+    var wkData = document.getElementById("SelectWorkNumberOfWorkers").value;
+    wkData = wkData.split("_");
+    var selectWorkNumberOfWorkers = Number(wkData[1]);
 
-//   // getProcessChartImagesData
-//   $.ajax({
-//     url: '/getProcessChartImagesData/',
-//     type: 'POST',
-//     data: {
-//       ChartType: "FlowChart"
-//     },
-//     dataType: 'json',
-//     success: function (response) {
-//       //alert(response);
-//       var data_array = Object.values(response[0].Data)
-//       console.log("Data array = " + data_array);
-//       var data_array_key = Object.keys(response[0].Data)
+    // 外部閲覧を禁止する
+    var permissionFlag = document.getElementById("PermissionFlag").checked;
 
-//       for (var r = 1; r <= rowNum; r++) {
-//         for (var c = 1; c <= colNum - 1; c++) {
+    // 外部閲覧を禁止する
+    var changeProhibitionFlag = document.getElementById("ChangeProhibitionFlag").checked;
 
-//           var char_val = String.fromCharCode(64 + c) + '_' + r;
-//           $("#" + char_val).append("<option value=''></option>");
+    // カラム数
+    var columnNumber = document.getElementById("DiagramColumns").value;
+    if (Number(columnNumber) < 5 || Number(columnNumber) > 26) {
+      alert("カラム数は、5～26 の範囲で指定してください");
+      return;
+    }
 
-//           if (design.length > 0) {
-//             for (var a = 0; a < design.length; a++) {
+    // 行数
+    var rowsNumber = document.getElementById("DiagramRows").value;
+    if (Number(rowsNumber) < 5 || Number(rowsNumber) > 99) {
+      alert("行数は、5～99 の範囲で指定してください");
+      return;
+    }
+  }
 
-//               var Block = design[a].Block;
-//               var LocationInfo = Block.LocationInfo;
-//               var location_id = document.getElementById(LocationInfo);
-//               var ImageName = Block.ImageName;
+  console.log(selectWorkFrequency);
+  console.log(selectWorkNumberOfWorkers);
+  console.log(permissionFlag);
+  console.log(changeProhibitionFlag);
 
-//               if (char_val == LocationInfo) {
-//                 console.log("char val = " + char_val);
-//                 console.log("Location info = " + LocationInfo);
-//                 $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/flowChartImg/" + ImageName + ".png' selected></option>");
-//               }
-//               else {
-//                 for (var i = 0; i < data_array.length; i++) {
-//                   $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
+  console.log(columnNumber);
+  console.log(rowsNumber);
 
-//                 }
-//               }
-//             }
-//           }
-//           else {
-//             for (var i = 0; i < data_array.length; i++) {
-//               $("#" + char_val).append("<option value='" + char_val + "' data-img_src='/static/img/" + data_array[i] + "'></option>");
+  var resultStatus = "";
 
-//             }
-//           }
-//         }
-//       }
-
-
-
-
-
-//       function custom_template(obj) {
-//         var data = $(obj.element).data();
-//         var text = $(obj.element).val();
-
-//         if (text == "") {
-//           template = $("<div style='width:100px;height:30px;margin-top:3px;'></div>");
-//           return template;
-//         }
-//         else {
-//           if (data && data['img_src']) {
-//             img_src = data['img_src'];
-//             template = $("<div><img src=\"" + img_src + "\" style=\"width:100px;height:40px;margin-left:36px;margin-top:3px;\"/></div>");
-//             return template;
-//           }
-
-//         }
-
-//       }
-
-//       var options = {
-//         'templateSelection': custom_template,
-//         'templateResult': custom_template,
-//       }
-
-//       for (var r = 1; r <= rowNum; r++) {
-//         for (var c = 1; c <= colNum - 1; c++) {
-//           var char_val = String.fromCharCode(64 + c) + '_' + r;
-//           $('#' + char_val).select2(options);
-
-//         }
-//       }
-
-//       $('.select2-container--default .select2-selection--single').css({ 'height': '45px' });
-//       $('.select2-container--default .select2-selection--single').css({ 'width': '220px' });
-//       $('.select2-container--default .select2-selection--single').css({ 'margin-top': '10px' });
-
-//     }
-
-//   });
-
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function PlusColumnAction(el) {
-
-  var ids = el.getAttribute("id");
-  alert(ids);
-  console.log(ids);
-
-  var chartDesignCode = $('#chartDesignCode').val();
-  var updateType = "plus";
-  var LocationInfo = "D_1"
-
+  // ①画面上部データを保存する
   $.ajax({
-    url: '/getProcessChartColumnUpdate/',
+    url: '/saveProcessChartImagesData/',
     type: 'POST',
     data: {
-      chartDesignCode: chartDesignCode,
-      LocationInfo: LocationInfo,
-      updateType: updateType
+      updateUser: email,
+      processProcedureID: ProcessProcedureID,
+      processProcedureName: processProcedureName,
+      chartDesignCode: ChartDesignCode,
+      permissionFlag: permissionFlag,
+      changeProhibitionFlag: changeProhibitionFlag,
+      workFrequency: selectWorkFrequency,
+      numberOfWorkers: selectWorkNumberOfWorkers,
+      totalWorkingTime: G_WORKTIME_TOTAL,
+      columnNumber: columnNumber,
+      rowsNumber: rowsNumber
     },
     dataType: 'json',
     success: function (response) {
-      if (response[0].statsu == "OK") {
-        alert("Response Status !!" + response[0].statsu);
+      //alert(response);
+      resultStatus = response.status;
+      if (response.status == "OK") {
+        //alert("Response Status !!" + response.status);
+
+        // ②デザイン情報を保存する
+        if (resultStatus == "OK") {
+
+        }
+
+        // 自画面を再表示する
         window.location.reload();
       }
-
-      // const json_string = JSON.stringify(response, null, 2);
-
-      // console.log(json_string); // 確認用
-
-      // document.getElementById("textarea").value = json_string;
     }
-
   });
 
 }
 
-
-function MinusColumnAction(el) {
+// ----------------------------------------------
+// カラムを指定位置に追加／削除する
+// ----------------------------------------------
+function PlusMinusColumnAction(el, num, updateType) {
 
   var ids = el.getAttribute("id");
-  alert(ids);
   console.log(ids);
+  console.log(num);
 
+  // 位置
+  var wkData = ids.split("_");
+  var locationInfo = wkData[0] + "_1";
+
+  // パラメータ
   var chartDesignCode = $('#chartDesignCode').val();
-  var updateType = "minus";
-  var LocationInfo = "D_1"
 
   $.ajax({
-    url: '/getProcessChartColumnUpdate/',
+    url: '/updateProcessChartColumn/',
     type: 'POST',
     data: {
       chartDesignCode: chartDesignCode,
-      LocationInfo: LocationInfo,
+      locationInfo: locationInfo,
       updateType: updateType
     },
     dataType: 'json',
     success: function (response) {
-      if (response[0].statsu == "OK") {
-        alert("Response Status !!" + response[0].statsu);
+      if (response[0].status == "OK") {
+        //alert("Response Status !!" + response[0].status);
         window.location.reload();
       }
-
-      // const json_string = JSON.stringify(response, null, 2);
-
-      // console.log(json_string); // 確認用
-
-      // document.getElementById("textarea").value = json_string;
     }
-
   });
-
 }
 
+// ----------------------------------------------
+// 行を指定位置に追加する
+// ----------------------------------------------
+function PlusMinusRowsAction(el, num, updateType) {
 
+  var ids = el.getAttribute("id");
+  console.log(ids);
+  console.log(num);
 
+  // 位置
+  var locationInfo = "A_" + num;
 
+  // パラメータ
+  var chartDesignCode = $('#chartDesignCode').val();
 
+  $.ajax({
+    url: '/updateProcessChartRow/',
+    type: 'POST',
+    data: {
+      chartDesignCode: chartDesignCode,
+      locationInfo: locationInfo,
+      updateType: updateType
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response[0].status == "OK") {
+        //alert("Response Status !!" + response[0].status);
+        window.location.reload();
+      }
+    }
+  });
+}
+
+// ----------------------------------------------
+// 画像を変更した場合に選択画像を保存する
+// ----------------------------------------------
+function saveChartImg(el, location) {
+  var ids = el.getAttribute("id");
+  console.log(ids);
+  console.log(location);
+
+  // デザインコード
+  var chartDesignCode = $('#chartDesignCode').val();
+
+  // 画像名
+  var imgFileName = document.getElementById(ids).value;
+
+  // 見出し
+  var midashi = document.getElementById(location + "_midashi");
+  midashiText = midashi.value;
+  if (imgFileName == "Space_001") {
+    midashi.value = "";
+    midashiText = "";
+  }
+
+  $.ajax({
+    url: '/updateChartImg/',
+    type: 'POST',
+    data: {
+      chartDesignCode: chartDesignCode,
+      imgFileName: imgFileName,
+      locationInfo: location,
+      midashi: midashiText
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response.status == "OK") {
+      }
+    }
+  });
+}
+
+// ----------------------------------------------
+// テキストを変更した時に保存する
+// ----------------------------------------------
+function saveChartComment(el, location) {
+  var ids = el.getAttribute("id");
+  console.log(ids);
+  console.log(location);
+
+  // デザインコード
+  var chartDesignCode = $('#chartDesignCode').val();
+
+  // 見出し
+  var midashi = document.getElementById(location + "_midashi");
+  var midashiText = midashi.value;
+
+  // 画像名
+  var imgFileName = document.getElementById(location + "_select").value;
+  if (imgFileName == "Space_001") {
+    alert("空白画像を選択時は、見出しを入力できません。他の画像を選択してください。")
+    midashi.value = "";
+    midashiText = "";
+  }
+
+  $.ajax({
+    url: '/updateChartComment/',
+    type: 'POST',
+    data: {
+      chartDesignCode: chartDesignCode,
+      locationInfo: location,
+      midashi: midashiText
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response.status == "OK") {
+      }
+    }
+  });
+}

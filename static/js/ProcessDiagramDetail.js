@@ -67,26 +67,34 @@ $(document).ready(function () {
             // ---------------------------
             // 画面上部の値
             // ---------------------------
-            // 合計時間
-            document.getElementById("TotalWorkingTime").value = data[0].TotalWorkingTime;
-            // 作業頻度
-            document.getElementById("WorkFrequency").value = data[0].WorkFrequency;
-            // 作業人数
-            document.getElementById("NumberOfWorkers").value = data[0].NumberOfWorkers;
-            // 外部閲覧を禁止する
-            if (data[0].PermissionFlag == "0") {
-                document.getElementById("PermissionFlag").checked = false;
-            }
-            else {
-                document.getElementById("PermissionFlag").checked = true;
-            }
+            // 画面上部へデータを設定する
+            {
+                // 合計時間
+                document.getElementById("TotalWorkingTime").value = data[0].TotalWorkingTime;
 
-            // 外部閲覧を禁止する
-            if (data[0].ChangeProhibitionFlag == "0") {
-                document.getElementById("ChangeProhibitionFlag").checked = false;
-            }
-            else {
-                document.getElementById("ChangeProhibitionFlag").checked = true;
+                // 作業頻度
+                var opname = "WorkFrequency_" + String(('00' + Number(data[0].WorkFrequency)).slice(-2));
+                $("#SelectWorkFrequency option[value='" + opname + "']").prop('selected', true);
+
+                // 作業人数
+                var opname = "NumberOfWorkers_" + String(('00' + Number(data[0].NumberOfWorkers)).slice(-2));
+                $("#SelectWorkNumberOfWorkers option[value='" + opname + "']").prop('selected', true);
+
+                // 外部閲覧を禁止する
+                if (data[0].PermissionFlag == "0") {
+                    document.getElementById("PermissionFlag").checked = false;
+                }
+                else {
+                    document.getElementById("PermissionFlag").checked = true;
+                }
+
+                // 外部閲覧を禁止する
+                if (data[0].ChangeProhibitionFlag == "0") {
+                    document.getElementById("ChangeProhibitionFlag").checked = false;
+                }
+                else {
+                    document.getElementById("ChangeProhibitionFlag").checked = true;
+                }
             }
 
             // ---------------------------

@@ -7,6 +7,7 @@
 #
 # ##############################################################################
 #
+from turtle import end_fill
 import requests
 import json
 from configparser import ConfigParser
@@ -128,7 +129,7 @@ def getProcessChartImagesData():
     finally:
         select_conn.close()
 
-        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
@@ -230,7 +231,7 @@ def getProcessChartListAll():
     finally:
         select_conn.close()
 
-        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
@@ -394,7 +395,7 @@ def getProcessChartDrawingData():
     finally:
         select_conn.close()
 
-        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
@@ -486,7 +487,7 @@ def getProcessChartCommentDataAll():
     finally:
         select_conn.close()
 
-        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
@@ -586,7 +587,7 @@ def getProcessChartCommentData():
     finally:
         select_conn.close()
 
-        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
@@ -597,22 +598,170 @@ def getProcessChartCommentData():
 #
 # ------------------------------------------------------
 
-@ProcessChartCmn00_api.route("/getProcessChartColumnUpdate/", methods=['POST', 'GET'])
-def getProcessChartColumnUpdate():
-
+@ProcessChartCmn00_api.route("/updateProcessChartColumn/", methods=['POST', 'GET'])
+def updateProcessChartColumn():
     try:
         chartDesignCode = flask.request.form['chartDesignCode']
-        LocationInfo = flask.request.form['LocationInfo']
+        locationInfo = flask.request.form['locationInfo']
         updateType = flask.request.form['updateType']
 
         print(chartDesignCode)
-        print(LocationInfo)
+        print(locationInfo)
         print(updateType)
 
         topJson = []
-        resultStatus = {}
 
+        if updateType == "plus":
+            plusProcessChartColumn(chartDesignCode, locationInfo, topJson)
+        else:
+            MinusProcessChartColumn(chartDesignCode, locationInfo, topJson)
+
+    except Exception as e:
+        print("updateProcessChartColumn select error  " + e.args)
+        pass
+
+    # end
+    finally:
+        return jsonify(topJson)
+
+# -----------------------------------------
+# カラム追加
+# -----------------------------------------
+
+
+def plusProcessChartColumn(chartDesignCode, locationInfo, topJson):
+
+    try:
+        resultStatus = {}
         getColumnRows = {}
+
+        getProcessChartDataColumnAndRows(chartDesignCode, getColumnRows)
+
+        # 指定カラムより大きいデータを取得する
+        select_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                     'Server='+app_section.get('IP')+';'
+                                     'Database=' +
+                                     app_section.get('DATABASE')+';'
+                                     'uid='+app_section.get('DB_USER_ID')+';'
+                                     'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        select_conn_cursor = select_conn.cursor()
+
+        select_query = "SELECT " \
+            "  de.ChartDesignCode, " \
+            "  de.LocationInfo, " \
+            "  de.ImageName, " \
+            "  de.CommentCode " \
+            "FROM " \
+            "    ChartDesign_TBL as de " \
+            "WHERE " \
+            "  de.ChartDesignCode = '" + chartDesignCode + "'" \
+            "  AND SUBSTRING(de.LocationInfo,1,1) >= " + \
+            " SUBSTRING('" + locationInfo + "',1,1)"
+
+        select_conn_cursor.execute(select_query)
+
+        dataList = []
+
+        # 位置情報を更新する
+        for x in select_conn_cursor:
+            design = Counter()
+            design['ChartDesignCode'] = x[0]
+            design['LocationInfo'] = x[1]
+            design['ImageName'] = x[2]
+            design['CommentCode'] = x[3]
+            design['updateLocationInfo'] = columnNameChange(x[1], "plus")
+
+            dataList.append(design)
+
+        # Close
+        select_conn.close()
+
+        # Debug
+        for colum in dataList:
+            print('LocationInfo = ' + colum['LocationInfo'])
+            print('    --> ' + colum['updateLocationInfo'])
+
+        # 指定カラムより大きいカラムのデータを、一旦、全削除する
+        trn_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                  'Server='+app_section.get('IP')+';'
+                                  'Database=' +
+                                  app_section.get('DATABASE')+';'
+                                  'uid='+app_section.get('DB_USER_ID')+';'
+                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+        try:
+            trn_cursor = trn_conn.cursor()
+
+            trn_sql = "DELETE " \
+                " FROM ChartDesign_TBL " \
+                " WHERE " \
+                "  ChartDesignCode = '" + chartDesignCode + "'" \
+                "  AND SUBSTRING(LocationInfo,1,1) >= " + \
+                " SUBSTRING('" + locationInfo + "',1,1)"
+
+            trn_cursor.execute(trn_sql)
+
+            # 変更後の位置で登録する
+            for colum in dataList:
+                if ord(colum['updateLocationInfo'][0]) >= ord(locationInfo[0]):
+                    # 指定カラムは操作しない
+                    trn_sql = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
+                        " VALUES (" + \
+                        "'" + colum['ChartDesignCode'] + "'," + \
+                        "'" + colum['updateLocationInfo'] + "'," + \
+                        "'" + colum['ImageName'] + "'," + \
+                        "'" + colum['CommentCode'] + "'" + \
+                        ") "
+
+                    print("Insert -- trn_sql = " + trn_sql)
+                    trn_cursor.execute(trn_sql)
+
+            # 行を加算する
+            updateColumn = getColumnRows['Column']
+            updateColumn = updateColumn + 1
+
+            trn_sql = "UPDATE " \
+                " ProcessChartData_TBL " \
+                " SET ColumnNumber = '" + str(updateColumn) + "'" \
+                " WHERE " \
+                "  ChartDesignCode = '" + chartDesignCode + "'"
+
+            # 結果
+            trn_cursor.execute(trn_sql)
+            trn_conn.commit()
+
+            resultStatus['statsu'] = "OK"
+
+        except Exception as e:
+            trn_conn.rollback()
+            resultStatus['statsu'] = "NG"
+
+        # 処理結果
+        topJson.append(resultStatus)
+
+    except Exception as e:
+        resultStatus['statsu'] = "NG"
+        print("getProcessChartCommentData select error  " + e.args)
+        pass
+
+    # end
+    finally:
+
+        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+
+        return jsonify(topJson)
+
+# -----------------------------------------
+# カラム削除
+# -----------------------------------------
+
+
+def MinusProcessChartColumn(chartDesignCode, locationInfo, topJson):
+
+    try:
+        resultStatus = {}
+        getColumnRows = {}
+
         getProcessChartDataColumnAndRows(chartDesignCode, getColumnRows)
 
         # SQL
@@ -634,8 +783,8 @@ def getProcessChartColumnUpdate():
             "    ChartDesign_TBL as de " \
             "WHERE " \
             "  de.ChartDesignCode = '" + chartDesignCode + "'" \
-            "  AND SUBSTRING(de.LocationInfo,1,1) >= " + \
-            " SUBSTRING('" + LocationInfo + "',1,1)"
+            "  AND SUBSTRING(de.LocationInfo,1,1) > " + \
+            " SUBSTRING('" + locationInfo + "',1,1)"
 
         select_conn_cursor.execute(select_query)
 
@@ -648,7 +797,7 @@ def getProcessChartColumnUpdate():
             design['LocationInfo'] = x[1]
             design['ImageName'] = x[2]
             design['CommentCode'] = x[3]
-            design['updateLocationInfo'] = columnNameChange(x[1], updateType)
+            design['updateLocationInfo'] = columnNameChange(x[1], "Minus")
 
             dataList.append(design)
 
@@ -660,13 +809,26 @@ def getProcessChartColumnUpdate():
             print('LocationInfo = ' + colum['LocationInfo'])
             print('    --> ' + colum['updateLocationInfo'])
 
-        # 全削除、全追加
+        # 指定カラムのデータ削除する
         trn_conn = pyodbc.connect('DRIVER={SQL Server};'
                                   'Server='+app_section.get('IP')+';'
                                   'Database=' +
                                   app_section.get('DATABASE')+';'
                                   'uid='+app_section.get('DB_USER_ID')+';'
                                   'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        trn_cursor = trn_conn.cursor()
+
+        trn_sql = "DELETE " \
+            " FROM ChartDesign_TBL " \
+            " WHERE " \
+            "  ChartDesignCode = '" + chartDesignCode + "'" \
+            "  AND SUBSTRING(LocationInfo,1,1) = " + \
+            " SUBSTRING('" + locationInfo + "',1,1)"
+
+        trn_cursor.execute(trn_sql)
+
+        # 全削除、全追加
         try:
             trn_cursor = trn_conn.cursor()
 
@@ -674,14 +836,14 @@ def getProcessChartColumnUpdate():
                 " FROM ChartDesign_TBL " \
                 " WHERE " \
                 "  ChartDesignCode = '" + chartDesignCode + "'" \
-                "  AND SUBSTRING(LocationInfo,1,1) >= " + \
-                " SUBSTRING('" + LocationInfo + "',1,1)"
+                "  AND SUBSTRING(LocationInfo,1,1) > " + \
+                " SUBSTRING('" + locationInfo + "',1,1)"
 
             trn_cursor.execute(trn_sql)
 
             # 登録
             for colum in dataList:
-                if ord(colum['updateLocationInfo'][0]) > ord(LocationInfo[0]):
+                if ord(colum['updateLocationInfo'][0]) >= ord(locationInfo[0]):
                     # 指定カラムは操作しない
                     trn_sql = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
                         " VALUES (" + \
@@ -695,10 +857,7 @@ def getProcessChartColumnUpdate():
 
             # 親データのカラム数を更新する
             updateColumn = getColumnRows['Column']
-            if updateType == "plus":
-                updateColumn = updateColumn + 1
-            else:
-                updateColumn = updateColumn - 1
+            updateColumn = updateColumn - 1
 
             trn_sql = "UPDATE " \
                 " ProcessChartData_TBL " \
@@ -707,7 +866,9 @@ def getProcessChartColumnUpdate():
                 "  ChartDesignCode = '" + chartDesignCode + "'"
 
             # 結果
+            trn_cursor.execute(trn_sql)
             trn_conn.commit()
+
             resultStatus['statsu'] = "OK"
 
         except Exception as e:
@@ -730,7 +891,11 @@ def getProcessChartColumnUpdate():
         return jsonify(topJson)
 
 
+# -----------------------------------------
 # カラム文字を加算／減算する
+# -----------------------------------------
+
+
 def columnNameChange(columnName, updateType):
     wkColumnArray = columnName.split('_')
     resultstr = columnName
@@ -756,26 +921,46 @@ def columnNameChange(columnName, updateType):
 #　例）3行にデータあって、３行を削除すると、３行のデータは消える
 #
 # ------------------------------------------------------
-
-@ProcessChartCmn00_api.route("/getProcessChartRowsUpdate/", methods=['POST', 'GET'])
-def getProcessChartRowsUpdate():
-
+@ProcessChartCmn00_api.route("/updateProcessChartRow/", methods=['POST', 'GET'])
+def updateProcessChartRow():
     try:
         chartDesignCode = flask.request.form['chartDesignCode']
-        LocationInfo = flask.request.form['LocationInfo']
+        locationInfo = flask.request.form['locationInfo']
         updateType = flask.request.form['updateType']
 
         print(chartDesignCode)
-        print(LocationInfo)
+        print(locationInfo)
         print(updateType)
 
         topJson = []
-        resultStatus = {}
 
+        if updateType == "plus":
+            plusProcessChartRow(chartDesignCode, locationInfo, topJson)
+        else:
+            MinusProcessChartRow(chartDesignCode, locationInfo, topJson)
+
+    except Exception as e:
+        print("updateProcessChartColumn select error  " + e.args)
+        pass
+
+    # end
+    finally:
+        return jsonify(topJson)
+
+# -----------------------------------------
+# 行追加
+# -----------------------------------------
+
+
+def plusProcessChartRow(chartDesignCode, locationInfo, topJson):
+
+    try:
+        resultStatus = {}
         getColumnRows = {}
+
         getProcessChartDataColumnAndRows(chartDesignCode, getColumnRows)
 
-        # SQL
+        # 指定行より大きいデータを取得する
         select_conn = pyodbc.connect('DRIVER={SQL Server};'
                                      'Server='+app_section.get('IP')+';'
                                      'Database=' +
@@ -787,7 +972,7 @@ def getProcessChartRowsUpdate():
 
         # 行番号の文字数を取得する
         # D_11 など、３カラム以降を取得する
-        targetRow = LocationInfo[2:]
+        targetRow = locationInfo[2:]
         targetRowLen = len(targetRow)
 
         select_query = "SELECT " \
@@ -800,7 +985,7 @@ def getProcessChartRowsUpdate():
             "WHERE " \
             "  de.ChartDesignCode = '" + chartDesignCode + "'" \
             "  AND SUBSTRING(de.LocationInfo,3," + str(targetRowLen) + ") >= " \
-            " SUBSTRING('" + LocationInfo + "',3," + str(targetRowLen) + ")"
+            " SUBSTRING('" + locationInfo + "',3," + str(targetRowLen) + ")"
 
         select_conn_cursor.execute(select_query)
 
@@ -813,16 +998,19 @@ def getProcessChartRowsUpdate():
             design['LocationInfo'] = x[1]
             design['ImageName'] = x[2]
             design['CommentCode'] = x[3]
-            design['updateLocationInfo'] = rowsNameChange(x[1], updateType)
+            design['updateLocationInfo'] = rowsNameChange(x[1], "plus")
 
             dataList.append(design)
+
+        # Close
+        select_conn.close()
 
         # Debug
         for colum in dataList:
             print('LocationInfo = ' + colum['LocationInfo'])
             print('    --> ' + colum['updateLocationInfo'])
 
-        # 全削除、全追加
+        # 指定カラムより大きいカラムのデータを、一旦、全削除する
         trn_conn = pyodbc.connect('DRIVER={SQL Server};'
                                   'Server='+app_section.get('IP')+';'
                                   'Database=' +
@@ -837,7 +1025,151 @@ def getProcessChartRowsUpdate():
                 " WHERE " \
                 "  ChartDesignCode = '" + chartDesignCode + "'" \
                 "  AND SUBSTRING(LocationInfo,3," + str(targetRowLen) + ") >= " \
-                " SUBSTRING('" + LocationInfo + "',3," + \
+                " SUBSTRING('" + locationInfo + "',3," + \
+                str(targetRowLen) + ")"
+
+            trn_cursor.execute(trn_sql)
+
+            # 変更後の位置で登録する
+            for colum in dataList:
+                trn_sql = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
+                    " VALUES (" + \
+                    "'" + colum['ChartDesignCode'] + "'," + \
+                    "'" + colum['updateLocationInfo'] + "'," + \
+                    "'" + colum['ImageName'] + "'," + \
+                    "'" + colum['CommentCode'] + "'" + \
+                    ") "
+
+                trn_cursor.execute(trn_sql)
+
+            #  行を加算する
+            updateRows = getColumnRows['Rows']
+            updateRows = updateRows + 1
+
+            trn_sql = "UPDATE " \
+                " ProcessChartData_TBL " \
+                " SET RowsNumber = '" + str(updateRows) + "'" \
+                " WHERE " \
+                "  ChartDesignCode = '" + chartDesignCode + "'"
+
+            #  結果
+            trn_cursor.execute(trn_sql)
+            trn_conn.commit()
+
+            resultStatus['statsu'] = "OK"
+
+        except Exception as e:
+            trn_conn.rollback()
+            resultStatus['statsu'] = "NG"
+
+        # 処理結果
+        topJson.append(resultStatus)
+
+    except Exception as e:
+        resultStatus['statsu'] = "NG"
+        print("plusProcessChartRow select error  " + e.args)
+        pass
+
+    # end
+    finally:
+
+        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+
+        return jsonify(topJson)
+
+# -----------------------------------------
+# 行削除
+# -----------------------------------------
+
+
+def MinusProcessChartRow(chartDesignCode, locationInfo, topJson):
+
+    try:
+        resultStatus = {}
+        getColumnRows = {}
+
+        getProcessChartDataColumnAndRows(chartDesignCode, getColumnRows)
+
+        # SQL
+        select_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                     'Server='+app_section.get('IP')+';'
+                                     'Database=' +
+                                     app_section.get('DATABASE')+';'
+                                     'uid='+app_section.get('DB_USER_ID')+';'
+                                     'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        select_conn_cursor = select_conn.cursor()
+
+        # 行番号の文字数を取得する
+        # D_11 など、３カラム以降を取得する
+        targetRow = locationInfo[2:]
+        targetRowLen = len(targetRow)
+
+        select_query = "SELECT " \
+            "  de.ChartDesignCode, " \
+            "  de.LocationInfo, " \
+            "  de.ImageName, " \
+            "  de.CommentCode " \
+            "FROM " \
+            "    ChartDesign_TBL as de " \
+            "WHERE " \
+            "  de.ChartDesignCode = '" + chartDesignCode + "'" \
+            "  AND SUBSTRING(de.LocationInfo,3," + str(targetRowLen) + ") > " \
+            " SUBSTRING('" + locationInfo + "',3," + str(targetRowLen) + ")"
+
+        select_conn_cursor.execute(select_query)
+
+        dataList = []
+
+        # 位置情報を作成する
+        for x in select_conn_cursor:
+            design = Counter()
+            design['ChartDesignCode'] = x[0]
+            design['LocationInfo'] = x[1]
+            design['ImageName'] = x[2]
+            design['CommentCode'] = x[3]
+            design['updateLocationInfo'] = rowsNameChange(x[1], "Minus")
+
+            dataList.append(design)
+
+        # Close
+        select_conn.close()
+
+        # Debug
+        for colum in dataList:
+            print('LocationInfo = ' + colum['LocationInfo'])
+            print('    --> ' + colum['updateLocationInfo'])
+
+        # 指定行のデータ削除する
+        trn_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                  'Server='+app_section.get('IP')+';'
+                                  'Database=' +
+                                  app_section.get('DATABASE')+';'
+                                  'uid='+app_section.get('DB_USER_ID')+';'
+                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        trn_cursor = trn_conn.cursor()
+
+        trn_sql = "DELETE " \
+            " FROM ChartDesign_TBL " \
+            " WHERE " \
+            "  ChartDesignCode = '" + chartDesignCode + "'" \
+            "  AND SUBSTRING(LocationInfo,3," + str(targetRowLen) + ") = " \
+            " SUBSTRING('" + locationInfo + "',3," + \
+            str(targetRowLen) + ")"
+
+        trn_cursor.execute(trn_sql)
+
+        # 全削除、全追加
+        try:
+            trn_cursor = trn_conn.cursor()
+
+            trn_sql = "DELETE " \
+                " FROM ChartDesign_TBL " \
+                " WHERE " \
+                "  ChartDesignCode = '" + chartDesignCode + "'" \
+                "  AND SUBSTRING(LocationInfo,3," + str(targetRowLen) + ") > " \
+                " SUBSTRING('" + locationInfo + "',3," + \
                 str(targetRowLen) + ")"
 
             trn_cursor.execute(trn_sql)
@@ -856,10 +1188,7 @@ def getProcessChartRowsUpdate():
 
             # 親データの行数を更新する
             updateRows = getColumnRows['Rows']
-            if updateType == "plus":
-                updateRows = updateRows + 1
-            else:
-                updateRows = updateRows - 1
+            updateRows = updateRows - 1
 
             trn_sql = "UPDATE " \
                 " ProcessChartData_TBL " \
@@ -867,10 +1196,10 @@ def getProcessChartRowsUpdate():
                 " WHERE " \
                 "  ChartDesignCode = '" + chartDesignCode + "'"
 
-            trn_cursor.execute(trn_sql)
-
             # 結果
+            trn_cursor.execute(trn_sql)
             trn_conn.commit()
+
             resultStatus['statsu'] = "OK"
 
         except Exception as e:
@@ -882,7 +1211,7 @@ def getProcessChartRowsUpdate():
 
     except Exception as e:
         resultStatus['statsu'] = "NG"
-        print("getProcessChartRowsUpdate select error  " + e.args)
+        print("MinusProcessChartRow select error  " + e.args)
         pass
 
     # end
@@ -892,8 +1221,11 @@ def getProcessChartRowsUpdate():
 
         return jsonify(topJson)
 
-
+# -----------------------------------------
 # 行番号を加算／減算する
+# -----------------------------------------
+
+
 def rowsNameChange(rowsName, updateType):
     wkRowsArray = rowsName.split('_')
     resultstr = rowsName
@@ -912,7 +1244,9 @@ def rowsNameChange(rowsName, updateType):
 
     return resultstr
 
+# -----------------------------------------
 # 親テーブルのカラム数、行数を取得する
+# -----------------------------------------
 
 
 def getProcessChartDataColumnAndRows(chartDesignCode, getDataList):
