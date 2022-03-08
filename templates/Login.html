@@ -1,0 +1,80 @@
+<!-- // ============================================================================= -->
+<!-- // 画面名：ログイン画面                                                            -->
+<!-- //                                                                               -->
+<!-- // ============================================================================= -->
+<!-- // （ファイル整形）Visual Studio Code : Shift + Alt + f                          -->
+<!-- // ============================================================================= -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <title>Login</title>
+  <meta charset="utf-8">
+  <!-- ★キャッシュクリアのおまじない ################### -->
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <!-- ★ ############################################### -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.min.css') }}">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.min.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" media="screen"
+    href="https://tarruda.github.io/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
+  <script src="{{ url_for('static', filename='js/function.js') }}"></script>
+</head>
+
+<body class="l-main__block--common">
+  <!-- ★キャッシュクリアのおまじない ################### -->
+  <div id="now"></div>
+  <script type="text/javascript" src="../static/js/cacheProcessVisualization.js?p=(new Date()).getTime()"></script>
+  <!-- ★ ############################################### -->
+
+  <header class="l-header">
+    <h1 class="l-header--logo">
+      <span class="l-header__item--logo">
+        <img src="/static/img/svg/logo.svg" alt="NEC">
+      </span>
+      <span class="l-header__txt--system">
+        プロセス可視化ツール
+      </span>
+    </h1>
+  </header>
+  <div class="form-horizontal" role="form">
+    <form action="gotoProcessMain" method="post">
+      <h3 class="login__heading">ログイン</h3>
+      <div class="login__box box_height">
+        {% if errorMsg %}
+        <div id="area-warning">
+          <div class="alert alert-warning" role="alert">{{errorMsg}}</div>
+        </div>
+        {% endif %}
+        <div class="login--input login--inputMail">
+          <input class="login__title--inputMail form-control" type="email" id="email" name="email"
+            placeholder="メールアドレス">
+        </div>
+        <div class="login--input login--inputPass">
+          <input class="login__title--inputPass form-control" type="password" id="password" name="password"
+            placeholder="パスワード">
+        </div>
+        
+        <button type="submit" class="c-button c-button--login">ログイン</button>
+       
+        
+      </div>
+    </form>
+  </div>
+  <script type="text/javascript" src="../static/js/Login.js?p=(new Date()).getTime()"></script>
+
+</body>
+
+</html>
