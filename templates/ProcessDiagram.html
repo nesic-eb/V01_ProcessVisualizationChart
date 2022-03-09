@@ -26,6 +26,16 @@
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/processDiagram.css') }}">
+    <script type="text/javascript">
+        function showModal(targetWin) {
+            //alert(targetWin)
+            if (targetWin == "UsageGuide") {
+                var openWindow = window.open("./gotoProcessUsageGuide", null,
+                    'top=' + 0 + 'px,left=' + 0 +
+                    'px,width=580px,height=770px,toolbar=yes,menubar=yes,scrollbars=yes');
+            };
+        };
+    </script>
 </head>
 
 <body class="l-main__block--common" onload="onLoadProcessChartData()">
@@ -44,21 +54,25 @@
     <!-- 画面-->
     <div class="l-content" style="margin-left: -30px;">
         <input type='hidden' name='chartDesignCode' id='chartDesignCode'>
+        <input type='hidden' name='autoSaveMode' id='autoSaveMode'>
 
         <div style="margin-left: -30px;">
             <table style="width: 100%; margin-top: 0px; margin-left: -30px;">
                 <tr>
-                    <td style="width: 600px;">
+                    <td style="width: 400px;">
                         <input type='text' style="background-color: beige;" name='process_ProcedureName'
                             id='process_ProcedureName' value="">
+                        <button class="btn btn-success"
+                            style="width: 100px; height: 30px; margin-left: 10px; margin-top: 30px;"
+                            onclick="SaveToProcessChartDataTBL()">名称変更</button>
                     </td>
-                    <td style="width: 200px;">
+                    <td style="width: 70px;">
+                    </td>
+                    <td style="width: 18px;">
                         <a href=" /goToProcessDiagramDetail"><button type="submit" id="btn_update"
                                 style="width: 200px; margin-top: 20px;" class="btn btn-primary">詳細画面を表示する</button></a>
                     </td>
-                    <td style="width: 200px;">
-                    </td>
-                    <td>
+                    <td style="width: 100px;">
                         <a href="/"><button type="submit" id="btn_Back" class="btn btn-primary"
                                 style="margin-top: 20px;">戻る</button></a>
                     </td>
@@ -74,7 +88,7 @@
                     <td style="width: 85px;">
                         <P style="margin-top: 4px;">合計時間：</P>
                     </td>
-                    <td style="width: 80px;">
+                    <td style="width: 90px;">
                         <input type="text" class="form-control" title="TotalWorkingTime" id="TotalWorkingTime"
                             style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
                             readonly value="" />
@@ -87,53 +101,44 @@
                     <td style="width: 85px;">
                         <P style="margin-top: 4px;">作業頻度：</P>
                     </td>
-                    <td style="width: 120px;">
-                        <select name="SelectWorkFrequency" id="SelectWorkFrequency"
-                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:25px; text-align: center;">
-                            <option value="WorkFrequency_01">1</option>
-                            <option value="WorkFrequency_02">2</option>
-                            <option value="WorkFrequency_03">3</option>
-                            <option value="WorkFrequency_05">5</option>
-                            <option value="WorkFrequency_07">7</option>
-                            <option value="WorkFrequency_10">10</option>
-                        </select>
+                    <td style="width: 130px;">
+                        <input type="text" class="form-control" title="SelectWorkFrequency" id="SelectWorkFrequency"
+                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
+                            readonly value="" />
                         <span>&nbsp;回／月</span>
                     </td>
 
                     <td style="width: 20px;">
                     </td>
 
-                    <td style="width: 80px;">
+                    <td style="width: 85px;">
                         <P style="margin-top: 4px;">作業人数：</P>
                     </td>
-                    <td style="width: 120px;">
-                        <select name="SelectWorkNumberOfWorkers" id="SelectWorkNumberOfWorkers"
-                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:25px; text-align: center;">
-                            <option value="NumberOfWorkers_01">1</option>
-                            <option value="NumberOfWorkers_02">2</option>
-                            <option value="NumberOfWorkers_03">3</option>
-                            <option value="NumberOfWorkers_04">4</option>
-                            <option value="NumberOfWorkers_05">5</option>
-                        </select>
+                    <td style="width: 130px;">
+                        <input type="text" class="form-control" title="SelectWorkNumberOfWorkers"
+                            id="SelectWorkNumberOfWorkers"
+                            style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
+                            readonly value="" />
                         <span>&nbsp;人</span>
                     </td>
 
                     <!-- 外部閲覧を禁止する -->
                     <td style="width: 200px;">
                         <input type="checkbox" id="PermissionFlag" name="PermissionFlag" value=""
-                            style="margin-top: 0px;">
+                            style="margin-top: 0px;" onclick="return false;">
                         <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;">外部閲覧を禁止する</span>
                     </td>
 
                     <!-- 変更を禁止する -->
                     <td style="width: 280px;">
                         <input type="checkbox" id="ChangeProhibitionFlag" name="ChangeProhibitionFlag" value=""
-                            style="margin-top: 0px;">
+                            style="margin-top: 0px;" onclick="return false;">
                         <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;">変更を禁止する（作成者のみ可）</span>
                     </td>
 
                     <td style="width: 100px;">
                     </td>
+
                     <td>
                     </td>
 
@@ -161,8 +166,29 @@
                     <td style="width: 10px;">
                     </td>
                     <td>
-                        <button class="btn btn-success" style="width: 200px; height: 30px; margin-top: -10px;"
-                            onclick="SaveToProcessChartDataTBL()">チャートデザイン保存</button>
+                        <button class="btn btn-success" style="width: 70px; height: 30px; margin-top: -10px;"
+                            onclick="ChangeToProcessChartColumnRow()">枠変更</button>
+                    </td>
+                    <td style="width: 30px;">
+                    </td>
+                    <!--
+                    <td>
+                        <button class="btn btn-success" style="width: 90px; height: 30px; margin-top: -10px;"
+                            onclick="AutoSaveToProcessChartDiagram()">一時保存</button>
+                    </td>
+                    -->
+                    <td style="width: 150px;">
+                        <input type="checkbox" id="AutoSaveModeCheck" name="AutoSaveModeCheck" value=""
+                            style="margin-top: 0px;" onclick="return false;" checked>
+                        <span style="margin-left: 6px; margin-top: 0px;">自動保存</span>
+                    </td>
+                    <td style="width: 30px;">
+                    </td>
+                    <td style="width: 70px;">
+                        <a href="JavaScript:showModal('UsageGuide')" id="UsageGuide" name="UsageGuide">【凡例】</a>
+                        <!--
+                            <img src="static/img/flowChartImg/EditData.svg" style="width: 18px;" alt="" name="">
+                            -->
                     </td>
                 </tr>
             </table>

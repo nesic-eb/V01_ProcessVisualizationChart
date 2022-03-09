@@ -152,12 +152,10 @@ function onLoadProcessChartData() {
         document.getElementById("process_ProcedureName").value = blockData.ProcessProcedureName;
 
         // 作業頻度
-        var opname = "WorkFrequency_" + String(('00' + Number(blockData.WorkFrequency)).slice(-2));
-        $("#SelectWorkFrequency option[value='" + opname + "']").prop('selected', true);
+        document.getElementById("SelectWorkFrequency").value = blockData.WorkFrequency;
 
         // 作業人数
-        var opname = "NumberOfWorkers_" + String(('00' + Number(blockData.NumberOfWorkers)).slice(-2));
-        $("#SelectWorkNumberOfWorkers option[value='" + opname + "']").prop('selected', true);
+        document.getElementById("SelectWorkNumberOfWorkers").value = blockData.NumberOfWorkers;
 
         // 外部閲覧を禁止する
         if (blockData.PermissionFlag == "0") {
@@ -347,6 +345,7 @@ function onLoadProcessChartData() {
             select.setAttribute("name", String.fromCharCode(64 + innerloop) + "_" + k + "_name");
             select.setAttribute("data-minimum-results-for-search", "Infinity");
             select.setAttribute('style', "margin-top: -60px;");
+            select.setAttribute('size', 5);
 
             var imgSelectName = "";
             var checkName = checkImgName(String.fromCharCode(64 + innerloop) + "_" + k, design);
@@ -431,7 +430,7 @@ function onLoadProcessChartData() {
         }
       }
 
-      // $('.select2-container--default .select2-selection--single').css({ 'height': '45px' });
+      // $('.select2-container--default .select2-selection--single').css({ 'height': '145px' });
       // $('.select2-container--default .select2-selection--single').css({ 'width': '220px' });
       // $('.select2-container--default .select2-selection--single').css({ 'margin-top': '10px' });
 
@@ -442,38 +441,49 @@ function onLoadProcessChartData() {
 }
 
 // ----------------------------------------------
-// 画面内容を保存する
-// ①画面上部を保存
-// ②デザイン情報を保存する
-// ③自画面を再表示する
+// 名称を保存する
 // ----------------------------------------------
 function SaveToProcessChartDataTBL() {
 
-  // 画面上部データ
+  // 名称
   {
-    // 名称
     var processProcedureName = document.getElementById("process_ProcedureName").value
     if (processProcedureName == "") {
       alert("資料名が空白です。入力してください。");
       return;
     }
+  }
 
-    // 作業頻度
-    var wkData = document.getElementById("SelectWorkFrequency").value;
-    wkData = wkData.split("_");
-    var selectWorkFrequency = Number(wkData[1]);
+  console.log(processProcedureName);
 
-    // 作業人数
-    var wkData = document.getElementById("SelectWorkNumberOfWorkers").value;
-    wkData = wkData.split("_");
-    var selectWorkNumberOfWorkers = Number(wkData[1]);
+  var resultStatus = "";
 
-    // 外部閲覧を禁止する
-    var permissionFlag = document.getElementById("PermissionFlag").checked;
+  // 名称を保存する
+  $.ajax({
+    url: '/saveProcessChartImagesData/',
+    type: 'POST',
+    data: {
+      updateUser: email,
+      processProcedureID: ProcessProcedureID,
+      processProcedureName: processProcedureName,
+      chartDesignCode: ChartDesignCode,
+    },
+    dataType: 'json',
+    success: function (response) {
+      resultStatus = response.status;
+      if (response.status == "OK") {
+      }
+    }
+  });
+}
 
-    // 外部閲覧を禁止する
-    var changeProhibitionFlag = document.getElementById("ChangeProhibitionFlag").checked;
+// ----------------------------------------------
+// 画面枠数を保存する
+// ----------------------------------------------
+function ChangeToProcessChartColumnRow() {
 
+  // 画面枠
+  {
     // カラム数
     var columnNumber = document.getElementById("DiagramColumns").value;
     if (Number(columnNumber) < 5 || Number(columnNumber) > 26) {
@@ -489,30 +499,18 @@ function SaveToProcessChartDataTBL() {
     }
   }
 
-  console.log(selectWorkFrequency);
-  console.log(selectWorkNumberOfWorkers);
-  console.log(permissionFlag);
-  console.log(changeProhibitionFlag);
-
   console.log(columnNumber);
   console.log(rowsNumber);
 
   var resultStatus = "";
 
-  // ①画面上部データを保存する
+  // 画面枠を保存する
   $.ajax({
-    url: '/saveProcessChartImagesData/',
+    url: '/changeToProcessChartColumnRow/',
     type: 'POST',
     data: {
-      updateUser: email,
       processProcedureID: ProcessProcedureID,
-      processProcedureName: processProcedureName,
       chartDesignCode: ChartDesignCode,
-      permissionFlag: permissionFlag,
-      changeProhibitionFlag: changeProhibitionFlag,
-      workFrequency: selectWorkFrequency,
-      numberOfWorkers: selectWorkNumberOfWorkers,
-      totalWorkingTime: G_WORKTIME_TOTAL,
       columnNumber: columnNumber,
       rowsNumber: rowsNumber
     },
@@ -521,20 +519,13 @@ function SaveToProcessChartDataTBL() {
       //alert(response);
       resultStatus = response.status;
       if (response.status == "OK") {
-        //alert("Response Status !!" + response.status);
-
-        // ②デザイン情報を保存する
-        if (resultStatus == "OK") {
-
-        }
-
         // 自画面を再表示する
         window.location.reload();
       }
     }
-  });
-
+  })
 }
+
 
 // ----------------------------------------------
 // カラムを指定位置に追加／削除する

@@ -9,11 +9,24 @@
 // ##################################################################################################
 // ##################################################################################################
 /* セッション情報取得 */
+
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessCheckEditWindow.js --------");
 
+console.log("edit_dataId=" + sessionStorage.getItem("edit_dataId"));
+console.log("edit_CommentCode=" + sessionStorage.getItem("edit_CommentCode"));
 
-function clearData(){
+console.log(sessionStorage.getItem("ChartDesignCode"));
+
+// 初期表示時のコメントコード
+var ORG_COMMENT_CODE = sessionStorage.getItem("edit_CommentCode");
+
+// ##################################################################################################
+// ##################################################################################################
+/* function の処理を記述 */
+
+// 初期化
+function clearData() {
     //alert("clear data...")
     $("#comment_code").val("0000");
     $("#heading").val("");
@@ -23,46 +36,236 @@ function clearData(){
     $("#OperationTarget").val("");
     $("#working_hour").val("");
     $("#SupplementComment").val("");
-    
+}
+
+// ----------------------------------------------
+// コメントコードを変更する
+// ----------------------------------------------
+function commentCode_onchange() {
+    var comment_code = $("#comment_code").val();
+    if (comment_code == "0000") {
+        const now = new Date(); // 現在の日付からDateオブジェクト作成
+
+        const nowString = now.getFullYear()
+            + (now.getMonth() + 1).toString().padStart(2, "0")
+            + now.getDate().toString().padStart(2, "0")
+            + now.getHours().toString().padStart(2, "0")
+            + now.getMinutes().toString().padStart(2, "0")
+            + now.getSeconds().toString().padStart(2, "0")
+            + ".000000"
+
+        var newCommentCode = "Comment_" + nowString
+        $("#new_comment_code").val(newCommentCode);
+        $("#new_comment_code").attr("readonly", false);
+        clearData();
+    }
+    else {
+        $("#new_comment_code").val("");
+        $("#new_comment_code").attr("readonly", true);
+
+        // コメントコードを検索して表示する
+        sessionStorage.setItem("edit_CommentCode", comment_code);
+
+        onloadProcessEditWindow()
+    }
+}
+
+// ----------------------------------------------
+// 画面：情報を表示する
+// ----------------------------------------------
+function onloadProcessEditWindow() {
+
+    // デザインコード
+    chartDesignCode = sessionStorage.getItem("ChartDesignCode");
+
+    // 位置情報
+    locationInfo = sessionStorage.getItem("edit_dataId");
+    $("#location_id").text(sessionStorage.getItem("edit_dataId"))
+
+    // コメントコード
+    var commentCode = sessionStorage.getItem("edit_CommentCode")
+
+    /// ------------------------------------
+    /// コメントリストを取得して、設定する
+    /// ------------------------------------
+    $.ajax({
+        url: '/getCommentList/',
+        type: 'POST',
+        data: {
+            commentCode: ORG_COMMENT_CODE
+        },
+        dataType: 'json',
+        success: function (response) {
+            console.log("response in get comment list " + response)
+            $("#comment_code").empty();
+            $("#comment_code").append("<option value='0000'>" + "新規作成" + "</option>");
+            for (var i = 0; i < response.length; i++) {
+                if (commentCode == response[i]) {
+                    $("#comment_code").append("<option value='" + response[i] + "' selected>" + response[i] + "</option>");
+                } else {
+                    $("#comment_code").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
+                }
+            }
+        }
+    });
+
+
+    /// ------------------------------------
+    /// コメント情報を取得する
+    /// ------------------------------------
+    $.ajax({
+        url: '/getProcessChartCommentDataFromCode/',
+        type: 'POST',
+        data: {
+            chartDesignCode: chartDesignCode,
+            commentCode: commentCode
+        },
+        success: function (response) {
+            var BlockData = response[0].design[0].Block;
+            dispEditData(BlockData);
+        }
+    });
+}
+
+// ----------------------------------------------
+// 画面：各情報を表示する
+// ----------------------------------------------
+function dispEditData(BlockData) {
+
+    // 見出し
+    var Heading = BlockData.Heading;
+    $("#heading").val(Heading)
+
+    // 説明
+    var Explanation = BlockData.Explanation;
+    $("#explaination").val(Explanation)
+
+    // 効率可否
+    var Efficiency = BlockData.Efficiency;
+    if (Efficiency == 0) {
+        $("#efficiency option[value='0']").prop('selected', true);
+    }
+    else {
+        $("#efficiency option[value='1']").prop('selected', true);
+    }
+
+    // 操作
+    var OperationTarget = BlockData.OperationTarget;
+    if (OperationTarget == "") {
+        $("#OperationTarget option[value='']").prop('selected', true);
+    }
+    else {
+        $("#OperationTarget option[value='" + OperationTarget + "']").prop('selected', true);
+    }
+
+    // 作業時間
+    var WorkingHour = BlockData.WorkingHour;
+    if (WorkingHour == "0" || WorkingHour == "") {
+        $("#working_hour option[value='0']").prop('selected', true);
+    }
+    else {
+        $("#working_hour option[value='" + WorkingHour + "']").prop('selected', true);
+    }
+
+    var ExceptionWork = BlockData.ExceptionWork;
+    $("#ExceptionWork").val(ExceptionWork)
+
+    var SupplementComment = BlockData.SupplementComment;
+    $("#SupplementComment").val(SupplementComment);
 }
 
 
-
-function buttonClick() {
+// ----------------------------------------------
+// 画面：各情報を更新する
+// ----------------------------------------------
+function updateButtonClick() {
     //alert('Click');
-    window.close();
-    var comment_code = $("#comment_code").val();
-    console.log("comment code = "+comment_code);
+
+    // デザインコード
+    chartDesignCode = sessionStorage.getItem("ChartDesignCode");
+
+    // 位置情報
+    locationInfo = sessionStorage.getItem("edit_dataId");
+    $("#location_id").text(sessionStorage.getItem("edit_dataId"))
+
+    updateType = "update";
     var new_comment_code = $("#new_comment_code").val();
-    if(comment_code == "0000"){
+
+    var comment_code = $("#comment_code").val();
+    if (comment_code == "0000") {
+        updateType = "insert";
         comment_code = new_comment_code;
     }
+
     var heading = $("#heading").val();
-    console.log("heading = "+heading);
     var explaination = $("#explaination").val();
-    console.log("explaination = "+explaination);
     var efficiency = $("#efficiency").val();
-    console.log("efficiency = "+efficiency);
     var ExceptionWork = $("#ExceptionWork").val();
-    console.log("ExceptionWork= "+ExceptionWork);
     var OperationTarget = $("#OperationTarget").val();
-    console.log("OperationTarget = "+OperationTarget);
     var working_hour = $("#working_hour").val();
-    console.log("working_hour = "+working_hour);
     var SupplementComment = $("#SupplementComment").val();
-    console.log("SupplementComment = "+SupplementComment);
+
+    console.log("updateType = " + updateType);
+    console.log("commentcode = " + comment_code);
+    console.log("heading = " + heading);
+    console.log("explaination = " + explaination);
+    console.log("efficiency = " + efficiency);
+    console.log("ExceptionWork= " + ExceptionWork);
+    console.log("OperationTarget = " + OperationTarget);
+    console.log("working_hour = " + working_hour);
+    console.log("SupplementComment = " + SupplementComment);
+
     $.ajax({
         url: '/updateChartCommentInfo/',
         type: 'POST',
         data: {
-            comment_code : comment_code,
-            heading : heading,
-            explaination : explaination,
-            efficiency : efficiency,
-            ExceptionWork : ExceptionWork,
-            OperationTarget :  OperationTarget,
-            working_hour :  working_hour,
-            SupplementComment :  SupplementComment
+            updateType: updateType,
+            chartDesignCode: chartDesignCode,
+            locationInfo: locationInfo,
+            comment_code: comment_code,
+            heading: heading,
+            explaination: explaination,
+            efficiency: efficiency,
+            ExceptionWork: ExceptionWork,
+            OperationTarget: OperationTarget,
+            working_hour: working_hour,
+            SupplementComment: SupplementComment
+        },
+        success: function (response) {
+            // コメントコードを入れ替える
+            ORG_COMMENT_CODE = comment_code;
+            // 閉じる
+            window.close()
+        }
+    });
+}
+
+// ----------------------------------------------
+// 画面：各情報を更新する
+// ----------------------------------------------
+function deleteButtonClick() {
+
+    // デザインコード
+    chartDesignCode = sessionStorage.getItem("ChartDesignCode");
+
+    // 位置情報
+    locationInfo = sessionStorage.getItem("edit_dataId");
+    $("#location_id").text(sessionStorage.getItem("edit_dataId"))
+
+    // コメントコード
+    var commentCode = $("#comment_code").val();
+    if (ORG_COMMENT_CODE == commentCode) {
+        alert("設定されているコメントは削除できません");
+        return;
+    }
+
+    $.ajax({
+        url: '/deleteChartCommentData/',
+        type: 'POST',
+        data: {
+            chartDesignCode: chartDesignCode,
+            locationInfo: locationInfo,
+            commentCode: commentCode,
         },
         success: function (response) {
         }
@@ -70,98 +273,3 @@ function buttonClick() {
 
 }
 
-
-function commentCode_onchange(){
-    var comment_code = $("#comment_code").val();
-    if(comment_code == "0000"){
-        $("#new_comment_code").attr("readonly",false);
-    }
-}
-
-
-      
-
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-    sURLVariables = sPageURL.split('&'),
-    sParameterName,
-i;
-
-for (i = 0; i < sURLVariables.length; i++) {
-sParameterName = sURLVariables[i].split('=');
-
-if (sParameterName[0] === sParam) {
-    return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-}
-}
-return false;
-};
-
-$.ajax({
-    url: '/getCommentList/',
-    type: 'GET',
-    dataType: 'json',
-    success: function (response) {
-        console.log("response in get comment list "+response)
-        for(var i=0;i<response.length;i++){
-            var CommentCode = getUrlParameter("CommentCode");
-            if(CommentCode == response[i]){
-                $("#comment_code").append("<option value='"+response[i]+"' selected>"+response[i]+"</option>");
-            }else{
-                $("#comment_code").append("<option value='"+response[i]+"'>"+response[i]+"</option>");
-            }
-            
-        }
-        
-    }
-});
-
-$( document ).ready(function() {
-
-
-var dataID = getUrlParameter("dataId");
-console.log("dataID = " + dataID)
-$("#location_id").text(dataID)
-
-// var CommentCode = getUrlParameter("CommentCode");
-// console.log("CommentCode = " + CommentCode)
-// var cmm_code = $("#comment_code").val();
-// console.log("cmm_code = "+cmm_code)
-    
-
-var Heading = getUrlParameter("Heading");
-console.log("Heading = " + Heading)
-$("#heading").val(Heading)
-
-
-var Explanation = getUrlParameter("Explanation");
-console.log("Explanation = " + Explanation)
-$("#explaination").val(Explanation)
-
-
-var Efficiency = getUrlParameter("Efficiency");
-console.log("Efficiency = " + Efficiency);
-$('#efficiency').val(String(Efficiency));
-
-
-
-var OperationTarget = getUrlParameter("OperationTarget");
-console.log("OperationTarget = " + OperationTarget);
-$("#OperationTarget").val(String(OperationTarget));
-
-
-var WorkingHour = getUrlParameter("WorkingHour");
-console.log("WorkingHour = " + WorkingHour)
-$("#working_hour").val(String(WorkingHour));
-
-
-var ExceptionWork = getUrlParameter("ExceptionWork");
-console.log("ExceptionWork = " + ExceptionWork)
-$("#ExceptionWork").val(ExceptionWork)
-
-
-var SupplementComment = getUrlParameter("SupplementComment");
-console.log("SupplementComment = " + SupplementComment)
-$("#SupplementComment").val(SupplementComment);
-
-});

@@ -117,7 +117,51 @@ def start_tornado(app, port=app_section.get('HTTP_LISTEN_PORT')):
 # ------------------------------------------------------
 @app.route("/")
 def index():
-    return render_template("ProcessChartMain.html")
+    return render_template("Login.html")
+
+
+
+@app.route("/gotoProcessMain",methods=['POST', 'GET'])
+def gotoProcessMain():
+    logger.info("gotoProcess Main  .....")
+    email = flask.request.form["email"]
+    print("email = ",email)
+    password = flask.request.form["password"]
+    print("password = ",password)
+    try:
+        user_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                   'Server='+app_section.get('IP')+';'
+                                   'Database=' +
+                                   app_section.get('DATABASE')+';'
+                                   'uid='+app_section.get('DB_USER_ID')+';'
+                                   'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        user_cursor = user_conn.cursor()
+        user_cursor.execute(
+            " SELECT "
+            "  mail_address, "
+            "  password "            
+            " FROM Person_Master_TBL "
+            " WHERE Mail_address = '" + email + "'"
+            "   AND ISNULL(Delete_flag, '0') <> '1' "
+            "   AND Principal_business_concurrent_service_code = '0' "
+        )
+
+        for x in user_cursor:
+            db_password = x[1]
+            # OrgCode（組織コード）           
+
+        if (password == db_password):
+            return render_template("ProcessChartMain.html")
+        else:
+            return render_template("Login.html",errorMsg = "メールとパスワードが間違っています。")
+    except Exception as inst:
+        print(inst)
+        logger.info("Error: in the function checkMatchEmailPassword ......")
+        return False
+
+
+    
 
 
 # ========================================================================
@@ -150,6 +194,17 @@ def goToProcessDiagramDetail():
 def gotoProcessEditWindow():
     logger.info("gotoProcessEditWindow .....")
     return render_template("ProcessEditWindow.html")
+
+# ========================================================================
+# プロセスチャートの詳細画面を表示する
+#
+# ------------------------------------------------------
+
+
+@app.route("/gotoProcessUsageGuide")
+def gotoProcessUsageGuide():
+    logger.info("gotoProcessUsageGuide .....")
+    return render_template("ProcessChartUsageGuide.html")
 
 
 # ############################################################################################################

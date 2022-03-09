@@ -587,16 +587,105 @@ def getProcessChartCommentData():
     finally:
         select_conn.close()
 
-        # print(json.dumps(topJson, indent=2, ensure_ascii=False))
+        print(json.dumps(topJson, indent=2, ensure_ascii=False))
 
         return jsonify(topJson)
 
+
+# ========================================================================
+# プロセス可視化チャート図：コメント内容情報を取得する
+# コメントコード
+#
+# ------------------------------------------------------
+
+
+@ProcessChartCmn00_api.route("/getProcessChartCommentDataFromCode/", methods=['POST', 'GET'])
+def getProcessChartCommentDataFromCode():
+
+    try:
+        chartDesignCode = flask.request.form['chartDesignCode']
+        commentCode = flask.request.form['commentCode']
+
+        print(chartDesignCode)
+        print(commentCode)
+
+        # SQL
+        select_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                     'Server='+app_section.get('IP')+';'
+                                     'Database=' +
+                                     app_section.get('DATABASE')+';'
+                                     'uid='+app_section.get('DB_USER_ID')+';'
+                                     'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        select_conn_cursor = select_conn.cursor()
+
+        topJson = []
+
+        # ---------------------------------------
+        # プロセス可視化チャート図情報を取得する
+        # ---------------------------------------
+        select_query = \
+            "SELECT " \
+            "  ISNULL(co.Heading, '') as Heading, " \
+            "  ISNULL(co.Explanation, '') as Explanation, " \
+            "  ISNULL(co.Efficiency, '') as Efficiency, " \
+            "  ISNULL(co.OperationTarget,'') as OperationTarget, " \
+            "  ISNULL(co.WorkingHour, '') as WorkingHour, " \
+            "  ISNULL(co.ExceptionWork,'') as ExceptionWork, " \
+            "  ISNULL(co.SupplementComment, '') as SupplementComment " \
+            "FROM " \
+            "    ChartComment_TBL as co " \
+            "WHERE " \
+            "   co.ChartDesignCode = '" + chartDesignCode + "'" \
+            "   AND co.CommentCode = '" + commentCode + "'"
+
+        select_conn_cursor.execute(select_query)
+
+        designList = []
+        dataList = Counter()
+
+        # チャート情報
+        for x in select_conn_cursor:
+            designPointBlock = Counter()
+
+            design = Counter()
+            # Comment
+            design['Heading'] = x[0]
+            design['Explanation'] = x[1]
+            design['Efficiency'] = x[2]
+            design['OperationTarget'] = x[3]
+            design['WorkingHour'] = x[4]
+            design['ExceptionWork'] = x[5]
+            design['SupplementComment'] = x[6]
+
+            designPointBlock['Block'] = design
+            designList.append(designPointBlock)
+
+        # 取り込み
+        dataList['design'] = designList
+
+        select_conn_cursor.close()
+
+        topJson.append(dataList)
+
+    except Exception as e:
+        print("getProcessChartCommentDataFromCode select error  " + e.args)
+        pass
+
+    # end
+    finally:
+        select_conn.close()
+
+        print(json.dumps(topJson, indent=2, ensure_ascii=False))
+
+        return jsonify(topJson)
 
 # ========================================================================
 # プロセス可視化チャート図：カラムを増減する
 #　例）D列にデータあって、D列を削除すると、D列のデータは消える
 #
 # ------------------------------------------------------
+
 
 @ProcessChartCmn00_api.route("/updateProcessChartColumn/", methods=['POST', 'GET'])
 def updateProcessChartColumn():
@@ -741,7 +830,7 @@ def plusProcessChartColumn(chartDesignCode, locationInfo, topJson):
 
     except Exception as e:
         resultStatus['statsu'] = "NG"
-        print("getProcessChartCommentData select error  " + e.args)
+        print("plusProcessChartColumn select error  " + e.args)
         pass
 
     # end
@@ -880,7 +969,7 @@ def MinusProcessChartColumn(chartDesignCode, locationInfo, topJson):
 
     except Exception as e:
         resultStatus['statsu'] = "NG"
-        print("getProcessChartCommentData select error  " + e.args)
+        print("MinusProcessChartColumn select error  " + e.args)
         pass
 
     # end
