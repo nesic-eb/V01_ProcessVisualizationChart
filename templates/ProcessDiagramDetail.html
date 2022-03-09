@@ -120,8 +120,8 @@
                     alt="NEC"></span><span class="l-header__txt--system">プロセス可視化チャート</span></h1>
         <div class="l-header--user">
             <div class="l-header--name"><i class="c-icon--user"><img src="/static/img/svg/icon_user.svg"
-                        alt="user"></i><span>{{user_name}}</span></div>
-            <div class="l-header--org">組織名:{{org_name}}<input type='hidden' id='real_login_org' value='{{org_name}}' />
+                        alt="user"></i><span>{{full_name}}</span></div>
+            <div class="l-header--org">組織名:{{organization}}<input type='hidden' id='real_login_org' value='{{org_name}}' />
             </div>
         </div>
     </header>
@@ -223,7 +223,7 @@
 
             -->
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <!-- 画面：左側要素のエリア -->
                     <div id="l_wrapper" style="width: 104%;">
                         <div id="left_table_Div">
@@ -232,7 +232,7 @@
                     </div>
                 </div>
 
-                <div class="col-sm-6" id="r_wrapper">
+                <div class="col-sm-5" id="r_wrapper">
                     <!-- 画面：右側要素のエリア -->
                     <div class="container-fluid" id="container_top">
                         <table>
