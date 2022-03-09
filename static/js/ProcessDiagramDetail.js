@@ -240,7 +240,7 @@ function createLeftTable(rows, column, design) {
 
     // 画面左側ブロックの親
     var left_table = document.getElementById("left_table_Div");
-    left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
+    //left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
     //left_table.setAttribute("style", "width: 1000px;")
 
     var mainTable = document.createElement("table");
@@ -413,7 +413,7 @@ function rightTableCreate(design) {
         var tbl = document.createElement("table");
         var tablename = "table_" + String(i)
         tbl.setAttribute("id", tablename);
-        tbl.setAttribute("style", "border: 1px #e3e3e3; width=1100px;");
+        tbl.setAttribute("style", "border: 1px #e3e3e3; ");
 
         // 空行
         {
@@ -500,7 +500,7 @@ function rightTableCreate(design) {
             td1.appendChild(p)
 
             var textarea = document.createElement("textarea");
-            textarea.setAttribute("style", "width:763px; height: 100px;");
+            textarea.setAttribute("style", "width:600px; height: 100px;");
             textarea.setAttribute("readonly", "true");
             textarea.value = CommentInfo
 
@@ -548,7 +548,7 @@ function rightTableCreate(design) {
             p.appendChild(node4);
             var text_box = document.createElement("input");
             text_box.setAttribute("type", "text");
-            text_box.setAttribute("style", "width: 563px; height:35px;");
+            text_box.setAttribute("style", "width: 403px; height:35px;");
             text_box.setAttribute("class", "form-control");
             text_box.setAttribute("readonly", "true");
             text_box.setAttribute("value", ExceptionWorkInfo);
@@ -591,7 +591,7 @@ function rightTableCreate(design) {
             td2.appendChild(p);
 
             var textarea = document.createElement("textarea");
-            textarea.setAttribute("style", "width:563px; height: 120px;");
+            textarea.setAttribute("style", "width:400px; height: 120px;");
             textarea.setAttribute("readonly", "true");
             textarea.value = SupplementCommentIngo
 

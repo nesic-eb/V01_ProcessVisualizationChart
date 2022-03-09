@@ -44,8 +44,8 @@
                     alt="NEC"></span><span class="l-header__txt--system">プロセス可視化チャート</span></h1>
         <div class="l-header--user">
             <div class="l-header--name"><i class="c-icon--user"><img src="/static/img/svg/icon_user.svg"
-                        alt="user"></i><span>{{ user_name }}</span></div>
-            <div class="l-header--org">組織名:{{ org_name }}<input type='hidden' id='real_login_org'
+                        alt="user"></i><span>{{ full_name }}</span></div>
+            <div class="l-header--org">組織名:{{ organization }}<input type='hidden' id='real_login_org'
                     value='{{org_name}}' />
             </div>
         </div>
@@ -73,7 +73,7 @@
                                 style="width: 200px; margin-top: 20px;" class="btn btn-primary">詳細画面を表示する</button></a>
                     </td>
                     <td style="width: 100px;">
-                        <a href="/"><button type="submit" id="btn_Back" class="btn btn-primary"
+                        <a href="/gotoProcessMainBack"><button type="submit" id="btn_Back" class="btn btn-primary"
                                 style="margin-top: 20px;">戻る</button></a>
                     </td>
                 </tr>
