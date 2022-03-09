@@ -14,9 +14,13 @@ console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessCheckEditWindow.js --------");
 
 console.log("edit_dataId=" + sessionStorage.getItem("edit_dataId"));
+console.log("ChartDesignCode=" + sessionStorage.getItem("ChartDesignCode"));
 console.log("edit_CommentCode=" + sessionStorage.getItem("edit_CommentCode"));
 
-console.log(sessionStorage.getItem("ChartDesignCode"));
+console.log("ChangeProhibitionflag=" + sessionStorage.getItem("ChangeProhibitionflag"));
+
+// 変更禁止フラグ（１：禁止）
+var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
 
 // 初期表示時のコメントコード
 var ORG_COMMENT_CODE = sessionStorage.getItem("edit_CommentCode");
@@ -125,6 +129,14 @@ function onloadProcessEditWindow() {
             dispEditData(BlockData);
         }
     });
+
+    // 変更禁止なので、更新系のボタンを削除する
+    if (CHANGEPROHIBITIONFLAG == "1") {
+        $("#updateData").remove();
+        $("#deleteData").remove();
+
+        document.getElementById("comment_code").disabled = true;
+    }
 }
 
 // ----------------------------------------------

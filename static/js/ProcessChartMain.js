@@ -24,6 +24,7 @@ sessionStorage.setItem("org2", "");
 sessionStorage.setItem("ProcessProcedureID", "");
 sessionStorage.setItem("ProcessProcedureName", "");
 sessionStorage.setItem("ChartDesignCode", "");
+sessionStorage.setItem("ChangeProhibitionflag", "");
 
 $('#org1').val(org1);
 $('#org2').val(org2);
@@ -40,7 +41,7 @@ $(document).ready(function () {
 });
 
 // ==================================================
-// 分析情報取得
+// 分類情報取得
 // 
 // ==================================================
 function getProcessCheckInfo() {
@@ -97,6 +98,8 @@ function CreateProcessdataTable() {
         console.log("WorkItem=" + wkData.WorkItem);
         console.log("procedure_name=" + wkData.procedure_name);
         console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+        console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+        console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
         console.log("CreateDateTime=" + wkData.CreateDateTime);
         console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
         console.log("ChartDesignCode=" + wkData.ChartDesignCode);
@@ -115,10 +118,12 @@ function CreateProcessdataTable() {
         row_array[1] = wkData.Classification;
         row_array[2] = wkData.WorkItem;
         row_array[3] = wkData.procedure_name;
-        row_array[4] = wkData.CreateMailAddress;
+        row_array[4] = wkData.CreateMailAddressName;
         row_array[5] = wkData.CreateDateTime;
         row_array[6] = wkData.ProcessProcedureID;
         row_array[7] = wkData.ChartDesignCode;
+        row_array[8] = wkData.ChangeProhibitionflag;
+        row_array[9] = wkData.CreateMailAddress;
 
         dataSet.push(row_array);
       };
@@ -135,9 +140,10 @@ function CreateProcessdataTable() {
           { title: "作成日" },
            /* DELETE */ {
             mRender: function (data, type, row) {
-              return '<a href="javascript:DispChartAction(\'' + row[3] + '\',\'' + row[6] + '\',\'' + row[7] + '\');"' +
+              return '<a href="javascript:DispChartAction(\'' + row[3] + '\',\'' + row[6] + '\',\'' + row[7] + '\',\'' + row[9] + '\',\'' + row[8] + '\');"' +
                 '" class="btn btn-primary">&nbsp;&nbsp;内容表示&nbsp;&nbsp;</a>' +
-                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] + '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\')">削除</button>'
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] +
+                '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\',\'' + row[9] + '\',\'' + row[8] + '\')">削除</button>'
             }, "width": "20%"
           },
         ],
@@ -175,7 +181,7 @@ function CreateProcessdataTable() {
 
 
 // ==================================================
-// 分析情報選択時に該当する情報を取得する
+// 分類情報選択時に該当する情報を取得する
 // 
 // ==================================================
 
@@ -219,8 +225,11 @@ $('#classification_code').on('change', function () {
           console.log("WorkItem=" + wkData.WorkItem);
           console.log("procedure_name=" + wkData.procedure_name);
           console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+          console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
           console.log("CreateDateTime=" + wkData.CreateDateTime);
           console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          console.log("ChartDesignCode=" + wkData.ChartDesignCode);
           console.log("Chart_Kind=" + wkData.Chart_Kind);
         }
         // Debug ---------------------------
@@ -236,7 +245,7 @@ $('#classification_code').on('change', function () {
           row_array[1] = wkData.Classification;
           row_array[2] = wkData.WorkItem;
           row_array[3] = wkData.procedure_name;
-          row_array[4] = wkData.CreateMailAddress;
+          row_array[4] = wkData.CreateMailAddressName;
           row_array[5] = wkData.CreateDateTime;
           ;
           dataSet.push(row_array);
@@ -275,7 +284,6 @@ $('#classification_code').on('change', function () {
     error: function (response) {
       console.log("Hello else data>>" + response)
       comboTree1.setSource("");
-
     }
   });
 });
@@ -322,8 +330,11 @@ $('#workitemID').on('change', function () {
           console.log("WorkItem=" + wkData.WorkItem);
           console.log("procedure_name=" + wkData.procedure_name);
           console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+          console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
           console.log("CreateDateTime=" + wkData.CreateDateTime);
           console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          console.log("ChartDesignCode=" + wkData.ChartDesignCode);
           console.log("Chart_Kind=" + wkData.Chart_Kind);
         }
         // Debug ---------------------------
@@ -339,7 +350,7 @@ $('#workitemID').on('change', function () {
           row_array[1] = wkData.Classification;
           row_array[2] = wkData.WorkItem;
           row_array[3] = wkData.procedure_name;
-          row_array[4] = wkData.CreateMailAddress;
+          row_array[4] = wkData.CreateMailAddressName;
           row_array[5] = wkData.CreateDateTime;
 
           dataSet.push(row_array);
@@ -391,6 +402,7 @@ $('#workitemID').on('change', function () {
           console.log("WorkItem=" + wkData.WorkItem);
           console.log("procedure_name=" + wkData.procedure_name);
           console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          console.log("CreateMailAddressname=" + wkData.CreateMailAddressName);
           console.log("CreateDateTime=" + wkData.CreateDateTime);
           console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
           console.log("Chart_Kind=" + wkData.Chart_Kind);
@@ -408,7 +420,7 @@ $('#workitemID').on('change', function () {
           row_array[1] = wkData.Classification;
           row_array[2] = wkData.WorkItem;
           row_array[3] = wkData.procedure_name;
-          row_array[4] = wkData.CreateMailAddress;
+          row_array[4] = wkData.CreateMailAddressName;
           row_array[5] = wkData.CreateDateTime;
 
           dataSet1.push(row_array);
@@ -438,7 +450,7 @@ $('#workitemID').on('change', function () {
       success: function (response) {
         if (response != "" && response != " " && response != "null") {
           var code_value = response[0];
-          $('#work_name').val(code_value);
+          // $('#work_name').val(code_value);
         }
       }
     });
@@ -480,7 +492,7 @@ $('#btn_register').click(function (e) {
         alert("登録しました。");
         window.location.reload();
       } else {
-        alert(response[0] + " : " + response[1]);
+        //alert(response[0] + " : " + response[1]);
         window.location.reload();
       }
     }
@@ -492,7 +504,7 @@ $('#btn_register').click(function (e) {
 //
 // ==================================================
 
-function DispChartAction(processProcedureName, processProcedureID, chartDesignCode) {
+function DispChartAction(processProcedureName, processProcedureID, chartDesignCode, createUser, changeProhibitionflag) {
   // 選択した情報をセッション情報へ
   sessionStorage.setItem("email", user_emal);
   sessionStorage.setItem("org1", org1);
@@ -500,6 +512,15 @@ function DispChartAction(processProcedureName, processProcedureID, chartDesignCo
   sessionStorage.setItem("ProcessProcedureID", processProcedureID);
   sessionStorage.setItem("ProcessProcedureName", processProcedureName);
   sessionStorage.setItem("ChartDesignCode", chartDesignCode);
+
+  // 変更可能？
+  sessionStorage.setItem("ChangeProhibitionflag", "0");
+  if (changeProhibitionflag == "1") {
+    if (createUser != user_emal) {
+      // 作成者でないので、編集禁止
+      sessionStorage.setItem("ChangeProhibitionflag", "1");
+    }
+  }
 
   // 画面に遷移する
   location.href = "../gotoProcessDiagram"
@@ -510,7 +531,17 @@ function DispChartAction(processProcedureName, processProcedureID, chartDesignCo
 // 
 // ==================================================
 
-function DeleteAction(work_name, workitem, processProcedureID) {
+function DeleteAction(work_name, workitem, processProcedureID, createUser, changeProhibitionflag) {
+
+  // 削除可能？
+  if (changeProhibitionflag == "1") {
+    if (createUser != user_emal) {
+      // 作成者でないので、編集禁止
+      alert("削除は、作成者が可能です。");
+      location.href = "../gotoProcessMainWindow"
+    }
+  }
+
   var workName = work_name.trim();
   var result = window.confirm(workName + 'を削除します。よろしいでしょうか？');
 
@@ -528,9 +559,12 @@ function DeleteAction(work_name, workitem, processProcedureID) {
         processProcedureID: processProcedureID
       },
       success: function (response) {
-        window.location.reload();
+        location.href = "../gotoProcessMainWindow"
       }//end of success
 
     });//end of ajax
-  };
+  }
+  else {
+    location.href = "../gotoProcessMainWindow"
+  }
 };

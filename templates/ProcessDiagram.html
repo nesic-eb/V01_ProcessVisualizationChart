@@ -44,8 +44,8 @@
                     alt="NEC"></span><span class="l-header__txt--system">プロセス可視化チャート</span></h1>
         <div class="l-header--user">
             <div class="l-header--name"><i class="c-icon--user"><img src="/static/img/svg/icon_user.svg"
-                        alt="user"></i><span>{{ user_name }}</span></div>
-            <div class="l-header--org">組織名:{{ org_name }}<input type='hidden' id='real_login_org'
+                        alt="user"></i><span>{{ full_name }}</span></div>
+            <div class="l-header--org">組織名:{{ organization }}<input type='hidden' id='real_login_org'
                     value='{{org_name}}' />
             </div>
         </div>
@@ -64,7 +64,7 @@
                             id='process_ProcedureName' value="">
                         <button class="btn btn-success"
                             style="width: 100px; height: 30px; margin-left: 10px; margin-top: 30px;"
-                            onclick="SaveToProcessChartDataTBL()">名称変更</button>
+                            id="updateChartName" onclick="SaveToProcessChartDataTBL()">名称変更</button>
                     </td>
                     <td style="width: 70px;">
                     </td>
@@ -73,7 +73,7 @@
                                 style="width: 200px; margin-top: 20px;" class="btn btn-primary">詳細画面を表示する</button></a>
                     </td>
                     <td style="width: 100px;">
-                        <a href="/"><button type="submit" id="btn_Back" class="btn btn-primary"
+                        <a href="/gotoProcessMainBack"><button type="submit" id="btn_Back" class="btn btn-primary"
                                 style="margin-top: 20px;">戻る</button></a>
                     </td>
                 </tr>
@@ -167,7 +167,7 @@
                     </td>
                     <td>
                         <button class="btn btn-success" style="width: 70px; height: 30px; margin-top: -10px;"
-                            onclick="ChangeToProcessChartColumnRow()">枠変更</button>
+                            id="updateWakuSize" onclick="ChangeToProcessChartColumnRow()">枠変更</button>
                     </td>
                     <td style="width: 30px;">
                     </td>
@@ -196,7 +196,7 @@
         <br />
 
         <!-- Create table -->
-        <div id="processChart_container">
+        <div id="processChart_container" style="margin-right: 20px;">
         </div>
 
         <!-- =============================================== -->

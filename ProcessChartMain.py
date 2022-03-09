@@ -247,6 +247,7 @@ def getAllProcessCheckData():
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
             "   pt.ProcessProcedureID, " \
+            "   pt.ChangeProhibitionflag, " \
             "   ISNULL(pt.ChartDesignCode, '') as ChartDesignCode " \
             "     , ( " \
             " select " \
@@ -255,6 +256,7 @@ def getAllProcessCheckData():
             "  Person_Master_TBL " \
             " where " \
             "  Mail_address = pt.CreateMailAddress " \
+            "  and Delete_flag <> '1' " \
             "  and Principal_business_concurrent_service_code = '0' " \
             " ) as usrname " \
             " FROM " \
@@ -285,11 +287,12 @@ def getAllProcessCheckData():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-          #  dataList['CreateMailAddress'] = x[5]
-            dataList['CreateMailAddress'] = x[9]
+            dataList['CreateMailAddress'] = x[5]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
-            dataList['ChartDesignCode'] = x[8]
+            dataList['ChangeProhibitionflag'] = x[8]
+            dataList['ChartDesignCode'] = x[9]
+            dataList['CreateMailAddressName'] = x[10]
 
             dataList['Chart_Kind'] = wkChartKind[0]
 
@@ -352,7 +355,8 @@ def getProcessCheckDataByClassification():
             "   pt.ProcessProcedureName, " \
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
-            "   pt.ProcessProcedureID " \
+            "   pt.ProcessProcedureID, " \
+            "   pt.ChangeProhibitionflag " \
             "     , ( " \
             " select " \
             " Surname + ' ' + name " \
@@ -391,11 +395,12 @@ def getProcessCheckDataByClassification():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-          #  dataList['CreateMailAddress'] = x[5]
-            dataList['CreateMailAddress'] = x[8]
+            dataList['CreateMailAddress'] = x[5]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
             dataList['Chart_Kind'] = wkChartKind[0]
+            dataList['ChangeProhibitionflag'] = x[8]
+            dataList['CreateMailAddressName'] = x[9]
 
             processCheck_data.append(dataList)
 
@@ -459,7 +464,8 @@ def getProcessCheckDataByWorkItemID():
             "   pt.ProcessProcedureName, " \
             "   ISNULL(pt.CreateMailAddress, '-') as Create_user, " \
             "   ISNULL(pt.CreateDateTime, '-') as Create_Date, " \
-            "   pt.ProcessProcedureID " \
+            "   pt.ProcessProcedureID," \
+            "   pt.ChangeProhibitionflag " \
             "     , ( " \
             " select " \
             " Surname + ' ' + name " \
@@ -499,11 +505,12 @@ def getProcessCheckDataByWorkItemID():
             dataList['Classification'] = x[0] + "/" + x[1].strip()
             dataList['WorkItem'] = x[2] + "/" + x[3]
             dataList['procedure_name'] = x[4]
-          #  dataList['CreateMailAddress'] = x[5]
-            dataList['CreateMailAddress'] = x[8]
+            dataList['CreateMailAddress'] = x[5]
             dataList['CreateDateTime'] = x[6]
             dataList['ProcessProcedureID'] = x[7]
             dataList['Chart_Kind'] = wkChartKind[0]
+            dataList['ChangeProhibitionflag'] = x[8]
+            dataList['CreateMailAddressName'] = x[9]
 
             processCheck_data.append(dataList)
 
@@ -612,7 +619,7 @@ def registerProcessCheckData():
                     "'" + org1 + "', " \
                     "'" + org2 + "', " \
                     "'0', " \
-                    "'0', " \
+                    "'1', " \
                     "'0', " \
                     "'0', " \
                     "'0.0' , " \
