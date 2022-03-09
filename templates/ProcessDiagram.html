@@ -64,7 +64,7 @@
                             id='process_ProcedureName' value="">
                         <button class="btn btn-success"
                             style="width: 100px; height: 30px; margin-left: 10px; margin-top: 30px;"
-                            onclick="SaveToProcessChartDataTBL()">名称変更</button>
+                            id="updateChartName" onclick="SaveToProcessChartDataTBL()">名称変更</button>
                     </td>
                     <td style="width: 70px;">
                     </td>
@@ -167,7 +167,7 @@
                     </td>
                     <td>
                         <button class="btn btn-success" style="width: 70px; height: 30px; margin-top: -10px;"
-                            onclick="ChangeToProcessChartColumnRow()">枠変更</button>
+                            id="updateWakuSize" onclick="ChangeToProcessChartColumnRow()">枠変更</button>
                     </td>
                     <td style="width: 30px;">
                     </td>
@@ -196,7 +196,7 @@
         <br />
 
         <!-- Create table -->
-        <div id="processChart_container">
+        <div id="processChart_container" style="margin-right: 20px;">
         </div>
 
         <!-- =============================================== -->

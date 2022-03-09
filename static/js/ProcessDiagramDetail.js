@@ -18,8 +18,12 @@ console.log(sessionStorage.getItem("org2"));
 console.log(sessionStorage.getItem("ProcessProcedureID"));
 console.log(sessionStorage.getItem("ProcessProcedureName"));
 console.log(sessionStorage.getItem("ChartDesignCode"));
+console.log(sessionStorage.getItem("ChangeProhibitionflag"));
 
 console.log("■ ---------------------------------------------");
+
+// 変更禁止フラグ（１：禁止）
+var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
 
 var G_COMMENT_MAX = 0
 var G_WORKTIME_TOTAL = 0
@@ -69,6 +73,10 @@ $(document).ready(function () {
             // ---------------------------
             // 画面上部へデータを設定する
             {
+                // チャート
+                var label = document.getElementById("chart_titile");
+                label.textContent = data[0].ProcessProcedureName;
+
                 // 合計時間
                 document.getElementById("TotalWorkingTime").value = data[0].TotalWorkingTime;
 
@@ -113,6 +121,13 @@ $(document).ready(function () {
     });
 });
 
+// 変更禁止なので、更新系のボタンを削除する
+if (CHANGEPROHIBITIONFLAG == "1") {
+    $("#updateChartData").remove();
+    document.getElementById("SelectWorkFrequency").disabled = true;
+    document.getElementById("SelectWorkNumberOfWorkers").disabled = true;
+    document.getElementById("ChangeProhibitionFlag").disabled = true;
+}
 
 // ##################################################################################################
 // ##################################################################################################
@@ -311,28 +326,18 @@ function createLeftTable(rows, column, design) {
     for (var a = 0; a < design.length; a++) {
         var Block = design[a].Block;
         var LocationInfo = Block.LocationInfo;
-        console.log("LocationInfo = " + LocationInfo);
         var location_id = document.getElementById(LocationInfo);
 
         var ImageName = Block.ImageName;
         var ImageFileName = Block.ImageFileName;
-        console.log("ImageName = " + ImageName);
         var CommentCode = Block.CommentCode;
-        console.log("CommentCode=" + CommentCode);
         var Heading = Block.Heading;
-        console.log("Heading = " + Heading);
         var Explanation = Block.Explanation;
-        console.log("Explanation=" + Explanation);
         var Efficiency = Block.Efficiency;
-        console.log("Efficiency=" + Efficiency)
         var OperationTarget = Block.OperationTarget;
-        console.log("OperationTarget = " + OperationTarget);
         var WorkingHour = Block.WorkingHour;
-        console.log("WorkingHour = " + WorkingHour);
         var ExceptionWork = Block.ExceptionWork;
-        console.log("ExceptionWork = " + ExceptionWork);
         var SupplementComment = Block.SupplementComment;
-        console.log("SupplementComment = " + SupplementComment)
 
         var br = document.createElement("br");
 
@@ -413,79 +418,143 @@ function rightTableCreate(design) {
         var tbl = document.createElement("table");
         var tablename = "table_" + String(i)
         tbl.setAttribute("id", tablename);
-        tbl.setAttribute("style", "border: 1px #e3e3e3; ");
+        tbl.setAttribute("style", "border: 1px #e3e3e3; width: 100%;");
 
         // 空行
         {
             // 展開の状態
             var trWk = document.createElement("tr");
-            var tdwk = document.createElement("td");
-            var text_box = document.createElement("input")
-            text_box.setAttribute("type", "hidden");
-            text_box.setAttribute("value", "1");
-            text_box.setAttribute("id", "OpenStatus_" + String(i));
-            text_box.setAttribute("name", "OpenStatus_" + String(i));
+            //trWk.classList.add("l-border");
 
-            var p1 = document.createElement("p");
-            var node = document.createTextNode("　");
-            p1.appendChild(node);
-            tdwk.appendChild(p1);
+            {
+                var td1 = document.createElement("td");
+                td1.setAttribute("style", "width: 10px;");
+                //td1.classList.add("l-border");
+            }
+            trWk.appendChild(td1);
 
-            tdwk.appendChild(text_box);
-            trWk.appendChild(tdwk);
+            {
+                var td2 = document.createElement("td");
+                td2.setAttribute("style", "width: 130px;");
+                //td2.classList.add("l-border");
+
+                var text_box = document.createElement("input")
+                text_box.setAttribute("type", "hidden");
+                text_box.setAttribute("value", "1");
+                text_box.setAttribute("id", "OpenStatus_" + String(i));
+                text_box.setAttribute("name", "OpenStatus_" + String(i));
+                td2.appendChild(text_box);
+            }
+            trWk.appendChild(td2);
+
+            {
+                var td1_5 = document.createElement("td");
+                td1_5.setAttribute("style", "width: 10px;");
+                //td1_5.classList.add("l-border");
+
+                var p1 = document.createElement("p");
+                var node = document.createTextNode("");
+                p1.appendChild(node);
+                td1_5.appendChild(p1);
+            }
+            trWk.appendChild(td1_5);
+
+            {
+                var td3 = document.createElement("td");
+                td3.setAttribute("style", "width: 300px;");
+                //td3.classList.add("l-border");
+
+                var p1 = document.createElement("p");
+                var node = document.createTextNode("");
+                p1.appendChild(node);
+                td3.appendChild(p1);
+            }
+            trWk.appendChild(td3);
+
+            // 予備
+            {
+                var td4 = document.createElement("td");
+                td4.setAttribute("style", "width: 10px;");
+                //td4.classList.add("l-border");
+
+                var p3 = document.createElement("p")
+                var node3 = document.createTextNode("");
+                p3.appendChild(node3);
+                td4.appendChild(p3);
+            }
+
+            trWk.appendChild(td4);
+
             tbl.appendChild(trWk)
-
         }
 
         // １行目
         var tr1 = document.createElement("tr");
         {
             var td1 = document.createElement("td");
-            td1.setAttribute("style", "width: 200px;");
+            //td1.classList.add("l-border");
 
             // 位置
-            var p1 = document.createElement("p");
-            var node = document.createTextNode("位置")
-            p1.appendChild(node);;
-            td1.appendChild(p1);
+            {
+                var p1 = document.createElement("p");
+                var node = document.createTextNode("位置")
+                p1.appendChild(node);;
+                td1.appendChild(p1);
 
-            var text_box = document.createElement("input");
-            text_box.setAttribute("type", "text");
-            text_box.setAttribute("style", "background-color: yellow; width: 180px; height: 30px; margin-top: 5px; text-align:left;");
-            text_box.setAttribute("readonly", "true");
-            text_box.setAttribute("id", "Comment_" + String(i));
-            text_box.setAttribute("value", LocationInfo);
-            td1.appendChild(text_box);
+                var text_box = document.createElement("input");
+                text_box.setAttribute("type", "text");
+                text_box.setAttribute("style", "background-color: yellow; width: 180px; height: 30px; margin-top: 5px; text-align:left;");
+                text_box.setAttribute("readonly", "true");
+                text_box.setAttribute("id", "Comment_" + String(i));
+                text_box.setAttribute("value", LocationInfo);
+                td1.appendChild(text_box);
+            }
 
             // 見出し
-            var td2 = document.createElement("td");
-            td2.setAttribute("style", "width: 400px;");
+            {
+                var td2 = document.createElement("td");
+                //td2.classList.add("l-border");
+                td2.setAttribute("colspan", "2");
+                td2.setAttribute("style", "width: 400px;");
 
-            var p2 = document.createElement("p");
-            var node2 = document.createTextNode("見出し")
-            p2.appendChild(node2);;
-            td2.appendChild(p2);
+                var p2 = document.createElement("p");
+                var node2 = document.createTextNode("見出し")
+                p2.appendChild(node2);;
+                td2.appendChild(p2);
 
-            var text_box = document.createElement("input");
-            text_box.setAttribute("type", "text");
-            text_box.setAttribute("style", "width: 400px; height:35px;");
-            text_box.setAttribute("class", "form-control");
-            text_box.setAttribute("readonly", "true");
-            text_box.setAttribute("value", Heading);
-            td2.appendChild(text_box);
+                var text_box = document.createElement("input");
+                text_box.setAttribute("type", "text");
+                text_box.setAttribute("style", "width: 400px; height:35px;");
+                text_box.setAttribute("class", "form-control");
+                text_box.setAttribute("readonly", "true");
+                text_box.setAttribute("value", Heading);
+                td2.appendChild(text_box);
+            }
 
             // 予備
             var td3 = document.createElement("td");
+            //td3.classList.add("l-border");
+
             td3.setAttribute("style", "width: 10px;");
             var p3 = document.createElement("p")
             var node3 = document.createTextNode("");
             p3.appendChild(node3);
             td3.appendChild(p3);
+
+            var td4 = document.createElement("td");
+            //td4.classList.add("l-border");
+
+            td4.setAttribute("style", "width: 10px;");
+            var p4 = document.createElement("p")
+            var node4 = document.createTextNode("");
+            p3.appendChild(node4);
+            td4.appendChild(p4);
         }
 
         tr1.appendChild(td1);
         tr1.appendChild(td2);
         tr1.appendChild(td3);
+        tr1.appendChild(td4);
 
         tbl.appendChild(tr1)
 
@@ -493,19 +562,45 @@ function rightTableCreate(design) {
         var tr2 = document.createElement("tr");
         {
             var td1 = document.createElement("td");
+            //td1.classList.add("l-border");
             td1.setAttribute("colspan", "3");
+            td1.setAttribute("style", "width: 720px;");
             var p = document.createElement("p")
             var node4 = document.createTextNode("説明")
             p.appendChild(node4);
             td1.appendChild(p)
 
             var textarea = document.createElement("textarea");
-            textarea.setAttribute("style", "width:600px; height: 100px;");
+            textarea.setAttribute("style", "width: 590px; height: 100px;");
             textarea.setAttribute("readonly", "true");
             textarea.value = CommentInfo
-
             td1.appendChild(textarea)
+
             tr2.appendChild(td1);
+
+            // 予備
+            var td3 = document.createElement("td");
+            //td3.classList.add("l-border");
+
+            td3.setAttribute("style", "width: 10px;");
+            var p3 = document.createElement("p")
+            var node3 = document.createTextNode("");
+            p3.appendChild(node3);
+            td3.appendChild(p3);
+
+            tr2.appendChild(td3);
+
+            var td4 = document.createElement("td");
+            //td4.classList.add("l-border");
+
+            td4.setAttribute("style", "width: 30px;");
+            var p4 = document.createElement("p")
+            var node4 = document.createTextNode("");
+            p4.appendChild(node4);
+            td4.appendChild(p4);
+
+            tr2.appendChild(td4);
+
             tbl.appendChild(tr2)
         }
 
@@ -513,6 +608,8 @@ function rightTableCreate(design) {
         {
             var trWk = document.createElement("tr");
             var tdwk = document.createElement("td");
+            //tdwk.classList.add("l-border");
+
             var p = document.createElement("p")
             var node4 = document.createTextNode("　")
             p.appendChild(node4);

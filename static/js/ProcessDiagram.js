@@ -20,6 +20,10 @@ var ProcessProcedureID = sessionStorage.getItem("ProcessProcedureID")
 var ProcessProcedureName = sessionStorage.getItem("ProcessProcedureName")
 var ChartDesignCode = sessionStorage.getItem("ChartDesignCode")
 
+// 変更禁止フラグ（１：禁止）
+var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
+
+// 時間合計
 var G_WORKTIME_TOTAL = 0
 
 console.log("Email = " + email);
@@ -28,6 +32,7 @@ console.log("Org2 = " + org2);
 console.log("Process Procedure ID = " + ProcessProcedureID);
 console.log("Process Procedure Name = " + ProcessProcedureName);
 console.log("Chart Design Code = " + ChartDesignCode);
+console.log("CCHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
 
 // ##################################################################################################
 // ##################################################################################################
@@ -35,6 +40,15 @@ console.log("Chart Design Code = " + ChartDesignCode);
 
 // チャートデザインコード（hiddin）
 $('#chartDesignCode').val(ChartDesignCode);
+
+// 変更禁止なので、更新系のボタンを削除する
+if (CHANGEPROHIBITIONFLAG == "1") {
+  $("#updateChartName").remove();
+  $("#updateWakuSize").remove();
+  document.getElementById("DiagramColumns").readOnly = true;
+  document.getElementById("DiagramRows").readOnly = true;
+  document.getElementById("AutoSaveModeCheck").checked = false;
+}
 
 // ##################################################################################################
 // ##################################################################################################
@@ -165,7 +179,7 @@ function onLoadProcessChartData() {
           document.getElementById("PermissionFlag").checked = true;
         }
 
-        // 外部閲覧を禁止する
+        // 変更を禁止する（作成者のみ可）
         if (blockData.ChangeProhibitionFlag == "0") {
           document.getElementById("ChangeProhibitionFlag").checked = false;
         }
@@ -222,42 +236,53 @@ function onLoadProcessChartData() {
           div.appendChild(span);
 
           // Plus（カラム）
-          {
-            var aplus = document.createElement('a');
-            aplus.setAttribute("href", "");
-            aplus.setAttribute("id", chr + "_rowPlus");
-            aplus.setAttribute("name", chr + "_rowPlus");
-            var img = document.createElement('img');
-            img.setAttribute("style", "margin-top: 0px; width: 18px;");
-            img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
-            // 要素にクリックイベントを追加する
-            aplus.onclick = (function (num) {
-              return function () {
-                PlusMinusColumnAction(this, num, "plus");
+          if (CHANGEPROHIBITIONFLAG == "0") {
+            {
+              var aplus = document.createElement('a');
+              aplus.setAttribute("href", "");
+              aplus.setAttribute("id", chr + "_rowPlus");
+              aplus.setAttribute("name", chr + "_rowPlus");
+              var img = document.createElement('img');
+              img.setAttribute("style", "margin-top: 0px; width: 18px;");
+
+              // Zまである場合は、+ は表示しない
+              if (Number(blockData.ColumnNumber) < 26) {
+                img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
+                // 要素にクリックイベントを追加する
+                aplus.onclick = (function (num) {
+                  return function () {
+                    PlusMinusColumnAction(this, num, "plus");
+                  }
+                })(j);
               }
-            })(j);
+            }
+            aplus.appendChild(img);
+            div.appendChild(aplus);
           }
-          aplus.appendChild(img);
-          div.appendChild(aplus);
 
           // Minus（カラム）
-          {
-            var aMinus = document.createElement('a');
-            aMinus.setAttribute("href", "");
-            aMinus.setAttribute("id", chr + "_rowMinus");
-            aMinus.setAttribute("name", chr + "_rowMinus");
-            var img = document.createElement('img');
-            img.setAttribute("style", "margin-top: 0px; width: 18px;");
-            img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
-            // 要素にクリックイベントを追加する
-            aMinus.onclick = (function (num) {
-              return function () {
-                PlusMinusColumnAction(this, num, "Minus");
+          if (CHANGEPROHIBITIONFLAG == "0") {
+            {
+              var aMinus = document.createElement('a');
+              aMinus.setAttribute("href", "");
+              aMinus.setAttribute("id", chr + "_rowMinus");
+              aMinus.setAttribute("name", chr + "_rowMinus");
+              var img = document.createElement('img');
+              img.setAttribute("style", "margin-top: 0px; width: 18px;");
+              img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
+
+              if (CHANGEPROHIBITIONFLAG == "0") {
+                // 要素にクリックイベントを追加する
+                aMinus.onclick = (function (num) {
+                  return function () {
+                    PlusMinusColumnAction(this, num, "Minus");
+                  }
+                })(j);
               }
-            })(j);
+            }
+            aMinus.appendChild(img);
+            div.appendChild(aMinus);
           }
-          aMinus.appendChild(img);
-          div.appendChild(aMinus);
 
           th.appendChild(div);
         }
@@ -287,44 +312,47 @@ function onLoadProcessChartData() {
         var p = document.createElement('p');
 
         // Plus（行）
-        {
-          var aplus = document.createElement('a');
-          aplus.setAttribute("href", "");
-          aplus.setAttribute("id", chr + "_rowPlus");
-          aplus.setAttribute("name", chr + "_rowPlus");
-          var img = document.createElement('img');
-          img.setAttribute("style", "margin-top: 0px; width: 18px;");
-          img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
-          // 要素にクリックイベントを追加する
-          aplus.onclick = (function (num) {
-            return function () {
-              PlusMinusRowsAction(this, num, "plus");
-            }
-          })(k);
+        if (CHANGEPROHIBITIONFLAG == "0") {
+          {
+            var aplus = document.createElement('a');
+            aplus.setAttribute("href", "");
+            aplus.setAttribute("id", chr + "_rowPlus");
+            aplus.setAttribute("name", chr + "_rowPlus");
+            var img = document.createElement('img');
+            img.setAttribute("style", "margin-top: 0px; width: 18px;");
+            img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
+            // 要素にクリックイベントを追加する
+            aplus.onclick = (function (num) {
+              return function () {
+                PlusMinusRowsAction(this, num, "plus");
+              }
+            })(k);
+          }
+          aplus.appendChild(img);
+          td.appendChild(aplus);
         }
-        aplus.appendChild(img);
-        td.appendChild(aplus);
         td.append(p);
 
         // Minus（行）
-        {
-          var aMinus = document.createElement('a');
-          aMinus.setAttribute("href", "");
-          aMinus.setAttribute("id", chr + "_rowMinus");
-          aMinus.setAttribute("name", chr + "_rowMinus");
-          var img = document.createElement('img');
-          img.setAttribute("style", "margin-top: -12px; width: 18px; margin-bottom: 3px");
-          img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
-          // 要素にクリックイベントを追加する
-          aMinus.onclick = (function (num) {
-            return function () {
-              PlusMinusRowsAction(this, num, "Minus");
-            }
-          })(k);
+        if (CHANGEPROHIBITIONFLAG == "0") {
+          {
+            var aMinus = document.createElement('a');
+            aMinus.setAttribute("href", "");
+            aMinus.setAttribute("id", chr + "_rowMinus");
+            aMinus.setAttribute("name", chr + "_rowMinus");
+            var img = document.createElement('img');
+            img.setAttribute("style", "margin-top: -12px; width: 18px; margin-bottom: 3px");
+            img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
+            // 要素にクリックイベントを追加する
+            aMinus.onclick = (function (num) {
+              return function () {
+                PlusMinusRowsAction(this, num, "Minus");
+              }
+            })(k);
+          }
+          aMinus.appendChild(img);
+          td.appendChild(aMinus);
         }
-        aMinus.appendChild(img);
-        td.appendChild(aMinus);
-
         tr.append(td);
 
         // 枠の中のデータ
@@ -334,12 +362,16 @@ function onLoadProcessChartData() {
 
           {
             var select = document.createElement('select');
-            // 要素にクリックイベントを追加する
-            select.onchange = (function (location) {
-              return function () {
-                saveChartImg(this, location);
+            if (CHANGEPROHIBITIONFLAG == "0") {
+              {
+                // 要素にクリックイベントを追加する
+                select.onchange = (function (location) {
+                  return function () {
+                    saveChartImg(this, location);
+                  }
+                })(String.fromCharCode(64 + innerloop) + "_" + k);
               }
-            })(String.fromCharCode(64 + innerloop) + "_" + k);
+            }
 
             select.setAttribute("id", String.fromCharCode(64 + innerloop) + "_" + k + "_select");
             select.setAttribute("name", String.fromCharCode(64 + innerloop) + "_" + k + "_name");
@@ -347,7 +379,6 @@ function onLoadProcessChartData() {
             select.setAttribute('style', "margin-top: -60px;");
             select.setAttribute('size', 5);
 
-            var imgSelectName = "";
             var checkName = checkImgName(String.fromCharCode(64 + innerloop) + "_" + k, design);
             if (checkName != "") {
               imgSelectName = checkName;
@@ -368,6 +399,11 @@ function onLoadProcessChartData() {
               }
               select.appendChild(option);
             }
+
+            // 変更禁止
+            if (CHANGEPROHIBITIONFLAG == "1") {
+              select.disabled = true;
+            }
           }
 
           tdi.appendChild(select);
@@ -379,11 +415,19 @@ function onLoadProcessChartData() {
           input.setAttribute('type', "text");
           input.setAttribute('style', "text-align:center; height: 25px;");
           input.setAttribute('value', checkText);
-          input.onchange = (function (location) {
-            return function () {
-              saveChartComment(this, location);
+          if (CHANGEPROHIBITIONFLAG == "1") {
+            input.readOnly = true;
+          }
+
+          if (CHANGEPROHIBITIONFLAG == "0") {
+            {
+              input.onchange = (function (location) {
+                return function () {
+                  saveChartComment(this, location);
+                }
+              })(String.fromCharCode(64 + innerloop) + "_" + k);
             }
-          })(String.fromCharCode(64 + innerloop) + "_" + k);
+          }
 
           tdi.appendChild(input);
           tr.append(tdi);

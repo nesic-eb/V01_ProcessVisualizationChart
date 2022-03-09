@@ -122,19 +122,25 @@ def index():
 
 @app.route("/gotoProcessMainBack")
 def gotoProcessMainBack():
-    organization = session["organization"] 
-    full_name = session["full_name"] 
-    return render_template("ProcessChartMain.html",organization=organization,full_name = full_name)
+    organization = session["organization"]
+    full_name = session["full_name"]
+    return render_template("ProcessChartMain.html", organization=organization, full_name=full_name)
 
 
-
-@app.route("/gotoProcessMain",methods=['POST', 'GET'])
+# ========================================================================
+# プロセス可視化チャート画面：ログイン画面
+#
+# ------------------------------------------------------
+@app.route("/gotoProcessMain", methods=['POST', 'GET'])
 def gotoProcessMain():
+
     logger.info("gotoProcess Main  .....")
     email = flask.request.form["email"]
-    print("email = ",email)
+    print("email = ", email)
+
     password = flask.request.form["password"]
-    print("password = ",password)
+    print("password = ", password)
+
     try:
         user_conn = pyodbc.connect('DRIVER={SQL Server};'
                                    'Server='+app_section.get('IP')+';'
@@ -152,9 +158,10 @@ def gotoProcessMain():
             "  p.Organization_Code_2,"
             "  p.Organization_Code_3,"
             "  p.Organization_Code_4,"
-            "  org.Organization_Name_abbr, "  
+
+            "  org.Organization_Name_abbr, "
             "  p.surname, "
-            "  p.surname "          
+            "  p.name "
             "  FROM Person_Master_TBL as p , Organization_Master_TBL as org "
             " WHERE p.Mail_address = '" + email + "'"
             "   AND ISNULL(p.Delete_flag, '0') <> '1' "
@@ -174,37 +181,47 @@ def gotoProcessMain():
             org_name = x[6]
             sur_name = x[7]
             name = x[8]
-            # OrgCode（組織コード）           
-
+            
+        # OrgCode（組織コード）
         if (password == db_password):
             session["email"] = email
-            organization = org_code_1+"-"+org_code_2+"-"+org_code_3+"-"+org_code_4+"/"+org_name
+            organization = org_code_1+"-"+org_code_2 + \
+                "-"+org_code_3+"-"+org_code_4+"/"+org_name
             full_name = sur_name+" "+name
             session["organization"] = organization
             session["full_name"] = full_name
-            return render_template("ProcessChartMain.html",organization=organization,full_name = full_name)
+            return render_template("ProcessChartMain.html", organization=organization, full_name=full_name)
         else:
-            return render_template("Login.html",errorMsg = "メールとパスワードが間違っています。")
+            return render_template("Login.html", errorMsg="メールとパスワードが間違っています。")
+
     except Exception as inst:
         print(inst)
         logger.info("Error: in the function checkMatchEmailPassword ......")
         return False
 
+# ========================================================================
+# プロセス可視化チャート画面：メイン画面
+#
+# ------------------------------------------------------
 
-    
 
+@app.route("/gotoProcessMainWindow", methods=['POST', 'GET'])
+def gotoProcessMainWindow():
+    logger.info("gotoProcessMainWindow .....")
+    return render_template("ProcessChartMain.html")
 
 # ========================================================================
 # プロセスチャート画面を表示する
 #
 # ------------------------------------------------------
 
+
 @app.route("/gotoProcessDiagram")
 def gotoProcessDiagram():
     logger.info("gotoProcessDiagram .....")
-    organization = session["organization"] 
-    full_name = session["full_name"] 
-    return render_template("ProcessDiagram.html",organization=organization,full_name=full_name)
+    organization = session["organization"]
+    full_name = session["full_name"]
+    return render_template("ProcessDiagram.html", organization=organization, full_name=full_name)
 
 
 # ========================================================================
@@ -214,9 +231,10 @@ def gotoProcessDiagram():
 @app.route("/goToProcessDiagramDetail")
 def goToProcessDiagramDetail():
     logger.info("goToProcessDiagramDetail .....")
-    organization = session["organization"] 
-    full_name = session["full_name"] 
-    return render_template("ProcessDiagramDetail.html",organization=organization,full_name=full_name)
+    organization = session["organization"]
+    full_name = session["full_name"]
+    return render_template("ProcessDiagramDetail.html", organization=organization, full_name=full_name)
+
 
 # ========================================================================
 # プロセスチャートの詳細画面を表示する
