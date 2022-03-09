@@ -58,7 +58,7 @@ ProcessDiagram_api = Blueprint('ProcessDiagram', __name__)
 
 # ========================================================================
 # プロセス可視化チャート図情報を保存する
-#
+#　【名称を変更する】
 #
 # ------------------------------------------------------
 
@@ -73,27 +73,9 @@ def saveProcessChartImagesData():
         processProcedureName = flask.request.form['processProcedureName']
         chartDesignCode = flask.request.form['chartDesignCode']
 
-        permissionFlag = flask.request.form['permissionFlag']
-        changeProhibitionFlag = flask.request.form['changeProhibitionFlag']
-
-        totalWorkingTime = flask.request.form['totalWorkingTime']
-        workFrequency = flask.request.form['workFrequency']
-        numberOfWorkers = flask.request.form['numberOfWorkers']
-
-        columnNumber = flask.request.form['columnNumber']
-        rowsNumber = flask.request.form['rowsNumber']
-
         print(processProcedureID)
         print(processProcedureName)
         print(chartDesignCode)
-
-        print(permissionFlag)
-        print(changeProhibitionFlag)
-        print(totalWorkingTime)
-        print(workFrequency)
-        print(numberOfWorkers)
-        print(columnNumber)
-        print(rowsNumber)
 
         status = {}
 
@@ -107,13 +89,6 @@ def saveProcessChartImagesData():
 
         conn_cursor = update_conn.cursor()
 
-        pFlag = "0"
-        cFlag = "0"
-        if permissionFlag == "true":
-            pFlag = "1"
-        if changeProhibitionFlag == "true":
-            cFlag = "1"
-
         tdatetime = datetime.now()
         updateDatetime = tdatetime.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -123,13 +98,6 @@ def saveProcessChartImagesData():
         update_query = \
             " UPDATE  ProcessChartData_TBL " \
             "  SET ProcessProcedureName = '" + processProcedureName + "'" \
-            "  , PermissionFlag = '" + pFlag + "' " \
-            "  , ChangeProhibitionFlag = '" + cFlag + "' " \
-            "  , WorkFrequency = '" + workFrequency + "' " \
-            "  , NumberOfWorkers = '" + numberOfWorkers + "' " \
-            "  , TotalWorkingTime = '" + totalWorkingTime + "' " \
-            "  , ColumnNumber = '" + columnNumber + "' " \
-            "  , RowsNumber = '" + rowsNumber + "' " \
             "  , UpdateMailAddress = '" + updateUser + "'" \
             "  , UpdateDateTime  = '" + updateDatetime + "'" \
             " WHERE " \
@@ -153,6 +121,68 @@ def saveProcessChartImagesData():
 
 # ========================================================================
 # プロセス可視化チャート図情報を保存する
+# 【枠数を変更する】
+#
+# ------------------------------------------------------
+
+
+@ProcessDiagram_api.route("/changeToProcessChartColumnRow/", methods=['POST', 'GET'])
+def changeToProcessChartColumnRow():
+
+    try:
+        processProcedureID = flask.request.form['processProcedureID']
+        chartDesignCode = flask.request.form['chartDesignCode']
+
+        columnNumber = flask.request.form['columnNumber']
+        rowsNumber = flask.request.form['rowsNumber']
+
+        print(processProcedureID)
+        print(chartDesignCode)
+
+        print(columnNumber)
+        print(rowsNumber)
+
+        status = {}
+
+        # SQL
+        update_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                     'Server='+app_section.get('IP')+';'
+                                     'Database=' +
+                                     app_section.get('DATABASE')+';'
+                                     'uid='+app_section.get('DB_USER_ID')+';'
+                                     'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        conn_cursor = update_conn.cursor()
+
+        # ---------------------------------------
+        # プロセス可視化チャート情報（一覧情報）を更新する
+        # ---------------------------------------
+        update_query = \
+            " UPDATE  ProcessChartData_TBL " \
+            "  SET ColumnNumber = '" + columnNumber + "' " \
+            "  , RowsNumber = '" + rowsNumber + "' " \
+            " WHERE " \
+            "  ProcessProcedureID = '" + processProcedureID + "'"
+
+        conn_cursor.execute(update_query)
+        conn_cursor.commit()
+
+        status['status'] = "OK"
+
+    except Exception as e:
+        print("changeToProcessChartColumnRow save error  " + e.args)
+        status['status'] = "NG"
+        pass
+
+    # end
+    finally:
+        print(json.dumps(status, indent=2, ensure_ascii=False))
+
+        return jsonify(status)
+
+
+# ========================================================================
+# プロセス可視化チャート図情報を保存する
 # 【画像】
 #
 # ------------------------------------------------------
@@ -161,17 +191,17 @@ def saveProcessChartImagesData():
 @ProcessDiagram_api.route("/updateChartImg/", methods=['POST', 'GET'])
 def updateChartImg():
 
-    chartDesignCode = flask.request.form['chartDesignCode']
-    imgFileName = flask.request.form['imgFileName']
-    locationInfo = flask.request.form['locationInfo']
-    midashi = flask.request.form['midashi']
-
-    print(chartDesignCode)
-    print(imgFileName)
-    print(locationInfo)
-    print(midashi)
-
     try:
+        chartDesignCode = flask.request.form['chartDesignCode']
+        imgFileName = flask.request.form['imgFileName']
+        locationInfo = flask.request.form['locationInfo']
+        midashi = flask.request.form['midashi']
+
+        print(chartDesignCode)
+        print(imgFileName)
+        print(locationInfo)
+        print(midashi)
+
         # イメージ名
         basename = os.path.basename(imgFileName)
         imgFileName = os.path.splitext(basename)[0]
@@ -285,10 +315,11 @@ def updateChartImg():
                 trn_cursor.execute(trn_sql)
 
                 # ChartComment_TBL
-                trn_sql = "INSERT INTO ChartComment_TBL (CommentCode, Heading, ChartDesignCode) " \
+                trn_sql = "INSERT INTO ChartComment_TBL (CommentCode, Heading, Efficiency, ChartDesignCode) " \
                     " VALUES (" + \
                     "'" + commentCode + "'," + \
                     "'" + midashi + "'," + \
+                    "'0'," + \
                     "'" + chartDesignCode + "'" + \
                     ") "
 

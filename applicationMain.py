@@ -195,6 +195,17 @@ def gotoProcessEditWindow():
     logger.info("gotoProcessEditWindow .....")
     return render_template("ProcessEditWindow.html")
 
+# ========================================================================
+# プロセスチャートの詳細画面を表示する
+#
+# ------------------------------------------------------
+
+
+@app.route("/gotoProcessUsageGuide")
+def gotoProcessUsageGuide():
+    logger.info("gotoProcessUsageGuide .....")
+    return render_template("ProcessChartUsageGuide.html")
+
 
 # ############################################################################################################
 # ############################################################################################################

@@ -37,7 +37,7 @@
             console.log("y座標 : " + y);
         });
 
-        function showModal(targetWin, dataId, CommentCode, Heading, Explanation, Efficiency, OperationTarget, WorkingHour, ExceptionWork, SupplementComment) {
+        function showModal(targetWin, dataId, CommentCode) {
             console.log("targetWin = " + targetWin)
             console.log("dataId = " + dataId)
 
@@ -45,11 +45,13 @@
                 // コメント開く
                 TargetOpenComment(dataId)
 
-                //var categoryWord = encodeURI(document.getElementById("searchCategory").value);
-                //var searchWord = encodeURI(document.getElementById("searchString").value);
-                var openWindow = window.open("./gotoProcessEditWindow?dataId=" + dataId + "&CommentCode=" + CommentCode + "&Heading=" + Heading + "&Explanation=" + Explanation + "&Efficiency=" + Efficiency + "&OperationTarget=" + OperationTarget + "&WorkingHour=" + WorkingHour + "&ExceptionWork=" + ExceptionWork + "&SupplementComment=" + SupplementComment + "", null,
+                // セッションに追加する
+                sessionStorage.setItem("edit_dataId", dataId);
+                sessionStorage.setItem("edit_CommentCode", CommentCode);
+
+                var openWindow = window.open("./gotoProcessEditWindow", null,
                     'top=' + y + 'px,left=' + x +
-                    'px,width=800px,height=660px,toolbar=yes,menubar=yes,scrollbars=yes');
+                    'px,width=800px,height=630px,toolbar=yes,menubar=yes,scrollbars=yes');
 
                 // 親画面にシェードをかける処理を実施
                 screenLock();
@@ -65,6 +67,7 @@
                         clearInterval(interval);
 
                         // ★★★元画面を再表示★★★
+                        location.reload();
 
                     } else {
                         // 子画面にフォーカスを当てる
@@ -73,8 +76,7 @@
                         window.blur();
                         openWindow.focus();
                     }
-                },
-                    500);
+                }, 500);
             };
         };
 
@@ -127,21 +129,20 @@
     <div class="l-content">
         <div class="container-fluid" style="margin-left: -30px;">
             <div class="row">
-                <h2>プロセス可視化チャート　詳細表示</h2>
-            </div>
-            <br>
-
-            <div class="row">
                 <table>
                     <tr>
+                        <td>
+                            <div class="row" style="margin-left: 0px;">
+                                <h2>プロセス可視化チャート　詳細表示</h2>
+                            </div>
+                        </td>
                         <td style="width: 300px;">
+                            <button class="btn btn-primary" style="width: 120px;height: 35px;">出力</button>
+                        </td>
+                        <td style=" width: 300px;">
                             <a href="/gotoProcessDiagram"><button type="submit" id="btn_design" class="btn btn-primary"
-                                    style="width: 200px;height: 35px;">チャートデザインに戻る</button></a>
+                                    style="width: 80px;height: 35px;">戻る</button></a>
                         </td>
-                        <td style="width: 300px;">
-                            <button class="btn btn-primary" style="width: 80px;height: 35px;">出力</button>
-                        </td>
-                        <td></td>
                     </tr>
                 </table>
 
@@ -194,20 +195,22 @@
                         <!-- 外部閲覧を禁止する -->
                         <td style="width: 150px;">
                             <input type="checkbox" id="PermissionFlag" name="PermissionFlag" value=""
-                                style="margin-top: 0px;">
+                                style="margin-top: 0px;" onclick="return false;">
                             <span style="margin-left: 6px; margin-top: -6px;">外部閲覧を禁止する</span>
                         </td>
 
                         <!-- 変更を禁止する -->
-                        <td style="width: 280px;">
+                        <td style="width: 150px;">
                             <input type="checkbox" id="ChangeProhibitionFlag" name="ChangeProhibitionFlag" value=""
                                 style="margin-top: 0px;">
                             <span style="margin-left: 6px; margin-top: -6px;">変更を禁止する（作成者のみ可）</span>
                         </td>
 
                         <td style="width: 100px;">
-                            <button class="btn btn-primary" style="width: 80px; height: 30px;"
+                            <button class="btn btn-success" style="width: 80px; height: 30px;"
                                 onclick="SaveToProcessChartDataTBL()">保存</button>
+                        </td>
+                        <td style="width: 100px;">
                         </td>
                     </tr>
                 </table>

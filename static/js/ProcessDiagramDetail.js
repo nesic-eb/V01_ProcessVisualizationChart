@@ -137,7 +137,7 @@ function isNumber(numVal) {
 // ----------------------------------------------
 function AllCloseComment() {
     for (i = 0; i < G_COMMENT_MAX; i++) {
-        var openStatusName = "OpenStatus_" + String(1);
+        var openStatusName = "OpenStatus_" + String(i);
 
         // 閉じる
         var tablename = "#table_" + String(i)
@@ -151,7 +151,7 @@ function AllCloseComment() {
 // ----------------------------------------------
 function AllOpenComment() {
     for (i = 0; i < G_COMMENT_MAX; i++) {
-        var openStatusName = "OpenStatus_" + String(1);
+        var openStatusName = "OpenStatus_" + String(i);
 
         // 開く
         var tablename = "#table_" + String(i);
@@ -168,7 +168,7 @@ function TargetOpenComment(targetComment) {
         var terget = "Comment_" + String(i);
         const getLocationInfo = document.getElementById(terget).value;
         if (getLocationInfo == targetComment) {
-            var openStatusName = "OpenStatus_" + String(1);
+            var openStatusName = "OpenStatus_" + String(i);
             // 開く
             var tablename = "#table_" + String(i);
             $(tablename).show();
@@ -354,7 +354,7 @@ function createLeftTable(rows, column, design) {
 
         // 編集アイコン
         var a_link = document.createElement("a")
-        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','" + CommentCode + "','" + Heading + "','" + Explanation + "','" + Efficiency + "','" + OperationTarget + "','" + WorkingHour + "','" + ExceptionWork + "','" + SupplementComment + "')");
+        a_link.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + LocationInfo + "','" + CommentCode + "')");
         a_link.setAttribute("title", "editLink");
         a_link.setAttribute("id", LocationInfo);
         a_link.setAttribute("name", LocationInfo);
