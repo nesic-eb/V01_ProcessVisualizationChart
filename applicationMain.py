@@ -158,6 +158,7 @@ def gotoProcessMain():
             "  p.Organization_Code_2,"
             "  p.Organization_Code_3,"
             "  p.Organization_Code_4,"
+
             "  org.Organization_Name_abbr, "
             "  p.surname, "
             "  p.name "
@@ -180,8 +181,8 @@ def gotoProcessMain():
             org_name = x[6]
             sur_name = x[7]
             name = x[8]
-            # OrgCode（組織コード）
-
+            
+        # OrgCode（組織コード）
         if (password == db_password):
             session["email"] = email
             organization = org_code_1+"-"+org_code_2 + \
@@ -233,6 +234,7 @@ def goToProcessDiagramDetail():
     organization = session["organization"]
     full_name = session["full_name"]
     return render_template("ProcessDiagramDetail.html", organization=organization, full_name=full_name)
+
 
 # ========================================================================
 # プロセスチャートの詳細画面を表示する

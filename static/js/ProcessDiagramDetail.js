@@ -255,7 +255,7 @@ function createLeftTable(rows, column, design) {
 
     // 画面左側ブロックの親
     var left_table = document.getElementById("left_table_Div");
-    left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
+    //left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
     //left_table.setAttribute("style", "width: 1000px;")
 
     var mainTable = document.createElement("table");
