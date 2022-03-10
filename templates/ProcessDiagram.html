@@ -85,6 +85,13 @@
         <div style="margin-left: -30px;">
             <table style="width: 90%; margin-top: 0px; margin-left: 20px;">
                 <tr>
+                    <td style="width: 40px;">
+                        <a href="JavaScript:showModal('UsageGuide')" id="UsageGuide" name="UsageGuide">
+                            <img src="static/img/flowChartImg/hint.svg"
+                                style="width: 28px; margin-top: -8px; margin-left: -20px;" alt="" name="">
+                        </a>
+                    </td>
+
                     <td style="width: 85px;">
                         <P style="margin-top: 4px;">合計時間：</P>
                     </td>
@@ -171,24 +178,17 @@
                     </td>
                     <td style="width: 30px;">
                     </td>
-                    <!--
-                    <td>
-                        <button class="btn btn-success" style="width: 90px; height: 30px; margin-top: -10px;"
-                            onclick="AutoSaveToProcessChartDiagram()">一時保存</button>
-                    </td>
-                    -->
                     <td style="width: 150px;">
                         <input type="checkbox" id="AutoSaveModeCheck" name="AutoSaveModeCheck" value=""
-                            style="margin-top: 0px;" onclick="return false;" checked>
+                            style="margin-top: 0px;" onclick="AutoSaveControl();" checked>
                         <span style="margin-left: 6px; margin-top: 0px;">自動保存</span>
                     </td>
-                    <td style="width: 30px;">
+                    <td style="width: 90px;">
+                        <button class="btn btn-success"
+                            style="width: 90px; height: 30px; margin-top: -10px; visibility: hidden;" id="SaveButton"
+                            name="SaveButton" onclick="SaveToProcessChartDiagram()">手動保存</button>
                     </td>
-                    <td style="width: 70px;">
-                        <a href="JavaScript:showModal('UsageGuide')" id="UsageGuide" name="UsageGuide">【凡例】</a>
-                        <!--
-                            <img src="static/img/flowChartImg/EditData.svg" style="width: 18px;" alt="" name="">
-                            -->
+                    <td style="width: 40px;">
                     </td>
                 </tr>
             </table>

@@ -13,12 +13,13 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessDiagram.js --------");
 
-var email = sessionStorage.getItem("email")
-var org1 = sessionStorage.getItem("org1")
-var org2 = sessionStorage.getItem("org2")
-var ProcessProcedureID = sessionStorage.getItem("ProcessProcedureID")
-var ProcessProcedureName = sessionStorage.getItem("ProcessProcedureName")
-var ChartDesignCode = sessionStorage.getItem("ChartDesignCode")
+var email = sessionStorage.getItem("email");
+var org1 = sessionStorage.getItem("org1");
+var org2 = sessionStorage.getItem("org2");
+var ProcessProcedureID = sessionStorage.getItem("ProcessProcedureID");
+var ProcessProcedureName = sessionStorage.getItem("ProcessProcedureName");
+var ChartDesignCode = sessionStorage.getItem("ChartDesignCode");
+var AutoSaveControlflag = sessionStorage.getItem("AutoSaveControl");
 
 // 変更禁止フラグ（１：禁止）
 var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
@@ -32,7 +33,9 @@ console.log("Org2 = " + org2);
 console.log("Process Procedure ID = " + ProcessProcedureID);
 console.log("Process Procedure Name = " + ProcessProcedureName);
 console.log("Chart Design Code = " + ChartDesignCode);
+console.log("AutoSaveControlflag = " + AutoSaveControlflag);
 console.log("CCHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
+
 
 // ##################################################################################################
 // ##################################################################################################
@@ -66,6 +69,117 @@ function isNumber(numVal) {
   var pattern = /^[-]?([1-9]\d*|0)(\.\d+)?$/;
   // 数値チェック
   return pattern.test(numVal);
+}
+
+// ----------------------------------------------
+// 自動保存の設定に合わせて＋ーを制御する
+// （画像名）
+// ----------------------------------------------
+function AutoSaveControl() {
+  var autoSave = document.getElementById("AutoSaveModeCheck");
+  var saveButton = document.getElementById("SaveButton");
+  var wakuButton = document.getElementById("updateWakuSize");
+  if (autoSave.checked == false) {
+    AutoSaveControlflag = "0";
+    sessionStorage.setItem("AutoSaveControl", "0");
+    saveButton.style.visibility = "visible";
+    wakuButton.style.visibility = "hidden";
+    PlusMinusImgControl("hidden");
+  }
+  else {
+    AutoSaveControlflag = "1";
+    sessionStorage.setItem("AutoSaveControl", "1");
+    saveButton.style.visibility = "hidden";
+    wakuButton.style.visibility = "visible";
+    PlusMinusImgControl("visible");
+  }
+}
+
+// + - 記号
+function PlusMinusImgControl(control) {
+  var columsNum = sessionStorage.getItem("AutoColumnNum");
+  var rowsNum = sessionStorage.getItem("AutoRowsNum");
+
+  for (colum = 1; colum <= columsNum; colum++) {
+    var chr = String.fromCharCode(64 + colum)
+    if (control == "hidden") {
+      var aplus = document.getElementById(chr + "_colPlus");
+      var aMinus = document.getElementById(chr + "_colMinus");
+      aplus.style.visibility = "hidden";
+      aMinus.style.visibility = "hidden";
+    }
+    else {
+      var aplus = document.getElementById(chr + "_colPlus");
+      var aMinus = document.getElementById(chr + "_colMinus");
+      aplus.style.visibility = "visible";
+      aMinus.style.visibility = "visible";
+    }
+  }
+
+  for (row = 1; row <= rowsNum; row++) {
+    if (control == "hidden") {
+      var aplus = document.getElementById(row + "_rowPlus");
+      var aMinus = document.getElementById(row + "_rowMinus");
+      aplus.style.visibility = "hidden";
+      aMinus.style.visibility = "hidden";
+    }
+    else {
+      var aplus = document.getElementById(row + "_rowPlus");
+      var aMinus = document.getElementById(row + "_rowMinus");
+      aplus.style.visibility = "visible";
+      aMinus.style.visibility = "visible";
+    }
+  }
+}
+
+// ----------------------------------------------
+// 画面で画像が設定されている情報を集めて保存する
+// 
+// ----------------------------------------------
+function SaveToProcessChartDiagram() {
+  var columsNum = document.getElementById("DiagramColumns").value;
+  var rowsNum = document.getElementById("DiagramRows").value;
+
+  var sendList = {};
+  var sendObj = [];
+
+  for (colum = 1; colum <= columsNum; colum++) {
+    var chr = String.fromCharCode(64 + colum)
+    for (row = 1; row <= rowsNum; row++) {
+      var columRowsName = chr + "_" + row + "_select";
+      var columRowsMidashi = chr + "_" + row + "_midashi";
+      var selImg = document.getElementById(columRowsName).value;
+      if (selImg != "") {
+        if (selImg != "Space_001") {
+          var textMidashi = document.getElementById(columRowsMidashi).value;
+          console.log("columRowsName = " + columRowsName + " / IMG = " + selImg + " / midashi = " + textMidashi);
+
+          var dataDic = { "img": selImg, "text": textMidashi, "location": chr + "_" + row };
+          sendObj.push(dataDic);
+        }
+      }
+    }
+  }
+
+  // デザインコード
+  var chartDesignCode = $('#chartDesignCode').val();
+
+  sendList["chartDesignCode"] = chartDesignCode;
+  sendList["userInfoList"] = sendObj;
+
+  $.ajax({
+    url: '/saveAllChartDesign/',
+    type: 'POST',
+    data: JSON.stringify(sendList),
+    dataType: 'json',
+    contentType: "application / json",
+    success: function (response) {
+      if (response.status == "OK") {
+        location.reload();
+      }
+    }
+  });
+
 }
 
 // ----------------------------------------------
@@ -162,7 +276,10 @@ function onLoadProcessChartData() {
 
       // 画面上部へデータを設定する
       {
-        // カラム数
+        sessionStorage.setItem("AutoColumnNum", colNum);
+        sessionStorage.setItem("AutoRowsNum", rowNum);
+
+        // 
         document.getElementById("process_ProcedureName").value = blockData.ProcessProcedureName;
 
         // 作業頻度
@@ -230,7 +347,7 @@ function onLoadProcessChartData() {
 
           // A ～ Z
           th.setAttribute("style", "text-align: center; width: 200px;");
-          th.setAttribute("id", chr + "_colPlus");
+          th.setAttribute("id", chr + "_columName");
           var span = document.createElement('span');
           span.innerHTML = chr + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
           div.appendChild(span);
@@ -240,10 +357,11 @@ function onLoadProcessChartData() {
             {
               var aplus = document.createElement('a');
               aplus.setAttribute("href", "");
-              aplus.setAttribute("id", chr + "_rowPlus");
-              aplus.setAttribute("name", chr + "_rowPlus");
+              aplus.setAttribute("id", chr + "_colPlus");
+              aplus.setAttribute("name", chr + "_colPlus");
               var img = document.createElement('img');
               img.setAttribute("style", "margin-top: 0px; width: 18px;");
+              img.setAttribute("id", chr + "_colPlusImg");
 
               // Zまである場合は、+ は表示しない
               if (Number(blockData.ColumnNumber) < 26) {
@@ -265,9 +383,10 @@ function onLoadProcessChartData() {
             {
               var aMinus = document.createElement('a');
               aMinus.setAttribute("href", "");
-              aMinus.setAttribute("id", chr + "_rowMinus");
-              aMinus.setAttribute("name", chr + "_rowMinus");
+              aMinus.setAttribute("id", chr + "_colMinus");
+              aMinus.setAttribute("name", chr + "_colMinus");
               var img = document.createElement('img');
+              img.setAttribute("id", chr + "_colMinusImg");
               img.setAttribute("style", "margin-top: 0px; width: 18px;");
               img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
 
@@ -302,7 +421,7 @@ function onLoadProcessChartData() {
 
         {
           td.setAttribute("style", "text-align: center;");
-          td.setAttribute("id", chr + "_RowPlus");
+          td.setAttribute("id", k + "_RowPlusNum");
           var p = document.createElement('p');
           p.setAttribute("style", "margin-top: 5px;");
           p.innerHTML = k;
@@ -316,9 +435,10 @@ function onLoadProcessChartData() {
           {
             var aplus = document.createElement('a');
             aplus.setAttribute("href", "");
-            aplus.setAttribute("id", chr + "_rowPlus");
-            aplus.setAttribute("name", chr + "_rowPlus");
+            aplus.setAttribute("id", k + "_rowPlus");
+            aplus.setAttribute("name", k + "_rowPlus");
             var img = document.createElement('img');
+            img.setAttribute("id", k + "_rowPlusImg");
             img.setAttribute("style", "margin-top: 0px; width: 18px;");
             img.setAttribute("src", "/static/img/flowChartImg/Plus.svg");
             // 要素にクリックイベントを追加する
@@ -338,9 +458,10 @@ function onLoadProcessChartData() {
           {
             var aMinus = document.createElement('a');
             aMinus.setAttribute("href", "");
-            aMinus.setAttribute("id", chr + "_rowMinus");
-            aMinus.setAttribute("name", chr + "_rowMinus");
+            aMinus.setAttribute("id", k + "_rowMinus");
+            aMinus.setAttribute("name", k + "_rowMinus");
             var img = document.createElement('img');
+            img.setAttribute("id", k + "_rowMinusImg");
             img.setAttribute("style", "margin-top: -12px; width: 18px; margin-bottom: 3px");
             img.setAttribute("src", "/static/img/flowChartImg/Minus.svg");
             // 要素にクリックイベントを追加する
@@ -410,6 +531,8 @@ function onLoadProcessChartData() {
 
           // 見出し
           var checkText = checkMidashiText(String.fromCharCode(64 + innerloop) + "_" + k, design);
+          // コメントコードを記憶する
+          //var checkCommentCode = checkCommnetCode(String.fromCharCode(64 + innerloop) + "_" + k, design);
           var input = document.createElement('input');
           input.setAttribute('id', String.fromCharCode(64 + innerloop) + "_" + k + "_midashi");
           input.setAttribute('type', "text");
@@ -440,6 +563,16 @@ function onLoadProcessChartData() {
       {
         var wknum = G_WORKTIME_TOTAL / 60.0;
         document.getElementById("TotalWorkingTime").value = wknum.toFixed(2);
+      }
+
+      //自動保存制御
+      if (AutoSaveControlflag == "0") {
+        document.getElementById("AutoSaveModeCheck").checked = false;
+        AutoSaveControl();
+      }
+      else {
+        document.getElementById("AutoSaveModeCheck").checked = true;
+        AutoSaveControl();
       }
 
       // -------------------------------------------
@@ -642,6 +775,10 @@ function PlusMinusRowsAction(el, num, updateType) {
 // 画像を変更した場合に選択画像を保存する
 // ----------------------------------------------
 function saveChartImg(el, location) {
+  if (AutoSaveControlflag == "0") {
+    // 自動更新停止
+    return;
+  }
   var ids = el.getAttribute("id");
   console.log(ids);
   console.log(location);
@@ -681,6 +818,11 @@ function saveChartImg(el, location) {
 // テキストを変更した時に保存する
 // ----------------------------------------------
 function saveChartComment(el, location) {
+  if (AutoSaveControlflag == "0") {
+    // 自動更新停止
+    return;
+  }
+
   var ids = el.getAttribute("id");
   console.log(ids);
   console.log(location);
