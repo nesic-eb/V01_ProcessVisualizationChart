@@ -25,6 +25,10 @@ sessionStorage.setItem("ProcessProcedureID", "");
 sessionStorage.setItem("ProcessProcedureName", "");
 sessionStorage.setItem("ChartDesignCode", "");
 sessionStorage.setItem("ChangeProhibitionflag", "");
+// 自動保存（１：保存する）
+sessionStorage.setItem("AutoSaveControl", "1");
+sessionStorage.setItem("AutoColumnNum", "");
+sessionStorage.setItem("AutoRowsNum", "");
 
 $('#org1').val(org1);
 $('#org2').val(org2);
