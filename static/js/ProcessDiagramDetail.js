@@ -255,7 +255,7 @@ function createLeftTable(rows, column, design) {
 
     // 画面左側ブロックの親
     var left_table = document.getElementById("left_table_Div");
-    //left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
+    left_table.setAttribute("style", "width: " + String(widthMax) + "px;")
     //left_table.setAttribute("style", "width: 1000px;")
 
     var mainTable = document.createElement("table");
@@ -789,16 +789,20 @@ function SaveToProcessChartDataTBL() {
     var wkTotalWorkingTime = document.getElementById("TotalWorkingTime").value;
 
     // 作業頻度
-    var wkWorkFrequency = document.getElementById("WorkFrequency").value;
+    var wkWorkFrequency = document.getElementById("SelectWorkFrequency").value;
+    wkWorkFrequency = wkWorkFrequency.replace("WorkFrequency_", "");
+    wkWorkFrequency = wkWorkFrequency.replace("0", "");
     if (isNumber(wkWorkFrequency) == false) {
         alert("作業頻度は、数値で入力してください。");
-        returnm;
+        return;
     }
     // 作業人数
-    var wkNumberOfWorkers = document.getElementById("NumberOfWorkers").value;
+    var wkNumberOfWorkers = document.getElementById("SelectWorkNumberOfWorkers").value;
+    wkNumberOfWorkers = wkNumberOfWorkers.replace("NumberOfWorkers_", "");
+    wkNumberOfWorkers = wkNumberOfWorkers.replace("0", "");
     if (isNumber(wkNumberOfWorkers) == false) {
         alert("作業人数は、数値で入力してください。");
-        returnm;
+        return;
     }
 
     var email = sessionStorage.getItem("email");
