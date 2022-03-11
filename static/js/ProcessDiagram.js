@@ -34,7 +34,7 @@ console.log("Process Procedure ID = " + ProcessProcedureID);
 console.log("Process Procedure Name = " + ProcessProcedureName);
 console.log("Chart Design Code = " + ChartDesignCode);
 console.log("AutoSaveControlflag = " + AutoSaveControlflag);
-console.log("CCHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
+console.log("CHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
 
 
 // ##################################################################################################
@@ -76,6 +76,9 @@ function isNumber(numVal) {
 // （画像名）
 // ----------------------------------------------
 function AutoSaveControl() {
+  if (CHANGEPROHIBITIONFLAG == "1") {
+    return;
+  }
   var autoSave = document.getElementById("AutoSaveModeCheck");
   var saveButton = document.getElementById("SaveButton");
   var wakuButton = document.getElementById("updateWakuSize");
@@ -566,13 +569,18 @@ function onLoadProcessChartData() {
       }
 
       //自動保存制御
-      if (AutoSaveControlflag == "0") {
-        document.getElementById("AutoSaveModeCheck").checked = false;
-        AutoSaveControl();
+      if (CHANGEPROHIBITIONFLAG == "0") {
+        if (AutoSaveControlflag == "0") {
+          document.getElementById("AutoSaveModeCheck").checked = false;
+          AutoSaveControl();
+        }
+        else {
+          document.getElementById("AutoSaveModeCheck").checked = true;
+          AutoSaveControl();
+        }
       }
       else {
-        document.getElementById("AutoSaveModeCheck").checked = true;
-        AutoSaveControl();
+        document.getElementById("AutoSaveModeCheck").disabled = true;
       }
 
       // -------------------------------------------
