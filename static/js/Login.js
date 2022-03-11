@@ -10,6 +10,19 @@
 /* セッション情報取得 */
 sessionStorage.setItem("org_check", "");
 
+// セッション情報作成
+sessionStorage.setItem("email", "");
+sessionStorage.setItem("org1", "");
+sessionStorage.setItem("org2", "");
+sessionStorage.setItem("ProcessProcedureID", "");
+sessionStorage.setItem("ProcessProcedureName", "");
+sessionStorage.setItem("ChartDesignCode", "");
+sessionStorage.setItem("ChangeProhibitionflag", "");
+// 自動保存（１：保存する）
+sessionStorage.setItem("AutoSaveControl", "1");
+sessionStorage.setItem("AutoColumnNum", "");
+sessionStorage.setItem("AutoRowsNum", "");
+
 // ##################################################################################################
 // ##################################################################################################
 
@@ -19,10 +32,10 @@ sessionStorage.setItem("org_check", "");
 // ==================================================
 function SaveEmailSessionAndNextWindow() {
   var email = $("#email").val();
-  console.log("email = "+email)
   var pass = $("#password").val();
-  console.log("password = "+pass);
-  var url = "";
+
+  console.log("email = " + email)
+  console.log("password = " + pass);
 
   // ログインの処理
   $.ajax({
@@ -34,12 +47,19 @@ function SaveEmailSessionAndNextWindow() {
     },
     dataType: 'json',
     success: function (response) {
+      if (response.status == "OK") {
+        var orgcode = response.orgcode.split("-");
 
-      location.href = url + "./gotoProcessMain?email=" + email + "&orgCode=" + response[1] + "&roll=" + response[2] + "&principalbusiness_code=" + response[3];
+        sessionStorage.setItem("email", email);
+        //sessionStorage.setItem("password", pass);
+        sessionStorage.setItem("org1", orgcode[0]);
+        sessionStorage.setItem("org2", orgcode[1]);
 
-      sessionStorage.setItem("email", email);
-      sessionStorage.setItem("password", pass);
-      
+        location.href = "./gotoProcessMain";
+      }
+      else {
+        alert("パスワードが違います。");
+      }
     }
   });
 
@@ -56,11 +76,7 @@ function myFunction() {
   var a = document.getElementById('password_setting_id');
   if (email == "" || pass == "") {
     alert("メールアドレスを入力してください。")
-  } else {
-    a.href = "/gotoPasswordSetting"
-
+    return;
   }
-  sessionStorage.setItem("email", email);
-  sessionStorage.setItem("password", pass);
 }
 

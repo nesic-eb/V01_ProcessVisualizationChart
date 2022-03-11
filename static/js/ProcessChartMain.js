@@ -12,26 +12,12 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessCheck.js --------");
 
-var org1 = '50';
-var org2 = '05';
-var user_name = ""
-var user_emal = "fujii.kyoichi.za@nesic.com"
-
-// セッション情報作成
-sessionStorage.setItem("email", "");
-sessionStorage.setItem("org1", "");
-sessionStorage.setItem("org2", "");
-sessionStorage.setItem("ProcessProcedureID", "");
-sessionStorage.setItem("ProcessProcedureName", "");
-sessionStorage.setItem("ChartDesignCode", "");
-sessionStorage.setItem("ChangeProhibitionflag", "");
-// 自動保存（１：保存する）
-sessionStorage.setItem("AutoSaveControl", "1");
-sessionStorage.setItem("AutoColumnNum", "");
-sessionStorage.setItem("AutoRowsNum", "");
+var user_emal = sessionStorage.getItem("email");
+var org1 = sessionStorage.getItem("org1");
+var org2 = sessionStorage.getItem("org2");
 
 $('#org1').val(org1);
-$('#org2').val(org2);
+$('#org2').val(org1);
 
 // ##################################################################################################
 // ##################################################################################################
@@ -542,7 +528,8 @@ function DeleteAction(work_name, workitem, processProcedureID, createUser, chang
     if (createUser != user_emal) {
       // 作成者でないので、編集禁止
       alert("削除は、作成者が可能です。");
-      location.href = "../gotoProcessMainWindow"
+      location.href = "../gotoProcessMain"
+      return;
     }
   }
 
@@ -563,12 +550,10 @@ function DeleteAction(work_name, workitem, processProcedureID, createUser, chang
         processProcedureID: processProcedureID
       },
       success: function (response) {
-        location.href = "../gotoProcessMainWindow"
+        location.href = "../gotoProcessMain"
       }//end of success
 
     });//end of ajax
   }
-  else {
-    location.href = "../gotoProcessMainWindow"
-  }
+
 };
