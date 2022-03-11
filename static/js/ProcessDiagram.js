@@ -335,7 +335,7 @@ function onLoadProcessChartData() {
         if (j == 0) {
           var div = document.createElement('div');
           // No.
-          th.setAttribute("style", "text-align: center; width: 35px; height: 35px;");
+          th.setAttribute("style", "text-align: center; width: 35px; height: 35px; background-color: #98fb98");
           th.setAttribute("id", "full_name");
           var span = document.createElement('span');
           span.innerHTML = "No.";
@@ -346,7 +346,7 @@ function onLoadProcessChartData() {
           var div = document.createElement('div');
 
           // A ～ Z
-          th.setAttribute("style", "text-align: center; width: 200px;");
+          th.setAttribute("style", "text-align: center; width: 200px; background-color: #98fb98");
           th.setAttribute("id", chr + "_columName");
           var span = document.createElement('span');
           span.innerHTML = chr + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -420,7 +420,7 @@ function onLoadProcessChartData() {
         var td = document.createElement('td');
 
         {
-          td.setAttribute("style", "text-align: center;");
+          td.setAttribute("style", "text-align: center; background-color: #f08080");
           td.setAttribute("id", k + "_RowPlusNum");
           var p = document.createElement('p');
           p.setAttribute("style", "margin-top: 5px;");

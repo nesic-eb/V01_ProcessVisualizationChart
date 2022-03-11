@@ -133,15 +133,24 @@ def gotoProcessMainBack():
 # ------------------------------------------------------
 @app.route("/gotoProcessMain", methods=['POST', 'GET'])
 def gotoProcessMain():
+    organization = session["organization"]
+    full_name = session["full_name"]
+    return render_template("ProcessChartMain.html", organization=organization, full_name=full_name)
 
-    logger.info("gotoProcess Main  .....")
+
+@app.route("/checkEmailAndPassword/", methods=['POST', 'GET'])
+def checkEmailAndPassword():
+    logger.info("checkEmailAndPassword Main  .....")
+
     email = flask.request.form["email"]
     print("email = ", email)
 
-    password = flask.request.form["password"]
+    password = flask.request.form["pass"]
     print("password = ", password)
 
     try:
+        status = {}
+
         user_conn = pyodbc.connect('DRIVER={SQL Server};'
                                    'Server='+app_section.get('IP')+';'
                                    'Database=' +
@@ -181,34 +190,29 @@ def gotoProcessMain():
             org_name = x[6]
             sur_name = x[7]
             name = x[8]
-            
+
         # OrgCode（組織コード）
         if (password == db_password):
-            session["email"] = email
             organization = org_code_1+"-"+org_code_2 + \
                 "-"+org_code_3+"-"+org_code_4+"/"+org_name
             full_name = sur_name+" "+name
+
+            session["email"] = email
             session["organization"] = organization
             session["full_name"] = full_name
-            return render_template("ProcessChartMain.html", organization=organization, full_name=full_name)
+
+            status['status'] = "OK"
+            status['orgcode'] = organization
+
+            return jsonify(status)
+
         else:
-            return render_template("Login.html", errorMsg="メールとパスワードが間違っています。")
+            status['status'] = "NG"
+            return jsonify(status)
 
-    except Exception as inst:
-        print(inst)
-        logger.info("Error: in the function checkMatchEmailPassword ......")
-        return False
-
-# ========================================================================
-# プロセス可視化チャート画面：メイン画面
-#
-# ------------------------------------------------------
-
-
-@app.route("/gotoProcessMainWindow", methods=['POST', 'GET'])
-def gotoProcessMainWindow():
-    logger.info("gotoProcessMainWindow .....")
-    return render_template("ProcessChartMain.html")
+    except Exception as e:
+        status['status'] = "NG"
+        return jsonify(status)
 
 # ========================================================================
 # プロセスチャート画面を表示する
