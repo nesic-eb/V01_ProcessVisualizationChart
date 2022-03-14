@@ -364,6 +364,7 @@ def getProcessCheckDataByClassification():
             "  Person_Master_TBL " \
             " where " \
             "  Mail_address = pt.CreateMailAddress " \
+            "  and Delete_flag <> '1' " \
             "  and Principal_business_concurrent_service_code = '0' " \
             " ) as usrname " \
             " FROM " \
@@ -473,6 +474,7 @@ def getProcessCheckDataByWorkItemID():
             "  Person_Master_TBL " \
             " where " \
             "  Mail_address = pt.CreateMailAddress " \
+            "  and Delete_flag <> '1' " \
             "  and Principal_business_concurrent_service_code = '0' " \
             " ) as usrname " \
             " FROM " \
