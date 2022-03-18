@@ -1,5 +1,5 @@
 // =============================================================================
-// 画面名：プロセス可視化チャート画面
+// 画面名：プロセス可視化チャート：編集画面
 // 
 // -----------------------------------------------------------------------------
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
@@ -60,7 +60,7 @@ function commentCode_onchange() {
 
         var newCommentCode = "Comment_" + nowString
         $("#new_comment_code").val(newCommentCode);
-        $("#new_comment_code").attr("readonly", false);
+        $("#new_comment_code").attr("readonly", true);
         clearData();
     }
     else {
@@ -132,8 +132,10 @@ function onloadProcessEditWindow() {
 
     // 変更禁止なので、更新系のボタンを削除する
     if (CHANGEPROHIBITIONFLAG == "1") {
-        $("#updateData").remove();
-        $("#deleteData").remove();
+        $("#updateDataButton").remove();
+        $("#cancelDataButton").remove();
+        $("#deleteDataButton").remove();
+        $("#clearDataButton").remove();
 
         document.getElementById("comment_code").disabled = true;
     }
@@ -253,7 +255,7 @@ function updateButtonClick() {
 }
 
 // ----------------------------------------------
-// 画面：各情報を更新する
+// 画面：各情報を削除する
 // ----------------------------------------------
 function deleteButtonClick() {
 
@@ -285,3 +287,13 @@ function deleteButtonClick() {
 
 }
 
+// ----------------------------------------------
+// 画面キャンセルする
+// ----------------------------------------------
+function cancelButtonClick() {
+    var result = window.confirm("変更内容を保存しないで、キャンセルしますか？");
+    if (result == true) {
+        window.close();
+    }
+
+}

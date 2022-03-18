@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 // =============================================================================
-// 機能名：レポート／プロセス可視化チャート
+// 機能名：プロセス可視化チャート：メイン画面
 //
 // =============================================================================
 // （ファイル整形）Visual Studio Code : Shift + Alt + f
@@ -934,8 +934,6 @@ def copyProcessCheckData():
     logger.info("Start the function copyProcessCheckData.....")
 
     messageList = []
-    cmntList = []
-    designList = []
 
     classification_code = flask.request.form['classification_code']
     workitem_id = flask.request.form['workitem_id']
@@ -966,28 +964,6 @@ def copyProcessCheckData():
                                     'uid='+app_section.get('DB_USER_ID')+';'
                                     'pwd='+app_section.get('DB_PASSWORD')+';')
 
-        copyconn = pyodbc.connect('DRIVER={SQL Server};'
-                                  'Server='+app_section.get('IP')+';'
-                                  'Database='+app_section.get('DATABASE')+';'
-                                  'uid='+app_section.get('DB_USER_ID')+';'
-                                  'pwd='+app_section.get('DB_PASSWORD')+';')
-
-        insertDesignconn = pyodbc.connect('DRIVER={SQL Server};'
-                                          'Server='+app_section.get('IP')+';'
-                                          'Database=' +
-                                          app_section.get('DATABASE')+';'
-                                          'uid=' +
-                                          app_section.get('DB_USER_ID')+';'
-                                          'pwd='+app_section.get('DB_PASSWORD')+';')
-
-        insertCommentconn = pyodbc.connect('DRIVER={SQL Server};'
-                                           'Server='+app_section.get('IP')+';'
-                                           'Database=' +
-                                           app_section.get('DATABASE')+';'
-                                           'uid=' +
-                                           app_section.get('DB_USER_ID')+';'
-                                           'pwd='+app_section.get('DB_PASSWORD')+';')
-
         workitem_id = workitem_id.strip()
 
         if (workitem_id != ""):
@@ -1017,9 +993,13 @@ def copyProcessCheckData():
                 messageList.append("既に、同じ名称が登録されています。")
                 return jsonify(messageList)
 
+            # COPY 処理
             if same_flag == True:
+                insert_cursor = insertconn.cursor()
 
-                # Insert
+                # 親テーブル
+                # Insert（ProcessChartData_TBL）
+
                 insert_query = \
                     " INSERT INTO " \
                     "  ProcessChartData_TBL " \
@@ -1047,107 +1027,142 @@ def copyProcessCheckData():
                     " NULL , " \
                     "'" + wkChartDesignCode + "' ) "
 
-                # ChartComment_TBL Select
-                copy_cursor = copyconn.cursor()
-                select_comment_query = " SELECT " \
-                    "   Heading, " \
-                    "   Efficiency " \
-                    " FROM " \
-                    "   ChartComment_TBL " \
-                    " WHERE ChartDesignCode = '" + chartDesigncode + "'"
+                insert_cursor.execute(insert_query)
 
-                copy_cursor.execute(select_comment_query)
-                for row in copy_cursor:
-                    cmntData = []
-                    cmntData.append(row[0])
-                    cmntData.append(row[1])
-                    cmntList.append(cmntData)
-
-                # ChartDesign_TBL Select
-                copy_cursor = copyconn.cursor()
+                # ---------------------------------------------
+                # Select / ChartDesign_TBL and ChartComment_TBL Select
+                # ---------------------------------------------
+                copy_cursor = selectconn.cursor()
                 select_chart_query = " SELECT " \
-                    "   LocationInfo, " \
-                    "   ImageName " \
+                    " d.LocationInfo, " \
+                    " d.ImageName, " \
+                    " d.CommentCode, " \
+                    " ISNULL(m.Heading, ''), " \
+                    " ISNULL(m.Explanation, ''), " \
+                    " ISNULL(m.Efficiency, ''), " \
+                    " ISNULL(m.OperationTarget, ''), " \
+                    " ISNULL(m.WorkingHour, ''), " \
+                    " ISNULL(m.ExceptionWork, ''), " \
+                    " ISNULL(m.SupplementComment, '') " \
                     " FROM " \
-                    "   ChartDesign_TBL " \
-                    " WHERE ChartDesignCode = '" + chartDesigncode + "'"
+                    "  ChartDesign_TBL as d, " \
+                    "  ChartComment_TBL as m " \
+                    " WHERE " \
+                    "   d.ChartDesignCode = '" + chartDesigncode + "'" \
+                    " AND d.ChartDesignCode = m.ChartDesignCode " \
+                    " AND d.CommentCode = m.CommentCode "
 
                 copy_cursor.execute(select_chart_query)
 
+                designList = []
                 for c in copy_cursor:
-                    designData = []
-                    designData.append(c[0])
-                    designData.append(c[1])
+                    designData = {}
+
+                    designData['LocationInfo'] = c[0]
+                    designData['ImageName'] = c[1]
+                    designData['CommentCode'] = c[2]
+                    designData['Heading'] = c[3]
+                    designData['Explanation'] = c[4]
+                    designData['Efficiency'] = c[5]
+                    designData['OperationTarget'] = c[6]
+                    designData['WorkingHour'] = c[7]
+                    designData['ExceptionWork'] = c[8]
+                    designData['SupplementComment'] = c[9]
+
+                    # 保存リスト
                     designList.append(designData)
 
-                # Insert ChartDesign_TBL
-                trn_sql_varied = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
-                    " VALUES ( " \
-                    " '@CHARTDESIGNCODE@' , " \
-                    " '@LOCATIONINFO@' , " \
-                    " '@IMAGENAME@' , " \
-                    " '@COMMENTCODE@' ) "
-
-                # Insert ChartComment_TBL
-                trn_sql1_varied = "INSERT INTO ChartComment_TBL (CommentCode, Heading, Efficiency, ChartDesignCode) " \
-                    " VALUES ( " \
-                    " '@COMMENTCODE@' , " \
-                    " '@HEADING@' , " \
-                    " '@EFFICIENCY@' , " \
-                    " '@CHARTDESIGNCODE@' ) "
-
-                print("len = ", len(designList))
-                for i in range(0, len(designList)):
-                    # SQL文
-                    trn_sql = trn_sql_varied
-                    trn_sql = trn_sql.replace(
-                        '@CHARTDESIGNCODE@', wkChartDesignCode)
-                    trn_sql = trn_sql.replace(
-                        '@LOCATIONINFO@', designList[i][0])
-                    trn_sql = trn_sql.replace('@IMAGENAME@', designList[i][1])
-
-                    tdatetime = datetime.now()
-                    updateDatetime = tdatetime.strftime('%Y%m%d%H%M%S.%f')
-                    commentCode = "Comment_" + updateDatetime
-                    trn_sql = trn_sql.replace('@COMMENTCODE@', commentCode)
-
-                    # SQL文
-                    trn_sql1 = trn_sql1_varied
-                    trn_sql1 = trn_sql1.replace(
-                        '@COMMENTCODE@', commentCode)
-                    trn_sql1 = trn_sql1.replace('@HEADING@', cmntList[i][0])
-                    trn_sql1 = trn_sql1.replace('@EFFICIENCY@', cmntList[i][1])
-                    trn_sql1 = trn_sql1.replace(
-                        '@CHARTDESIGNCODE@', wkChartDesignCode)
-
-                    #
-                    insert_design_cursor = insertDesignconn.cursor()
-                    insert_design_cursor.execute(trn_sql)
-                    insertDesignconn.commit()
-
-                    insert_comment_cursor = insertCommentconn.cursor()
-                    insert_comment_cursor.execute(trn_sql1)
-                    insertCommentconn.commit()
+                # -----------------------------------------------
+                # 抽出したデータをコピーしていく
+                # -----------------------------------------------
 
                 try:
-                    insert_processdata_cursor = insertconn.cursor()
-                    insert_processdata_cursor.execute(insert_query)
+
+                    # Insert ChartDesign_TBL
+                    trn_design_varied = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
+                        " VALUES ( " \
+                        " '@CHARTDESIGNCODE@' , " \
+                        " '@LOCATIONINFO@' , " \
+                        " '@IMAGENAME@' , " \
+                        " '@COMMENTCODE@' ) "
+
+                    # Insert ChartComment_TBL
+                    trn_comment_varied = "INSERT INTO ChartComment_TBL (CommentCode, Heading, Explanation, Efficiency, OperationTarget, WorkingHour, ExceptionWork, SupplementComment, ChartDesignCode) " \
+                        " VALUES ( " \
+                        " '@COMMENTCODE@' , " \
+                        " '@HEADING@' , " \
+                        " '@EXPLANATION@' , " \
+                        " '@EFFICIENCY@' , " \
+                        " '@OPERATIONTARGET@' , " \
+                        " '@WORKINGHOUR@' , " \
+                        " '@EXCEPTIONWORK@' , " \
+                        " '@SUPPLEMENTCOMMENT@' , " \
+                        " '@CHARTDESIGNCODE@' ) "
+
+                    print("designList len = ", len(designList))
+
+                    for itemData in designList:
+                        tdatetime = datetime.now()
+                        updateDatetime = tdatetime.strftime('%Y%m%d%H%M%S.%f')
+                        commentCode = "Comment_" + updateDatetime
+
+                        # SQL文 / ChartDesign_TBL
+                        trn_sql = trn_design_varied
+                        trn_sql = trn_sql.replace(
+                            '@CHARTDESIGNCODE@', wkChartDesignCode)
+                        trn_sql = trn_sql.replace(
+                            '@LOCATIONINFO@', itemData['LocationInfo'])
+                        trn_sql = trn_sql.replace(
+                            '@IMAGENAME@', itemData['ImageName'])
+                        trn_sql = trn_sql.replace('@COMMENTCODE@', commentCode)
+
+                        insert_cursor.execute(trn_sql)
+
+                        # SQL文 / ChartComment_TBL
+                        trn_sql_comment = trn_comment_varied
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@COMMENTCODE@', commentCode)
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@HEADING@', itemData['Heading'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@EXPLANATION@', itemData['Explanation'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@EFFICIENCY@', itemData['Efficiency'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@OPERATIONTARGET@', itemData['OperationTarget'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@WORKINGHOUR@', itemData['WorkingHour'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@EXCEPTIONWORK@', itemData['ExceptionWork'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@SUPPLEMENTCOMMENT@', itemData['SupplementComment'])
+                        trn_sql_comment = trn_sql_comment.replace(
+                            '@CHARTDESIGNCODE@', wkChartDesignCode)
+
+                        print(trn_sql_comment)
+                        insert_cursor.execute(trn_sql_comment)
+
+                    # 保存
                     insertconn.commit()
 
                 except Exception as e:
                     insertconn.rollback()
-                    insertDesignconn.rollback()
-                    insertCommentconn.rollback()
+
                     messageList.append("Error")
                     messageList.append("Insert Error（内部エラー）")
+
+
                     return jsonify(messageList)
 
         # 正常終了
         messageList.append("Normal")
+
         return jsonify(messageList)
 
     except Exception as e:
         logger.Error("Error : in the function registerProcessCheckData.....")
+
         messageList.append("Error")
         messageList.append("Exception Error（内部エラー）: " + str(type(e)))
+
         return jsonify(messageList)

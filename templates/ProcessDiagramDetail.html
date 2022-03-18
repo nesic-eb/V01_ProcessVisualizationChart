@@ -51,7 +51,7 @@
 
                 var openWindow = window.open("./gotoProcessEditWindow", null,
                     'top=' + y + 'px,left=' + x +
-                    'px,width=800px,height=630px,toolbar=yes,menubar=yes,scrollbars=yes');
+                    'px,width=800px,height=660px,toolbar=yes,menubar=yes,scrollbars=yes');
 
                 // 親画面にシェードをかける処理を実施
                 screenLock();
@@ -139,17 +139,18 @@
                             </div>
                         </td>
                         <td style="width: 300px;">
-                            <button class="btn btn-primary" style="width: 120px;height: 35px;">出力</button>
+                            <button class="btn btn-primary" style="width: 160px;height: 30px;" onclick="chartPrint()"
+                                id="btn_print">コメント部&nbsp;印刷</button>
                         </td>
                         <td style=" width: 300px;">
-                            <a href="/gotoProcessDiagram"><button type="submit" id="btn_design" class="btn btn-primary"
-                                    style="width: 80px;height: 35px;">戻る</button></a>
+                            <a href="/gotoProcessDiagram"><button type="submit" id="btn_Back" class="btn btn-primary"
+                                    style="width: 80px; height: 30px;">戻る</button></a>
                         </td>
                     </tr>
                 </table>
 
                 <br>
-                <hr style="height: 1px; background-color: rgb(200, 200, 200)">
+                <hr style="margin-top: -10px; height: 1px; background-color: rgb(200, 200, 200)">
 
                 <table style="margin-top: 5px;">
                     <tr>
@@ -198,14 +199,15 @@
                         <td style="width: 150px;">
                             <input type="checkbox" id="PermissionFlag" name="PermissionFlag" value=""
                                 style="margin-top: 0px;" onclick="return false;">
-                            <span style="margin-left: 6px; margin-top: -6px;">外部閲覧を禁止する</span>
+                            <span style="margin-left: 6px; margin-top: -6px;" id="PermissionFlagText">外部閲覧を禁止</span>
                         </td>
 
                         <!-- 変更を禁止する -->
                         <td style="width: 150px;">
                             <input type="checkbox" id="ChangeProhibitionFlag" name="ChangeProhibitionFlag" value=""
                                 style="margin-top: 0px;">
-                            <span style="margin-left: 6px; margin-top: -6px;">変更を禁止する（作成者のみ可）</span>
+                            <span style="margin-left: 6px; margin-top: -6px;"
+                                id="ChangeProhibitionFlagText">変更を禁止（作成者可）</span>
                         </td>
 
                         <td style="width: 100px;">
@@ -216,7 +218,8 @@
                         </td>
                     </tr>
                 </table>
-                <hr style="height: 1px; background-color: rgb(200, 200, 200)">
+
+                <hr style="margin-top: 5px; height: 1px; background-color: rgb(200, 200, 200)">
             </div>
 
             <br>
@@ -224,7 +227,7 @@
             <!--
 
             -->
-            <div class="row">
+            <div class="row" style="margin-top: -5px;">
                 <div class="col-sm-7">
                     <!-- 画面：左側要素のエリア -->
                     <div id="l_wrapper" style="width: 103%;">

@@ -1,5 +1,5 @@
 // =============================================================================
-// 画面名：プロセスチャート画面
+// 画面名：プロセス可視化チャート：チャート表示画面
 // 
 // -----------------------------------------------------------------------------
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
@@ -864,4 +864,72 @@ function saveChartComment(el, location) {
       }
     }
   });
+}
+
+// ----------------------------------------------
+// 印刷
+// ----------------------------------------------
+function chartPrint() {
+  // 名称変更
+  var updateChartName = document.getElementById('updateChartName');
+  updateChartName.style.visibility = "hidden";
+  // 詳細画面表示
+  var dispProcessDiagramDetail = document.getElementById('dispProcessDiagramDetail');
+  dispProcessDiagramDetail.style.visibility = "hidden";
+  // チャート印刷
+  var btn_print = document.getElementById('btn_print');
+  btn_print.style.visibility = "hidden";
+  // 戻る
+  var btn_Back = document.getElementById('btn_Back');
+  btn_Back.style.visibility = "hidden";
+
+  // 外部閲覧を禁止する
+  var permissionFlag = document.getElementById('PermissionFlag');
+  var permissionFlagText = document.getElementById('PermissionFlagText');
+  permissionFlag.style.visibility = "hidden";
+  permissionFlagText.style.visibility = "hidden";
+
+  // 変更を禁止する
+  var changeProhibitionFlag = document.getElementById('ChangeProhibitionFlag');
+  var changeProhibitionFlagText = document.getElementById('ChangeProhibitionFlagText');
+  changeProhibitionFlag.style.visibility = "hidden";
+  changeProhibitionFlagText.style.visibility = "hidden";
+
+  // 枠変更
+  updateWakuSize
+  var updateWakuSize = document.getElementById('updateWakuSize');
+  updateWakuSize.style.visibility = "hidden";
+
+  // 自動保存
+  var autoSaveModeCheck = document.getElementById('AutoSaveModeCheck');
+  var autoSaveModeCheckText = document.getElementById('AutoSaveModeCheckText');
+  autoSaveModeCheck.style.visibility = "hidden";
+  autoSaveModeCheckText.style.visibility = "hidden";
+
+  // 手動保存
+  var saveButton = document.getElementById('SaveButton');
+  saveButton.style.visibility = "hidden";
+
+  // 印刷
+  window.print();
+
+  // 名称変更
+  updateChartName.style.visibility = "visible";
+  dispProcessDiagramDetail.style.visibility = "visible";
+  btn_print.style.visibility = "visible";
+  btn_Back.style.visibility = "visible";
+
+  permissionFlag.style.visibility = "visible";
+  permissionFlagText.style.visibility = "visible";
+
+  changeProhibitionFlag.style.visibility = "visible";
+  changeProhibitionFlagText.style.visibility = "visible";
+
+  updateWakuSize.style.visibility = "visible";
+
+  autoSaveModeCheck.style.visibility = "visible";
+  autoSaveModeCheckText.style.visibility = "visible";
+
+  saveButton.style.visibility = "visible";
+
 }

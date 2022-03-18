@@ -1,5 +1,5 @@
 // =============================================================================
-// 画面名：プロセス可視化チャートの詳細画面
+// 画面名：プロセス可視化チャート：詳細画面
 // 
 // -----------------------------------------------------------------------------
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
@@ -193,7 +193,7 @@ function TargetOpenComment(targetComment) {
 };
 
 // ----------------------------------------------
-// 画面：チャート図形枠の最大幅を取得する
+// 画面：図形の最大幅を取得する
 // ----------------------------------------------
 function imgTableWidth(design) {
 
@@ -394,7 +394,7 @@ function rightTableCreate(design) {
         var container_id = document.createElement("div");
         container_id.setAttribute("id", containerName);
         container_id.setAttribute("class", "container");
-        container_id.setAttribute("style", "border: 1px solid #e3e3e3;");
+        container_id.setAttribute("style", "border: 1px solid #e3e3e3; width: 700px;");
 
         var hr = document.createElement("hr");
         hr.style.border = "2";
@@ -837,5 +837,61 @@ function SaveToProcessChartDataTBL() {
 };
 
 
+// ----------------------------------------------
+// 印刷
+// ----------------------------------------------
+function chartPrint() {
+    // 画面左側を非表示にして、コメント部のみを印刷する
+    var l_wrapper = document.getElementById('l_wrapper');
+    var r_wrapper = document.getElementById('r_wrapper');
 
+    l_wrapper.setAttribute("style", "width: 0px;");
+    l_wrapper.style.visibility = "hidden";
 
+    r_wrapper.setAttribute("style", "margin-left: -450px;");
+
+    // 不要ボタン等の非表示
+    // ----------------------------------
+    // チャート印刷
+    var btn_print = document.getElementById('btn_print');
+    btn_print.style.visibility = "hidden";
+    // 戻る
+    var btn_Back = document.getElementById('btn_Back');
+    btn_Back.style.visibility = "hidden";
+
+    // 外部閲覧を禁止する
+    var permissionFlag = document.getElementById('PermissionFlag');
+    var permissionFlagText = document.getElementById('PermissionFlagText');
+    permissionFlag.style.visibility = "hidden";
+    permissionFlagText.style.visibility = "hidden";
+
+    // 変更を禁止する
+    var changeProhibitionFlag = document.getElementById('ChangeProhibitionFlag');
+    var changeProhibitionFlagText = document.getElementById('ChangeProhibitionFlagText');
+    changeProhibitionFlag.style.visibility = "hidden";
+    changeProhibitionFlagText.style.visibility = "hidden";
+
+    // 保存
+    var updateChartData = document.getElementById('updateChartData');
+    updateChartData.style.visibility = "hidden";
+
+    // 印刷
+    window.print();
+
+    // 元に戻す
+    updateChartData.style.visibility = "visible";
+
+    changeProhibitionFlag.style.visibility = "visible";
+    changeProhibitionFlagText.style.visibility = "visible";
+
+    permissionFlag.style.visibility = "visible";
+    permissionFlagText.style.visibility = "visible";
+
+    btn_print.style.visibility = "visible";
+    btn_Back.style.visibility = "visible";
+
+    l_wrapper.style.visibility = "visible";
+    l_wrapper.setAttribute("style", "width: 103%;");
+
+    r_wrapper.setAttribute("style", "margin-left: 0x;");
+}

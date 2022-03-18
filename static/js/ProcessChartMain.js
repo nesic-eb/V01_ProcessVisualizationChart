@@ -1,5 +1,5 @@
 // =============================================================================
-// 画面名：プロセス可視化チャート画面
+// 画面名：プロセス可視化チャート：メイン画面
 // 
 // -----------------------------------------------------------------------------
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
@@ -92,6 +92,7 @@ function getAllProcessProcedureName() {
 
 //Create Datatable
 function CreateProcessdataTable() {
+
   $.ajax({
     url: '/getAllProcessCheckData/',
     async: false,
@@ -161,7 +162,7 @@ function CreateProcessdataTable() {
            /* DELETE */ {
             mRender: function (data, type, row) {
               return '<a href="javascript:DispChartAction(\'' + row[3] + '\',\'' + row[6] + '\',\'' + row[7] + '\',\'' + row[9] + '\',\'' + row[8] + '\');"' +
-                '" class="btn btn-primary">&nbsp;&nbsp;内容表示&nbsp;&nbsp;</a>' +
+                '" class="btn btn-primary">&nbsp;&nbsp;チャート表示&nbsp;&nbsp;</a>' +
                 '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-danger" data-id="' + row[0] +
                 '" onclick="DeleteAction(\'' + row[3] + '\',\'' + row[2] + '\',\'' + row[6] + '\',\'' + row[9] + '\',\'' + row[8] + '\')">削除</button>'
             }, "width": "20%"
@@ -227,8 +228,8 @@ $('#classification_code').on('change', function () {
       type: 'POST',
       data: {
         classification_code: code[0],
-        org1: org_code1,
-        org2: org_code2
+        org1: org1,
+        org2: org2
       },
       dataType: 'json',
       success: function (response) {
@@ -270,7 +271,11 @@ $('#classification_code').on('change', function () {
           row_array[3] = wkData.procedure_name;
           row_array[4] = wkData.CreateMailAddressName;
           row_array[5] = wkData.CreateDateTime;
-          ;
+          row_array[6] = wkData.ProcessProcedureID;
+          row_array[7] = wkData.ChartDesignCode;
+          row_array[8] = wkData.ChangeProhibitionflag;
+          row_array[9] = wkData.CreateMailAddress;
+
           dataSet.push(row_array);
         };
 
@@ -340,83 +345,90 @@ $('#classification_code').on('change', function () {
 $('#workitemID').on('change', function () {
   var workid_code = this.value;
   workid_code = workid_code.split("/");
+
   var classification_code = $('#classification_code').val();
   classification_code = classification_code.split("/");
 
   if (this.value == "Select" || this.value == "") {
     $('#work_name').val("");
-    console.log("Work item name onchange if>" + workid_code[0].trim());
 
-    $.ajax({
-      url: '/getProcessCheckDataByClassification/',
-      async: false,
-      type: 'POST',
-      data: {
-        classification_code: classification_code[0],
-        org1: org_code1,
-        org2: org_code2
-      },
-      dataType: 'json',
-      success: function (response) {
-        // JSONのキーからの取得
-        var jsonObj = JSON.stringify(response);
-        var jsonData = JSON.parse(jsonObj)
+    // 分類コードが選択されている場合のみ
+    if (classification_code != "Select" && classification_code != "") {
+      console.log("Work item name onchange if>" + workid_code[0].trim());
 
-        // Debug ---------------------------
-        console.log(jsonData); // 確認用
+      $.ajax({
+        url: '/getProcessCheckDataByClassification/',
+        async: false,
+        type: 'POST',
+        data: {
+          classification_code: classification_code[0],
+          org1: org1,
+          org2: org2
+        },
+        dataType: 'json',
+        success: function (response) {
+          // JSONのキーからの取得
+          var jsonObj = JSON.stringify(response);
+          var jsonData = JSON.parse(jsonObj)
 
-        var jsonStatus = jsonData[0].status
-        console.log("jsonStatus=" + jsonStatus);
+          // Debug ---------------------------
+          console.log(jsonData); // 確認用
 
-        for (var i = 0; i < jsonData[0].data.length; i++) {
-          var wkData = jsonData[0].data[i]
-          // console.log("Classification=" + wkData.Classification);
-          // console.log("WorkItem=" + wkData.WorkItem);
-          // console.log("procedure_name=" + wkData.procedure_name);
-          // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-          // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
-          // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
-          // console.log("CreateDateTime=" + wkData.CreateDateTime);
-          // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-          // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
-          // console.log("Chart_Kind=" + wkData.Chart_Kind);
+          var jsonStatus = jsonData[0].status
+          console.log("jsonStatus=" + jsonStatus);
+
+          for (var i = 0; i < jsonData[0].data.length; i++) {
+            var wkData = jsonData[0].data[i]
+            // console.log("Classification=" + wkData.Classification);
+            // console.log("WorkItem=" + wkData.WorkItem);
+            // console.log("procedure_name=" + wkData.procedure_name);
+            // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+            // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+            // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
+            // console.log("CreateDateTime=" + wkData.CreateDateTime);
+            // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+            // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
+            // console.log("Chart_Kind=" + wkData.Chart_Kind);
+          }
+          // Debug ---------------------------
+
+          var dataSet = [];
+
+          // add response data in array
+          for (var i = 0; i < jsonData[0].data.length; i++) {
+            const row_array = [];
+            var wkData = jsonData[0].data[i];
+
+            row_array[0] = parseInt(i) + 1;
+            row_array[1] = wkData.Classification;
+            row_array[2] = wkData.WorkItem;
+            row_array[3] = wkData.procedure_name;
+            row_array[4] = wkData.CreateMailAddressName;
+            row_array[5] = wkData.CreateDateTime;
+            row_array[6] = wkData.ProcessProcedureID;
+            row_array[7] = wkData.ChartDesignCode;
+            row_array[8] = wkData.ChangeProhibitionflag;
+            row_array[9] = wkData.CreateMailAddress;
+
+            dataSet.push(row_array);
+          };
+
+          bTable = $('#processCheckdata').dataTable();
+          bTable.fnClearTable();
+          if (dataSet.length != 0) {
+            bTable.fnAddData(dataSet);
+          };
+
+        },
+        error: function (response) {
         }
-        // Debug ---------------------------
-
-        var dataSet = [];
-
-        // add response data in array
-        for (var i = 0; i < jsonData[0].data.length; i++) {
-          const row_array = [];
-          var wkData = jsonData[0].data[i];
-
-          row_array[0] = parseInt(i) + 1;
-          row_array[1] = wkData.Classification;
-          row_array[2] = wkData.WorkItem;
-          row_array[3] = wkData.procedure_name;
-          row_array[4] = wkData.CreateMailAddressName;
-          row_array[5] = wkData.CreateDateTime;
-
-          dataSet.push(row_array);
-        };
-
-        bTable = $('#processCheckdata').dataTable();
-        bTable.fnClearTable();
-        if (dataSet.length != 0) {
-          bTable.fnAddData(dataSet);
-        };
-
-      },
-      error: function (response) {
-      }
-    });
+      });
+    }
 
   } else {
     $('#work_name').val("");
     console.log("Work item name onchange else>" + workid_code[0].trim());
     var workid = workid_code[0].trim();
-    var org_code1 = $('#org1').val();
-    var org_code2 = $('#org2').val();
 
     $.ajax({
       url: '/getProcessCheckDataByWorkItemID/',
@@ -425,8 +437,8 @@ $('#workitemID').on('change', function () {
       data: {
         workitem_id: workid,
         classification_code: classification_code[0],
-        org1: org_code1,
-        org2: org_code2
+        org1: org1,
+        org2: org2
       },
       dataType: 'json',
       success: function (response) {
@@ -466,6 +478,10 @@ $('#workitemID').on('change', function () {
           row_array[3] = wkData.procedure_name;
           row_array[4] = wkData.CreateMailAddressName;
           row_array[5] = wkData.CreateDateTime;
+          row_array[6] = wkData.ProcessProcedureID;
+          row_array[7] = wkData.ChartDesignCode;
+          row_array[8] = wkData.ChangeProhibitionflag;
+          row_array[9] = wkData.CreateMailAddress;
 
           dataSet1.push(row_array);
         };
@@ -487,8 +503,8 @@ $('#workitemID').on('change', function () {
       type: 'POST',
       data: {
         workitem_id: workid,
-        org_code1: org_code1,
-        org_code2: org_code2
+        org_code1: org1,
+        org_code2: org2
       },
       dataType: 'json',
       success: function (response) {
@@ -510,8 +526,7 @@ $('#workitemID').on('change', function () {
 $('#work_name1').on('change', function () {
 
   var code = this.value;
-  var org_code1 = $('#org1').val();
-  var org_code2 = $('#org2').val();
+
   if (code != "Select") {
     $.ajax({
       url: '/getChartDesignCode/',
@@ -543,8 +558,6 @@ $('#classification_code1').on('change', function () {
   var code = this.value;
   code = code.split("/");
   $('#work_name2').val("");
-  var org_code1 = $('#org1').val();
-  var org_code2 = $('#org2').val();
 
   $.ajax({
     url: '/getWorkItemIDInfo/',

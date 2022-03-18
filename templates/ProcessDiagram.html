@@ -1,3 +1,12 @@
+<!--
+// =============================================================================
+// 画面名：プロセス可視化チャート：チャート表示画面
+//
+// -----------------------------------------------------------------------------
+// （ファイル整形）Visual Studio Code : Shift + Alt + f
+// =============================================================================
+-->
+
 <!DOCTYPE html>
 <html dir="ltr" lang="ja">
 
@@ -69,21 +78,26 @@
                     <td style="width: 70px;">
                     </td>
                     <td style="width: 18px;">
-                        <a href=" /goToProcessDiagramDetail"><button type="submit" id="btn_update"
-                                style="width: 200px; margin-top: 20px;" class="btn btn-primary">詳細画面を表示する</button></a>
+                        <a href=" /goToProcessDiagramDetail"><button
+                                style="width: 200px; margin-top: 20px; height: 30px;" class="btn btn-primary"
+                                id="dispProcessDiagramDetail">詳細画面&nbsp;表示</button></a>
                     </td>
                     <td style="width: 100px;">
-                        <a href="/gotoProcessMainBack"><button type="submit" id="btn_Back" class="btn btn-primary"
-                                style="margin-top: 20px;">戻る</button></a>
+                        <button class="btn btn-primary" style="margin-top: 20px; width: 160px; height: 30px;"
+                            onclick="chartPrint()" id="btn_print">チャート&nbsp;印刷</button>
+                    </td>
+                    <td style="width: 100px;">
+                        <a href="/gotoProcessMainBack"><button id="btn_Back" class="btn btn-primary"
+                                style="margin-top: 20px; width: 80px; height: 30px;">戻る</button></a>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <hr style="height: 1px; background-color: rgb(200, 200, 200)">
+        <div style="margin-left: -30px; margin-top: -10px;">
+            <hr style="height: 1px; background-color: rgb(200, 200, 200)">
 
-        <div style="margin-left: -30px;">
-            <table style="width: 90%; margin-top: 0px; margin-left: 20px;">
+            <table style="width: 90%; margin-top: -10px; margin-left: 20px;">
                 <tr>
                     <td style="width: 40px;">
                         <a href="JavaScript:showModal('UsageGuide')" id="UsageGuide" name="UsageGuide">
@@ -92,33 +106,33 @@
                         </a>
                     </td>
 
-                    <td style="width: 85px;">
+                    <td style="width: 95px;">
                         <P style="margin-top: 4px;">合計時間：</P>
                     </td>
                     <td style="width: 90px;">
                         <input type="text" class="form-control" title="TotalWorkingTime" id="TotalWorkingTime"
                             style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
                             readonly value="" />
-                        <span>&nbsp;h</span>
+                        <span>h</span>
                     </td>
 
-                    <td style="width: 20px;">
+                    <td style="width: 10px;">
                     </td>
 
-                    <td style="width: 85px;">
+                    <td style="width: 95px;">
                         <P style="margin-top: 4px;">作業頻度：</P>
                     </td>
-                    <td style="width: 130px;">
+                    <td style="width: 135px;">
                         <input type="text" class="form-control" title="SelectWorkFrequency" id="SelectWorkFrequency"
                             style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
                             readonly value="" />
-                        <span>&nbsp;回／月</span>
+                        <span>回/月</span>
                     </td>
 
-                    <td style="width: 20px;">
+                    <td style="width: 10px;">
                     </td>
 
-                    <td style="width: 85px;">
+                    <td style="width: 95px;">
                         <P style="margin-top: 4px;">作業人数：</P>
                     </td>
                     <td style="width: 130px;">
@@ -126,33 +140,29 @@
                             id="SelectWorkNumberOfWorkers"
                             style="margin-left: 0px; margin-top: 0px; width: 60px; height:35px; text-align: right;"
                             readonly value="" />
-                        <span>&nbsp;人</span>
+                        <span>人</span>
                     </td>
 
                     <!-- 外部閲覧を禁止する -->
                     <td style="width: 210px;">
                         <input type="checkbox" id="PermissionFlag" name="PermissionFlag" value=""
                             style="margin-top: 0px;" onclick="return false;">
-                        <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;">外部閲覧を禁止する</span>
+                        <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;"
+                            id="PermissionFlagText">外部閲覧を禁止</span>
                     </td>
 
                     <!-- 変更を禁止する -->
                     <td style="width: 280px;">
                         <input type="checkbox" id="ChangeProhibitionFlag" name="ChangeProhibitionFlag" value=""
                             style="margin-top: 0px;" onclick="return false;">
-                        <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;">変更を禁止する（作成者のみ可）</span>
+                        <span style="margin-left: 6px; margin-top: -4px; margin-top: 0px;"
+                            id="ChangeProhibitionFlagText">変更を禁止（作成者可）</span>
                     </td>
 
                     <td style="width: 80px;">
                     </td>
 
-                    <td>
-                    </td>
-
-                    <td style="width: 50px;">
-                    </td>
-
-                    <td style="width: 85px;">
+                    <td style="width: 95px;">
                         <P tyle="margin-top: 4px;">カラム数：</P>
                     </td>
                     <td style="width: 60px;">
@@ -181,7 +191,7 @@
                     <td style="width: 150px;">
                         <input type="checkbox" id="AutoSaveModeCheck" name="AutoSaveModeCheck" value=""
                             style="margin-top: 0px;" onclick="AutoSaveControl();" checked>
-                        <span style="margin-left: 6px; margin-top: 0px;">自動保存</span>
+                        <span style="margin-left: 6px; margin-top: 0px;" id="AutoSaveModeCheckText">自動保存</span>
                     </td>
                     <td style="width: 90px;">
                         <button class="btn btn-success"
@@ -195,7 +205,7 @@
         </div>
 
         <!-- Create table -->
-        <div id="processChart_container" style="margin-right: 20px;">
+        <div id="processChart_container">
         </div>
         <br />
         <br />
