@@ -115,16 +115,16 @@ function CreateProcessdataTable() {
 
       for (var i = 0; i < jsonData[0].data.length; i++) {
         var wkData = jsonData[0].data[i]
-        console.log("Classification=" + wkData.Classification);
-        console.log("WorkItem=" + wkData.WorkItem);
-        console.log("procedure_name=" + wkData.procedure_name);
-        console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-        console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
-        console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
-        console.log("CreateDateTime=" + wkData.CreateDateTime);
-        console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-        console.log("ChartDesignCode=" + wkData.ChartDesignCode);
-        console.log("Chart_Kind=" + wkData.Chart_Kind);
+        // console.log("Classification=" + wkData.Classification);
+        // console.log("WorkItem=" + wkData.WorkItem);
+        // console.log("procedure_name=" + wkData.procedure_name);
+        // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+        // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+        // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
+        // console.log("CreateDateTime=" + wkData.CreateDateTime);
+        // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+        // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
+        // console.log("Chart_Kind=" + wkData.Chart_Kind);
       }
       // Debug ---------------------------
 
