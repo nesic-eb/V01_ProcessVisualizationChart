@@ -30,11 +30,19 @@ $(document).ready(function () {
   });
 });
 
+var comboTree2 = null;
+$(document).ready(function () {
+  comboTree2 = $('#workitemID1').comboTree({
+    isMultiple: false
+  });
+});
+
 // ==================================================
 // 分類情報取得
 // 
 // ==================================================
 function getProcessCheckInfo() {
+  $('#work_name1').val("");
 
   $.ajax({
     url: '/getClassification/',
@@ -46,19 +54,41 @@ function getProcessCheckInfo() {
     },
     dataType: 'json',
     success: function (response) {
-      console.log("Response>>>" + response)
       for (var i = 0; i < response.length; i++) {
-        console.log(response[i])
         $("#classification_code").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
+        $("#classification_code1").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
 
       }
 
     }
   });
-
+  getAllProcessProcedureName();
   CreateProcessdataTable();
-
 }
+
+//Get all processProcedureName
+function getAllProcessProcedureName() {
+
+  $.ajax({
+    url: '/getAllProcessProcedureName/',
+    async: false,
+    type: 'POST',
+    data: {
+      org1: org1,
+      org2: org2
+    },
+    dataType: 'json',
+    success: function (response) {
+      for (var i = 0; i < response.length; i++) {
+        $("#work_name1").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
+
+      }
+
+    }
+  });
+}
+
+
 
 //Create Datatable
 function CreateProcessdataTable() {
@@ -84,16 +114,16 @@ function CreateProcessdataTable() {
 
       for (var i = 0; i < jsonData[0].data.length; i++) {
         var wkData = jsonData[0].data[i]
-        console.log("Classification=" + wkData.Classification);
-        console.log("WorkItem=" + wkData.WorkItem);
-        console.log("procedure_name=" + wkData.procedure_name);
-        console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-        console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
-        console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
-        console.log("CreateDateTime=" + wkData.CreateDateTime);
-        console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-        console.log("ChartDesignCode=" + wkData.ChartDesignCode);
-        console.log("Chart_Kind=" + wkData.Chart_Kind);
+        // console.log("Classification=" + wkData.Classification);
+        // console.log("WorkItem=" + wkData.WorkItem);
+        // console.log("procedure_name=" + wkData.procedure_name);
+        // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+        // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+        // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
+        // console.log("CreateDateTime=" + wkData.CreateDateTime);
+        // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+        // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
+        // console.log("Chart_Kind=" + wkData.Chart_Kind);
       }
       // Debug ---------------------------
 
@@ -180,10 +210,13 @@ $('#classification_code').on('change', function () {
   var code = this.value;
   code = code.split("/");
   $('#work_name').val("");
+  $('#work_name1').empty().append('<option>Select</option>');
+
   var org_code1 = $('#org1').val();
   var org_code2 = $('#org2').val();
 
   if (code[0] == "Select") {
+    getAllProcessProcedureName();
     CreateProcessdataTable();
   }
   else {
@@ -211,16 +244,16 @@ $('#classification_code').on('change', function () {
 
         for (var i = 0; i < jsonData[0].data.length; i++) {
           var wkData = jsonData[0].data[i]
-          console.log("Classification=" + wkData.Classification);
-          console.log("WorkItem=" + wkData.WorkItem);
-          console.log("procedure_name=" + wkData.procedure_name);
-          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-          console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
-          console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
-          console.log("CreateDateTime=" + wkData.CreateDateTime);
-          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-          console.log("ChartDesignCode=" + wkData.ChartDesignCode);
-          console.log("Chart_Kind=" + wkData.Chart_Kind);
+          // console.log("Classification=" + wkData.Classification);
+          // console.log("WorkItem=" + wkData.WorkItem);
+          // console.log("procedure_name=" + wkData.procedure_name);
+          // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+          // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
+          // console.log("CreateDateTime=" + wkData.CreateDateTime);
+          // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
+          // console.log("Chart_Kind=" + wkData.Chart_Kind);
         }
         // Debug ---------------------------
 
@@ -272,10 +305,31 @@ $('#classification_code').on('change', function () {
       comboTree1.setSource(data);
     },
     error: function (response) {
-      console.log("Hello else data>>" + response)
       comboTree1.setSource("");
     }
   });
+
+  $.ajax({
+    url: '/getProcessProcedureNameByClassification/',
+    async: false,
+    type: 'POST',
+    data: {
+      classification_code: code[0],
+      org1: org1,
+      org2: org2
+    },
+    dataType: 'json',
+    success: function (response) {
+      console.log("Response getProcessProcedureNameByClassification>>>" + response)
+      for (var i = 0; i < response.length; i++) {
+        console.log(response[i])
+        $("#work_name1").append("<option value='" + response[i] + "'>" + response[i] + "</option>");
+
+      }
+
+    }
+  });
+
 });
 
 
@@ -316,16 +370,16 @@ $('#workitemID').on('change', function () {
 
         for (var i = 0; i < jsonData[0].data.length; i++) {
           var wkData = jsonData[0].data[i]
-          console.log("Classification=" + wkData.Classification);
-          console.log("WorkItem=" + wkData.WorkItem);
-          console.log("procedure_name=" + wkData.procedure_name);
-          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-          console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
-          console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
-          console.log("CreateDateTime=" + wkData.CreateDateTime);
-          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-          console.log("ChartDesignCode=" + wkData.ChartDesignCode);
-          console.log("Chart_Kind=" + wkData.Chart_Kind);
+          // console.log("Classification=" + wkData.Classification);
+          // console.log("WorkItem=" + wkData.WorkItem);
+          // console.log("procedure_name=" + wkData.procedure_name);
+          // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          // console.log("CreateMailAddressName=" + wkData.CreateMailAddressName);
+          // console.log("ChangeProhibitionflag=" + wkData.ChangeProhibitionflag);
+          // console.log("CreateDateTime=" + wkData.CreateDateTime);
+          // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          // console.log("ChartDesignCode=" + wkData.ChartDesignCode);
+          // console.log("Chart_Kind=" + wkData.Chart_Kind);
         }
         // Debug ---------------------------
 
@@ -388,14 +442,14 @@ $('#workitemID').on('change', function () {
 
         for (var i = 0; i < jsonData[0].data.length; i++) {
           var wkData = jsonData[0].data[i]
-          console.log("Classification=" + wkData.Classification);
-          console.log("WorkItem=" + wkData.WorkItem);
-          console.log("procedure_name=" + wkData.procedure_name);
-          console.log("CreateMailAddress=" + wkData.CreateMailAddress);
-          console.log("CreateMailAddressname=" + wkData.CreateMailAddressName);
-          console.log("CreateDateTime=" + wkData.CreateDateTime);
-          console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
-          console.log("Chart_Kind=" + wkData.Chart_Kind);
+          // console.log("Classification=" + wkData.Classification);
+          // console.log("WorkItem=" + wkData.WorkItem);
+          // console.log("procedure_name=" + wkData.procedure_name);
+          // console.log("CreateMailAddress=" + wkData.CreateMailAddress);
+          // console.log("CreateMailAddressname=" + wkData.CreateMailAddressName);
+          // console.log("CreateDateTime=" + wkData.CreateDateTime);
+          // console.log("ProcessProcedureID=" + wkData.ProcessProcedureID);
+          // console.log("Chart_Kind=" + wkData.Chart_Kind);
         }
         // Debug ---------------------------
 
@@ -446,6 +500,75 @@ $('#workitemID').on('change', function () {
     });
   }
 });
+
+
+// ==================================================
+// コピー先　作業名情報選択時に該当する情報を取得する
+// 
+// ==================================================
+
+$('#work_name1').on('change', function () {
+
+  var code = this.value;
+  var org_code1 = $('#org1').val();
+  var org_code2 = $('#org2').val();
+  if (code != "Select") {
+    $.ajax({
+      url: '/getChartDesignCode/',
+      async: false,
+      type: 'POST',
+      data: {
+        workName: code,
+        org1: org1,
+        org2: org2
+      },
+      dataType: 'json',
+      success: function (response) {
+        $('#chartDesigncode').val(response);
+      },
+      error: function (response) {
+      }
+    });
+  }
+});
+
+
+// ==================================================
+// コピー先　分類情報選択時に該当する情報を取得する
+// 
+// ==================================================
+
+$('#classification_code1').on('change', function () {
+
+  var code = this.value;
+  code = code.split("/");
+  $('#work_name2').val("");
+  var org_code1 = $('#org1').val();
+  var org_code2 = $('#org2').val();
+
+  $.ajax({
+    url: '/getWorkItemIDInfo/',
+    async: false,
+    type: 'POST',
+    data: {
+      classification_code1: code[0],
+      org1: org1,
+      org2: org2
+    },
+    dataType: 'json',
+    success: function (response) {
+      var data = response;
+      var text = '{"id":"1", "subs":"", "title":"Select"}';
+      var obj = JSON.parse(text);
+      data.splice(0, 0, obj);
+      comboTree2.setSource(data);
+    },
+    error: function (response) {
+      comboTree2.setSource("");
+    }
+  });
+});
+
 
 // ==================================================
 // 登録を行う
@@ -557,3 +680,53 @@ function DeleteAction(work_name, workitem, processProcedureID, createUser, chang
   }
 
 };
+
+
+
+// ==================================================
+// コピーするを行う
+//
+//
+// ==================================================
+
+$('#btn_copy').click(function (e) {
+  e.preventDefault();
+  var work_name1 = $('#work_name1').val();
+
+  var classification_code1 = $('#classification_code1').val();
+  classification_code1 = classification_code1.split("/");
+
+  var workitemID1 = $('#workitemID1').val();
+  workitemID1 = workitemID1.split("/");
+
+  var work_name2 = $('#work_name2').val();
+
+  var chartkind = $('#chart_kind').val();
+
+  var chartDesigncode = $('#chartDesigncode').val();
+
+  $.ajax({
+    url: '/copyProcessCheckData/',
+    type: 'POST',
+    data: {
+      classification_code: classification_code1[0].trim(),
+      workitem_id: workitemID1[0].trim(),
+      chartDesigncode: chartDesigncode,
+      workName2: work_name2,
+      org1: org1,
+      org2: org2,
+      user_emal: user_emal,
+      chartkind: chartkind
+    },
+    dataType: 'json',
+    success: function (response) {
+      if (response[0] == "Normal") {
+        alert("登録しました。");
+        window.location.reload();
+      } else {
+        //alert(response[0] + " : " + response[1]);
+        window.location.reload();
+      }
+    }
+  });
+});
