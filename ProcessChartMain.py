@@ -999,6 +999,7 @@ def copyProcessCheckData():
 
                 # 親テーブル
                 # Insert（ProcessChartData_TBL）
+
                 insert_query = \
                     " INSERT INTO " \
                     "  ProcessChartData_TBL " \
@@ -1149,6 +1150,7 @@ def copyProcessCheckData():
 
                     messageList.append("Error")
                     messageList.append("Insert Error（内部エラー）")
+
 
                     return jsonify(messageList)
 
