@@ -49,7 +49,7 @@
             /* background-color: lightgreen; */
         }
 
-        @media (min-width: 400px) {
+        @media (min-width: 500px) {
             #parent {
                 display: flex;
             }
@@ -59,6 +59,10 @@
             }
 
             #child2 {
+                flex-grow: 1;
+            }
+
+            #child3 {
                 flex-grow: 1;
             }
         }
@@ -84,14 +88,8 @@
     </header>
 
     <form>
-        <div class="l-content__block" style="margin:30px;">
-            <div class=" l-content__item--title">
-                <h3 class="l-content__heading--title">プロセス可視化チャート</h3>
-            </div>
-        </div>
-
-        <div id="parent" style="margin:30px;">
-            <div id="child1">
+        <div id="parent" style="margin:30px;margin-top: 70px;">
+            <div style="width: 34%;" id="child1">
                 <div style="text-align: left;">
                     <label>分類:</label>
                     <select style="width: 300px;" id='classification_code' name='classification_code'>
@@ -105,21 +103,8 @@
                     <div style="width: 400px;">
                         <input type="text" id="workitemID" autocomplete="off" name="workitemID" />
                     </div>
-
                 </div>
-            </div>
 
-            <div style="width: 60%;" id="child2">
-                <div style="text-align: left;">
-                    <label>チャート種別：</label>
-                    <div style="width: 600px;">
-                        <select style="width: 300px;" id='chart_kind' name='chart_kind'>
-                            <option selected>FlowChart</option>
-                        </select>
-                        <span>
-                    </div>
-                </div>
-                <br>
                 <div style="text-align: left;">
                     <label>作業名：</label>
                     <div style="width: 600px;">
@@ -131,8 +116,60 @@
                         </span>
                     </div>
                 </div>
+            </div>
+
+            <div style="width: 33%;" id="child2">
+                <div style="text-align: left;">
+                    <label>＜コピー先　作業名 ＞</label>
+                    <div style="width: 600px;">
+                        <select style="width: 300px;" id='work_name1' name='work_name1'>
+                            <option>Select</option>
+                        </select>
+                        <span>
+                    </div>
+                </div>
+
+                <br>
+                <div style="text-align: left;">
+                    <label>＜コピー先　分類 ＞</label>
+                    <select style="width: 300px;" id='classification_code1' name='classification_code1'>
+                        <option>Select</option>
+                    </select>
+                </div>
+
+                <br>
+                <div style="text-align: left;">
+                    <label>＜コピー先　作業項目 ＞</label>
+                    <div style="width: 400px;">
+                        <input type="text" id="workitemID1" autocomplete="off" name="workitemID1" />
+                    </div>
+                </div>
+
+                <div style="text-align: left;">
+                    <label>＜コピー先　作業名 ＞</label>
+                    <div style="width: 600px;">
+                        <input style="width: 400px;" type="text" class="form-control" id="work_name2" name="work_name2">
+                        <span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="submit" id="btn_copy" class="btn btn-primary"
+                                style="margin-top: -10px;">コピーする</button>
+                        </span>
+                    </div>
+                </div>
+                <input id="chartDesigncode" name="chartDesigncode" type="hidden" value="">
                 <input id="org1" name="org1" type="hidden" value="">
                 <input id="org2" name="org2" type="hidden" value="">
+            </div>
+            <div style="width: 24%;" id="child3">
+                <div style="text-align: right;margin-left: -160px;">
+                    <label style="margin-left: -216px;text-align: right;">チャート種別：</label>
+                    <div style="width: 600px;">
+                        <select style="width: 300px;" id='chart_kind' name='chart_kind'>
+                            <option selected>FlowChart</option>
+                        </select>
+                        <span>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -7,6 +7,8 @@
 // （ファイル整形）Visual Studio Code : Shift + Alt + f
 // =============================================================================
 '''
+from asyncio.windows_events import NULL
+from turtle import update
 from typing import Container
 import requests
 import json
@@ -770,3 +772,382 @@ def deleteProcessCheckData():
     finally:
         delete_processCheck_conn.close()
         select_cursor.close()
+
+
+# ========================================================================
+# コピー先作業名情報を取得する
+#
+#
+# ------------------------------------------------------
+
+@ProcessChartMain_api.route("/getAllProcessProcedureName/", methods=['POST', 'GET'])
+def getAllProcessProcedureName():
+
+    logger.info(
+        "Start the function getAllProcessProcedureName in ProcessCheck......")
+
+    try:
+        processProcedureNameData = []
+
+        org1 = flask.request.form['org1']
+        org2 = flask.request.form['org2']
+
+        processProcedure_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                               'Server=' +
+                                               app_section.get('IP')+';'
+                                               'Database=' +
+                                               app_section.get('DATABASE')+';'
+                                               'uid=' +
+                                               app_section.get(
+                                                   'DB_USER_ID')+';'
+                                               'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        processProcedure_cursor = processProcedure_conn.cursor()
+
+        processProcedure_cursor.execute(
+            " SELECT "
+            "   ProcessProcedureName "
+            " FROM ProcessChartData_TBL "
+            " WHERE OrganizationCode1 = '" + org1 + "' "
+            "   AND OrganizationCode2 = '" + org2 + "' ")
+
+        for row in processProcedure_cursor:
+            processProcedureNameData.append(row[0])
+
+        return jsonify(processProcedureNameData)
+
+    except Exception as e:
+        logger.Error(
+            "ERROR : in the function getAllProcessProcedureName in ProcessCheck.....")
+        raise e
+
+
+# ========================================================================
+# コピー先作業名情報を取得する(By classification)
+#
+#
+# ------------------------------------------------------
+
+@ProcessChartMain_api.route("/getProcessProcedureNameByClassification/", methods=['POST', 'GET'])
+def getProcessProcedureNameByClassification():
+
+    logger.info(
+        "Start the function getProcessProcedureNameByClassification in ProcessCheck......")
+
+    try:
+        processProcedureNameData = []
+
+        classificationCode = flask.request.form['classification_code']
+        org1 = flask.request.form['org1']
+        org2 = flask.request.form['org2']
+
+        processProcedure_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                               'Server=' +
+                                               app_section.get('IP')+';'
+                                               'Database=' +
+                                               app_section.get('DATABASE')+';'
+                                               'uid=' +
+                                               app_section.get(
+                                                   'DB_USER_ID')+';'
+                                               'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        processProcedure_cursor = processProcedure_conn.cursor()
+
+        processProcedure_cursor.execute(
+            " SELECT "
+            "   ProcessProcedureName "
+            " FROM ProcessChartData_TBL "
+            " WHERE ClassificationCode = '" + classificationCode + "' "
+            " AND OrganizationCode1 = '" + org1 + "' "
+            "   AND OrganizationCode2 = '" + org2 + "' ")
+
+        for row in processProcedure_cursor:
+            processProcedureNameData.append(row[0])
+
+        return jsonify(processProcedureNameData)
+
+    except Exception as e:
+        logger.Error(
+            "ERROR : in the function getProcessProcedureNameByclassification in ProcessCheck.....")
+        raise e
+
+
+# ========================================================================
+# Get ChartDesign code
+#
+#
+# ------------------------------------------------------
+
+@ProcessChartMain_api.route("/getChartDesignCode/", methods=['POST', 'GET'])
+def getChartDesignCode():
+
+    logger.info(
+        "Start the function getChartDesignCode in ProcessCheck......")
+
+    try:
+        chartDesignCodedata = []
+
+        workName = flask.request.form['workName']
+        org1 = flask.request.form['org1']
+        org2 = flask.request.form['org2']
+
+        processProcedure_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                               'Server=' +
+                                               app_section.get('IP')+';'
+                                               'Database=' +
+                                               app_section.get('DATABASE')+';'
+                                               'uid=' +
+                                               app_section.get(
+                                                   'DB_USER_ID')+';'
+                                               'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        processProcedure_cursor = processProcedure_conn.cursor()
+
+        processProcedure_cursor.execute(
+            " SELECT "
+            "   ChartDesignCode "
+            " FROM ProcessChartData_TBL "
+            " WHERE ProcessProcedureName = '" + workName + "' "
+            " AND OrganizationCode1 = '" + org1 + "' "
+            "   AND OrganizationCode2 = '" + org2 + "' ")
+
+        for row in processProcedure_cursor:
+            chartDesignCodedata.append(row[0])
+
+        return jsonify(chartDesignCodedata)
+
+    except Exception as e:
+        logger.Error(
+            "ERROR : in the function getChartDesignCode in ProcessCheck.....")
+        raise e
+
+
+# ========================================================================
+# プロセス確認メンテナンス：コピー機能
+#
+#
+# ------------------------------------------------------
+
+@ProcessChartMain_api.route('/copyProcessCheckData/', methods=['POST'])
+def copyProcessCheckData():
+
+    logger.info("Start the function copyProcessCheckData.....")
+
+    messageList = []
+    cmntList = []
+    designList = []
+
+    classification_code = flask.request.form['classification_code']
+    workitem_id = flask.request.form['workitem_id']
+    chartDesigncode = flask.request.form['chartDesigncode']
+    workName2 = flask.request.form['workName2']
+    org1 = flask.request.form['org1']
+    org2 = flask.request.form['org2']
+    user_emal = flask.request.form['user_emal']
+    chartkind = flask.request.form['chartkind']
+
+    now = datetime.now()
+    # dd/mm/YY H:M:S
+    dt_string = now.strftime("%Y/%m/%d %H:%M:%S")
+
+    wkProcessProcedureID = chartkind + "_" + now.strftime("%Y%m%d%H%M%S%f")
+    wkChartDesignCode = "DesignCode_" + now.strftime("%Y%m%d%H%M%S")
+
+    try:
+        selectconn = pyodbc.connect('DRIVER={SQL Server};'
+                                    'Server='+app_section.get('IP')+';'
+                                    'Database='+app_section.get('DATABASE')+';'
+                                    'uid='+app_section.get('DB_USER_ID')+';'
+                                    'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        insertconn = pyodbc.connect('DRIVER={SQL Server};'
+                                    'Server='+app_section.get('IP')+';'
+                                    'Database='+app_section.get('DATABASE')+';'
+                                    'uid='+app_section.get('DB_USER_ID')+';'
+                                    'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        copyconn = pyodbc.connect('DRIVER={SQL Server};'
+                                  'Server='+app_section.get('IP')+';'
+                                  'Database='+app_section.get('DATABASE')+';'
+                                  'uid='+app_section.get('DB_USER_ID')+';'
+                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        insertDesignconn = pyodbc.connect('DRIVER={SQL Server};'
+                                          'Server='+app_section.get('IP')+';'
+                                          'Database=' +
+                                          app_section.get('DATABASE')+';'
+                                          'uid=' +
+                                          app_section.get('DB_USER_ID')+';'
+                                          'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        insertCommentconn = pyodbc.connect('DRIVER={SQL Server};'
+                                           'Server='+app_section.get('IP')+';'
+                                           'Database=' +
+                                           app_section.get('DATABASE')+';'
+                                           'uid=' +
+                                           app_section.get('DB_USER_ID')+';'
+                                           'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        workitem_id = workitem_id.strip()
+
+        if (workitem_id != ""):
+            print("Insert New workitem_id" + workitem_id)
+
+            # 同じプロセス手順名が存在するかを確認する
+            select_conn_process_cursor = selectconn.cursor()
+
+            select_query = " SELECT " \
+                "   COUNT(ProcessProcedureName) " \
+                " FROM " \
+                "   ProcessChartData_TBL " \
+                " WHERE ProcessProcedureName = '" + workName2 + "'" \
+                " AND WorkItemID = '" + workitem_id + "'" \
+                " AND OrganizationCode1 = '" + org1 + "'" \
+                " AND OrganizationCode2 = '" + org2 + "'"
+
+            select_conn_process_cursor.execute(select_query)
+
+            same_flag = True
+            for x in select_conn_process_cursor:
+                if x[0] == 1:
+                    same_flag = False
+
+            if same_flag == False:
+                messageList.append("Error")
+                messageList.append("既に、同じ名称が登録されています。")
+                return jsonify(messageList)
+
+            if same_flag == True:
+
+                # Insert
+                insert_query = \
+                    " INSERT INTO " \
+                    "  ProcessChartData_TBL " \
+                    "  ( ProcessProcedureID, ProcessProcedureName, ClassificationCode, WorkItemID, " \
+                    "    OrganizationCode1, OrganizationCode2, PermissionFlag, ChangeProhibitionflag, " \
+                    "    WorkFrequency, NumberOfWorkers, TotalWorkingTime, ColumnNumber, RowsNumber, " \
+                    "    CreateMailAddress, CreateDateTime, UpdateMailAddress, UpdateDateTime, ChartDesignCode) " \
+                    "  VALUES ( " \
+                    "'" + wkProcessProcedureID + "', " \
+                    "'" + workName2 + "', " \
+                    "'" + classification_code + "', " \
+                    "'" + workitem_id + "', " \
+                    "'" + org1 + "', " \
+                    "'" + org2 + "', " \
+                    "'0', " \
+                    "'1', " \
+                    "'0', " \
+                    "'0', " \
+                    "'0.0' , " \
+                    "'8' , " \
+                    "'8' , " \
+                    "'" + user_emal + "' , " \
+                    "'" + dt_string + "' , " \
+                    " NULL , " \
+                    " NULL , " \
+                    "'" + wkChartDesignCode + "' ) "
+
+                # ChartComment_TBL Select
+                copy_cursor = copyconn.cursor()
+                select_comment_query = " SELECT " \
+                    "   Heading, " \
+                    "   Efficiency " \
+                    " FROM " \
+                    "   ChartComment_TBL " \
+                    " WHERE ChartDesignCode = '" + chartDesigncode + "'"
+
+                copy_cursor.execute(select_comment_query)
+                for row in copy_cursor:
+                    cmntData = []
+                    cmntData.append(row[0])
+                    cmntData.append(row[1])
+                    cmntList.append(cmntData)
+
+                # ChartDesign_TBL Select
+                copy_cursor = copyconn.cursor()
+                select_chart_query = " SELECT " \
+                    "   LocationInfo, " \
+                    "   ImageName " \
+                    " FROM " \
+                    "   ChartDesign_TBL " \
+                    " WHERE ChartDesignCode = '" + chartDesigncode + "'"
+
+                copy_cursor.execute(select_chart_query)
+
+                for c in copy_cursor:
+                    designData = []
+                    designData.append(c[0])
+                    designData.append(c[1])
+                    designList.append(designData)
+
+                # Insert ChartDesign_TBL
+                trn_sql_varied = "INSERT INTO ChartDesign_TBL (ChartDesignCode, LocationInfo, ImageName, CommentCode) " \
+                    " VALUES ( " \
+                    " '@CHARTDESIGNCODE@' , " \
+                    " '@LOCATIONINFO@' , " \
+                    " '@IMAGENAME@' , " \
+                    " '@COMMENTCODE@' ) "
+
+                # Insert ChartComment_TBL
+                trn_sql1_varied = "INSERT INTO ChartComment_TBL (CommentCode, Heading, Efficiency, ChartDesignCode) " \
+                    " VALUES ( " \
+                    " '@COMMENTCODE@' , " \
+                    " '@HEADING@' , " \
+                    " '@EFFICIENCY@' , " \
+                    " '@CHARTDESIGNCODE@' ) "
+
+                print("len = ", len(designList))
+                for i in range(0, len(designList)):
+                    # SQL文
+                    trn_sql = trn_sql_varied
+                    trn_sql = trn_sql.replace(
+                        '@CHARTDESIGNCODE@', wkChartDesignCode)
+                    trn_sql = trn_sql.replace(
+                        '@LOCATIONINFO@', designList[i][0])
+                    trn_sql = trn_sql.replace('@IMAGENAME@', designList[i][1])
+
+                    tdatetime = datetime.now()
+                    updateDatetime = tdatetime.strftime('%Y%m%d%H%M%S.%f')
+                    commentCode = "Comment_" + updateDatetime
+                    trn_sql = trn_sql.replace('@COMMENTCODE@', commentCode)
+
+                    # SQL文
+                    trn_sql1 = trn_sql1_varied
+                    trn_sql1 = trn_sql1.replace(
+                        '@COMMENTCODE@', commentCode)
+                    trn_sql1 = trn_sql1.replace('@HEADING@', cmntList[i][0])
+                    trn_sql1 = trn_sql1.replace('@EFFICIENCY@', cmntList[i][1])
+                    trn_sql1 = trn_sql1.replace(
+                        '@CHARTDESIGNCODE@', wkChartDesignCode)
+
+                    #
+                    insert_design_cursor = insertDesignconn.cursor()
+                    insert_design_cursor.execute(trn_sql)
+                    insertDesignconn.commit()
+
+                    insert_comment_cursor = insertCommentconn.cursor()
+                    insert_comment_cursor.execute(trn_sql1)
+                    insertCommentconn.commit()
+
+                try:
+                    insert_processdata_cursor = insertconn.cursor()
+                    insert_processdata_cursor.execute(insert_query)
+                    insertconn.commit()
+
+                except Exception as e:
+                    insertconn.rollback()
+                    insertDesignconn.rollback()
+                    insertCommentconn.rollback()
+                    messageList.append("Error")
+                    messageList.append("Insert Error（内部エラー）")
+                    return jsonify(messageList)
+
+        # 正常終了
+        messageList.append("Normal")
+        return jsonify(messageList)
+
+    except Exception as e:
+        logger.Error("Error : in the function registerProcessCheckData.....")
+        messageList.append("Error")
+        messageList.append("Exception Error（内部エラー）: " + str(type(e)))
+        return jsonify(messageList)
