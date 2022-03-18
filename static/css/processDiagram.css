@@ -1,6 +1,6 @@
 /*
 // =============================================================================
-// 画面名：Process Diagram
+// 画面名：プロセス可視化チャート：チャート表示画面
 // 
 // -----------------------------------------------------------------------------
 // （ファイル整形）Visual Studio Code : Shift + Alt + f 
@@ -88,4 +88,15 @@ button[type=submit] {
   border-right: solid 1px #acacac6b;
   border-left: solid 1px #acacac6b;
   border-bottom: solid 1px #acacac6b;
+}
+
+/* print 対応 */
+@media print {
+  a[href]:after {
+    content: "" !important;
+  }
+
+  abbr[title]:after {
+    content: "" !important;
+  }
 }

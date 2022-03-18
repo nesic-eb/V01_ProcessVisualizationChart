@@ -55,16 +55,24 @@
                 <th style="width: 50px;">
                     <p style="margin-top: 10px;">位置：</p>
                 </th>
-                <th style="width: 300px;">
+                <th style="width: 150px;">
                     <label style="margin-top: 0px; font-size: large; color: blue;" id="location_id"></label>
                 </th>
+                <th style="width: 200px;">
+                </th>
                 <th style="width: 150px;">
-                    <button type="button" class="btn btn-primary" style="width: 80px; height:35px;" id="updateData"
-                        name="updateData" onclick="updateButtonClick()">更新</button>
+                    <button type="button" class="btn btn-primary" style="width: 80px; height:35px;"
+                        id="updateDataButton" name="updateDataButton" onclick="updateButtonClick()">更新</button>
                 </th>
                 <th>
-                    <button type="button" class="btn btn-primary" style="width: 80px; height:35px;" id="deleteData"
-                        name="deleteData" onclick="deleteButtonClick()">削除</button>
+                    <button type="button" class="btn btn-primary" style="width: 100px; height:35px;"
+                        id="cancelDataButton" name="cancelDataButton" onclick="cancelButtonClick()">キャンセル</button>
+                </th>
+                <th style="width: 80px;">
+                </th>
+                <th>
+                    <button type="button" class="btn btn-danger" style="width: 80px; height:35px;" id="deleteDataButton"
+                        name="deleteDataButton" onclick="deleteButtonClick()">削除</button>
                 </th>
             </tr>
         </table>
@@ -73,19 +81,19 @@
         <table class="table" style="margin-top: -10px;">
             <tr>
                 <td colspan="2">
-                    <p>コメントID</p>
+                    <p>コメントコード</p>
                     <select class='form-control' id="comment_code" onchange="commentCode_onchange()">
                         <option value="0000">新規作成</option>
                     </select>
                 </td>
                 <td colspan="2">
-                    <p>コメントID（新規入力時）</p>
+                    <p>コメントコード（新規入力時）</p>
                     <input type="text" id="new_comment_code" class="form-control"
                         style="height:35px;background-color:yellow;" readonly />
                 </td>
                 <td>
                     <p>&nbsp;</p>
-                    <button type="button" class="btn btn-success" style="height:33px;"
+                    <button type="button" class="btn btn-success" style="height:33px;" id="clearDataButton"
                         onclick="clearData()">クリア</button>
                 </td>
             </tr>
@@ -93,14 +101,15 @@
             <tr>
                 <td colspan="5">
                     <p>見出し</p>
-                    <input type="text" class="form-control" style="width: 743px;height:35px;" value="" id="heading" />
+                    <input type="text" class="form-control" style="width: 743px;height:35px;" maxlength="50" value=""
+                        id="heading" />
                 </td>
             </tr>
 
             <tr>
                 <td colspan="5">
                     <p>説明</p>
-                    <textarea id="explaination" style="width: 743px;height: 70px;"></textarea>
+                    <textarea id="explaination" style="width: 743px;height: 70px;" maxlength="800"></textarea>
                 </td>
             </tr>
 
@@ -129,10 +138,11 @@
                     <p>操作対象等</p>
                     <select class='form-control' id="OperationTarget">
                         <option value="">Select</option>
-                        <option value="基幹システム">基幹システム</option>
+                        <option value="別システム">別システム</option>
                         <option value="メール">メール</option>
                         <option value="ミーテイング">ミーテイング</option>
                         <option value="資料作成">資料作成</option>
+                        <option value="調整・調査">調整・調査</option>
                     </select>
                 </td>
                 <td rowspan="2">
