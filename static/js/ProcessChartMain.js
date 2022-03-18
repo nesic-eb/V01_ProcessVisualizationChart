@@ -737,7 +737,7 @@ $('#btn_copy').click(function (e) {
         alert("登録しました。");
         window.location.reload();
       } else {
-        //alert(response[0] + " : " + response[1]);
+        alert(response[0] + " : " + response[1]);
         window.location.reload();
       }
     }
