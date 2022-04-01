@@ -73,6 +73,10 @@ function onLoadProcessLableData() {
                 $("#lableStart").val(startchr);
                 $("#lableEnd").val(endchr);
 
+                $("#selectColor option[value='" + labelData[0].LabelColor + "']").attr("selected", "selected");
+                var ObjSelectLabel = document.getElementById("selectColorLabel");
+                ObjSelectLabel.style.backgroundColor = labelData[0].LabelColor;
+
                 var ll = document.getElementById("location_id");
                 ll.innerHTML = startchr + " ～ " + endchr;
             }
@@ -84,6 +88,10 @@ function onLoadProcessLableData() {
                 $("#chartLableText").val(labelData[0].LabelText);
                 $("#lableStart").val(startchr);
                 $("#lableEnd").val(endchr);
+
+                $("#selectColor option[value='" + labelData[0].LabelColor + "']").attr("selected", "selected");
+                var ObjSelectLabel = document.getElementById("selectColorLabel");
+                ObjSelectLabel.style.backgroundColor = labelData[0].LabelColor;
 
                 var ll = document.getElementById("location_id");
                 ll.innerHTML = startchr + " ～ " + endchr;
@@ -195,6 +203,10 @@ function updateButtonClick() {
         }
     }
 
+    // カラー
+    var ObjSelectColor = document.getElementById("selectColor");
+    var colorValue = ObjSelectColor.value;
+
     $.ajax({
         url: '/updateChartLabelText/',
         type: 'POST',
@@ -204,7 +216,8 @@ function updateButtonClick() {
             dataStartIdx: startchr,
             dataEndIdx: endchr,
             labelText: labelText,
-            labelType: labelType
+            labelType: labelType,
+            labelColor: colorValue
         },
         success: function (response) {
             if (response.status == "NG") {
@@ -221,6 +234,11 @@ function updateButtonClick() {
 // 画面：各情報を削除する
 // ----------------------------------------------
 function deleteButtonClick() {
+    var result = window.confirm("削除しますか？");
+    if (result == false) {
+        return;
+    }
+
     // タイプ
     var labelType = sessionStorage.getItem("labelType")
 
@@ -249,8 +267,19 @@ function deleteButtonClick() {
 // 画面キャンセルする
 // ----------------------------------------------
 function cancelButtonClick() {
-    var result = window.confirm("変更内容を保存しないで、キャンセルしますか？");
+    var result = true;
+    //result = window.confirm("変更内容を保存しないで、キャンセルしますか？");
     if (result == true) {
         window.close();
     }
+}
+
+// ----------------------------------------------
+// ラベルカラーを選択した
+// ----------------------------------------------
+function onSelectColorChange() {
+    var ObjSelectColor = document.getElementById("selectColor");
+    var ObjSelectLabel = document.getElementById("selectColorLabel");
+    var selectColor = ObjSelectColor.value;
+    ObjSelectLabel.style.backgroundColor = selectColor;
 }

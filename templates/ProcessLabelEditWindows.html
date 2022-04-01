@@ -90,11 +90,32 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <p>ラベル名称</p>
+                    <p>ラベル名称：</p>
                     <input type="text" class="form-control" style="width: 500px;height:35px;" maxlength="50" value=""
                         id="chartLableText" />
                 </td>
                 <td>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <select id="selectColor" onchange="onSelectColorChange()">
+                        <option value="#FFFFCC" style="background-color:#FFFFCC;color:#FFFFCC" selected>薄い黄</option>
+                        <option value="#99FF99" style="background-color:#99FF99;color:#99FF99">薄い黄緑</option>
+                        <option value="#33FF99" style="background-color:#33FF99;color:#33FF99">薄い緑</option>
+                        <option value="#CCCCFF" style="background-color:#CCCCFF;color:#CCCCFF">薄い紫</option>
+                        <option value="#66CCFF" style="background-color:#66CCFF;color:#66CCFF">薄い青紫</option>
+                        <option value="#00CCFF" style="background-color:#00CCFF;color:#00CCFF">薄い青</option>
+                        <option value="#FF99FF" style="background-color:#FF99FF;color:#FF99FF">薄いピンク</option>
+                        <option value="#FFCCCC" style="background-color:#FFCCCC;color:#FFCCCC">薄いオレンジ</option>
+                        <option value="#FF99CC" style="background-color:#FF99CC;color:#FF99CC">薄い赤</option>
+                    </select>
+                </td>
+                <td>
+                    <div id="selectColorLabel"
+                        style="text-align: center; width: 120px; height: 30px;  background-color: #FFFF99;">
+                        <label>ラベルの色</label>
+                    </div>
                 </td>
             </tr>
         </table>

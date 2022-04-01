@@ -547,8 +547,10 @@ function onLoadProcessChartData() {
         for (var j = 1; j <= Number(colNum); j++) {
           var LabelData = getProcessLabelData_EndColum(j, "column", ChartBusinessLabelData);
           var colspanNum = 1;
+          var labelColor = "#FFFFCC";
           if (LabelData != null) {
             colspanNum = Number(LabelData.EndIdx) - Number(LabelData.StartIdx) + 1;
+            labelColor = LabelData.LabelColor;
           }
 
           if (columNumMax <= Number(colNum)) {
@@ -556,7 +558,7 @@ function onLoadProcessChartData() {
 
               var td = document.createElement('td');
               td.classList.add("t-border");
-              td.setAttribute("style", "text-align: center; height: 30px; background-color: #FFFFCC");
+              td.setAttribute("style", "text-align: center; height: 30px; background-color: " + labelColor + ";");
               td.setAttribute("colspan", String(colspanNum));
               {
                 var processLabel = "";
@@ -574,7 +576,7 @@ function onLoadProcessChartData() {
                   aEdit.setAttribute("name", chr + "_process");
                   var img = document.createElement('img');
                   img.setAttribute("id", chr + "_processImg");
-                  img.setAttribute("style", "margin-top: -2px; width: 18px;");
+                  img.setAttribute("style", "margin-top: -2px; width: 20px;");
                   img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
 
                   aEdit.appendChild(img)
@@ -670,9 +672,11 @@ function onLoadProcessChartData() {
           var LabelData = getProcessLabelData_EndColum(k, "rows", ChartBusinessLabelData);
           var rowspanNum = 1;
           var departmentLabel = "";
+          var labelColor = "#FFFFCC";
           if (LabelData != null) {
             rowspanNum = Number(LabelData.EndIdx) - Number(LabelData.StartIdx) + 1;
             departmentLabel = LabelData.LabelText;
+            labelColor = LabelData.LabelColor;
           }
 
           if (rowsNumMax <= Number(rowNum)) {
@@ -681,7 +685,7 @@ function onLoadProcessChartData() {
               var td = document.createElement('td');
               td.classList.add("t-border");
               td.setAttribute("rowspan", String(rowspanNum));
-              td.setAttribute("style", "text-align: center; width: 25px; background-color: #FFFFCC");
+              td.setAttribute("style", "text-align: center; width: 25px; background-color: " + labelColor + ";");
               {
 
                 var div = document.createElement('div');
@@ -699,7 +703,7 @@ function onLoadProcessChartData() {
                   aEdit.setAttribute("name", chr + "_process");
                   var img = document.createElement('img');
                   img.setAttribute("id", chr + "_processImg");
-                  img.setAttribute("style", "margin-top: 20px; margin-left: -8px; width: 18px; ");
+                  img.setAttribute("style", "margin-top: 20px; margin-left: -8px; width: 20px; ");
                   img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
 
                   aEdit.appendChild(img)
