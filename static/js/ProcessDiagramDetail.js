@@ -40,6 +40,23 @@ $(document).ready(function () {
     var processProcedureID = sessionStorage.getItem("ProcessProcedureID");
     var chartDesignCode = sessionStorage.getItem("ChartDesignCode");
 
+    var ChartBusinessLabelData;
+
+    // チャートヘッダラベル情報を取得する
+    $.ajax({
+        url: '/getProcessChartBusinessLabelData/',
+        type: 'POST',
+        data: {
+            processProcedureID: processProcedureID
+        },
+        dataType: 'json',
+        async: false,
+        success: function (response) {
+            //alert(response);
+            ChartBusinessLabelData = response[0].BusinessLabel;
+        }
+    });
+
     $.ajax({
         url: '/getProcessChartDrawingData/',
         type: 'POST',
@@ -48,6 +65,7 @@ $(document).ready(function () {
             chartDesignCode: chartDesignCode
         },
         dataType: 'json',
+        async: false,
         success: function (response) {
             // 図面データ取得
             console.log("REACh")
@@ -109,7 +127,7 @@ $(document).ready(function () {
             // 画面：左側 
             // ---------------------------
             // 図面データに合わせて枠を表示する
-            createLeftTable(RowsNumber, ColumnNumber, design);
+            createLeftTable(RowsNumber, ColumnNumber, design, ChartBusinessLabelData);
 
             // ---------------------------
             // 画面：右側
@@ -132,6 +150,84 @@ if (CHANGEPROHIBITIONFLAG == "1") {
 // ##################################################################################################
 // ##################################################################################################
 /* function の処理を記述 */
+
+// ----------------------------------------------
+// 画面：プロセス欄／業務欄のテキストを求める
+// （開始位置が一致する）
+// ----------------------------------------------
+function checkProcessLabelData(idx, checkType, businessLabelData) {
+    var checkText = "";
+
+    if (checkType = "column") {
+        for (var a = 0; a < businessLabelData.length; a++) {
+            if ("Process" == businessLabelData[a].LabelType) {
+                var StartIdx = businessLabelData[a].StartIdx;
+
+                if (idx == Number(StartIdx)) {
+                    // あった
+                    checkText = businessLabelData[a].LabelText;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (checkType == "rows") {
+        for (var a = 0; a < businessLabelData.length; a++) {
+            if ("Department" == businessLabelData[a].LabelType) {
+                var StartIdx = businessLabelData[a].StartIdx;
+
+                if (idx == Number(StartIdx)) {
+                    // あった
+                    checkText = businessLabelData[a].LabelText;
+                    break;
+                }
+            }
+        }
+    }
+
+    return checkText;
+}
+
+// ----------------------------------------------
+// 画面：プロセス欄／業務欄の終了位置を見つける
+// （開始位置が一致する）
+// ----------------------------------------------
+function getProcessLabelData_EndColum(idx, checkType, businessLabelData) {
+    var LabelData = null;
+
+    // 横
+    if (checkType == "column") {
+        for (var a = 0; a < businessLabelData.length; a++) {
+            if ("Process" == businessLabelData[a].LabelType) {
+                var StartIdx = businessLabelData[a].StartIdx;
+
+                if (idx == Number(StartIdx)) {
+                    // あった
+                    LabelData = businessLabelData[a];
+                    break;
+                }
+            }
+        }
+    }
+
+    // 縦
+    if (checkType == "rows") {
+        for (var a = 0; a < businessLabelData.length; a++) {
+            if ("Department" == businessLabelData[a].LabelType) {
+                var StartIdx = businessLabelData[a].StartIdx;
+
+                if (idx == Number(StartIdx)) {
+                    // あった
+                    LabelData = businessLabelData[a];
+                    break;
+                }
+            }
+        }
+    }
+
+    return LabelData;
+}
 
 /**
  * 数値チェック関数
@@ -248,7 +344,7 @@ function checkImgTd(column, design) {
 // ----------------------------------------------
 // 画面：左側を作図する
 // ----------------------------------------------
-function createLeftTable(rows, column, design) {
+function createLeftTable(rows, column, design, chartBusinessLabelData) {
 
     // 枠（幅）の最大値を求める
     var widthMax = imgTableWidth(design);
@@ -262,6 +358,7 @@ function createLeftTable(rows, column, design) {
     mainTable.setAttribute("style", "border: 1px; background-color: #cdefff; ");
 
     // 行
+    var rowsNumMax = 1;
     for (var j = 0; j <= rows; j++) {
         var tr = document.createElement("tr");
         tr.classList.add("l-border");
@@ -275,6 +372,8 @@ function createLeftTable(rows, column, design) {
                 th.setAttribute("style", "text-align:center; width: 20px; height: 30px;");
                 th.style.backgroundColor = "#98fb98";
                 if (i == 0) {
+                    th.setAttribute("rowspan", "2");
+                    th.setAttribute("colspan", "2");
                     var node = document.createTextNode("No.");
                     th.appendChild(node)
                 } else {
@@ -285,6 +384,7 @@ function createLeftTable(rows, column, design) {
                 tr.appendChild(th);
 
             } else {
+                // 
                 chr = String.fromCharCode(64 + i);
                 var td = document.createElement("td");
                 td.classList.add("l-border");
@@ -305,16 +405,104 @@ function createLeftTable(rows, column, design) {
                 }
                 td.setAttribute("id", chr + "_" + j)
                 if (i == 0) {
+                    // 行番号
                     var node = document.createTextNode(j);
                     td.appendChild(node);
-                }
+                    tr.appendChild(td);
 
+                    // ラベル欄（行）
+                    var LabelData = getProcessLabelData_EndColum(j, "rows", chartBusinessLabelData);
+                    var rowspanNum = 1;
+                    var departmentLabel = "";
+                    var labelColor = "#FFFFCC";
+                    if (LabelData != null) {
+                        rowspanNum = Number(LabelData.EndIdx) - Number(LabelData.StartIdx) + 1;
+                        departmentLabel = LabelData.LabelText;
+                        labelColor = LabelData.LabelColor;
+                    }
+
+                    if (rowsNumMax <= rows) {
+                        if (rowsNumMax <= j) {
+
+                            var td = document.createElement('td');
+                            td.classList.add("t-border");
+                            td.setAttribute("rowspan", String(rowspanNum));
+                            td.setAttribute("style", "text-align: center; width: 25px; background-color: " + labelColor + ";");
+                            {
+                                var div = document.createElement('div');
+                                {
+                                    var span = document.createElement('span');
+                                    span.setAttribute("style", "margin-top: 0px; writing-mode: vertical-rl; text-orientation: upright; margin-left: 0px;");
+                                    if (departmentLabel != "") {
+                                        span.innerHTML = "【" + departmentLabel + "】";
+                                    }
+                                    div.appendChild(span)
+                                }
+                                td.appendChild(div);
+                            }
+                            tr.appendChild(td);
+                            rowsNumMax = rowsNumMax + rowspanNum;
+                        }
+                    }
+                }
+                else {
+                    // データ行
                 tr.appendChild(td);
             }
+        }
         }
 
         // テーブルに行を追加
         mainTable.appendChild(tr)
+
+        // ラベル欄（プロセス欄）
+        if (j == 0) {
+
+            var trp = document.createElement('tr');
+            trp.classList.add("l-border");
+            trp.setAttribute("style", "background-color: #FFFFCC");
+
+            var columNumMax = 1;
+            for (var i = 1; i <= column; i++) {
+                var LabelData = getProcessLabelData_EndColum(i, "column", chartBusinessLabelData);
+                var colspanNum = 1;
+                var labelColor = "#FFFFCC";
+                if (LabelData != null) {
+                    colspanNum = Number(LabelData.EndIdx) - Number(LabelData.StartIdx) + 1;
+                    labelColor = LabelData.LabelColor;
+                }
+
+                if (columNumMax <= column) {
+                    if (columNumMax <= i) {
+
+                        var td = document.createElement('td');
+                        td.classList.add("l-border");
+                        td.setAttribute("style", "text-align: center; height: 30px; background-color: " + labelColor + ";");
+                        td.setAttribute("colspan", String(colspanNum));
+                        {
+                            var processLabel = "";
+                            processLabel = checkProcessLabelData(i, "column", chartBusinessLabelData);
+
+                            var div = document.createElement('div');
+                            {
+                                var span = document.createElement('span');
+                                if (processLabel != "") {
+                                    span.innerHTML = "【" + processLabel + "】";
+                                }
+                            }
+                            div.appendChild(span)
+                            td.appendChild(div);
+                        }
+                        trp.appendChild(td);
+                        columNumMax = columNumMax + colspanNum;
+                    }
+                }
+
+            } // end for
+
+            mainTable.appendChild(trp)
+        }
+
     }
 
     // 親DIVにtableを追加
