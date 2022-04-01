@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ja">
+
+<head>
+    <title>Chart Column Rows Label</title>
+    <meta charset="utf-8">
+    <!-- ★キャッシュクリアのおまじない ################### -->
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- ★ ############################################### -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css"
+        rel="stylesheet">
+    <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/ProcessLabelEditWindow.js') }}"></script>
+    <script type="text/javascript">
+        var url = new URL(window.location.href);
+        var params = url.searchParams;
+        var dataID = params.get('dataId')
+        // 位置を設定する
+        let element = document.getElementById('selectid');
+        //element.value = dataID;
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(window).on("beforeunload", function (e) {
+                window.opener.focus();
+            });
+        });
+
+        // 親画面の存在確認
+        // 存在しなかったら次画面（子画面）を閉じる
+        if (!window.opener || window.opener.closed) {
+            window.close();
+        } else {
+            // 親画面を取得
+            var parentWindowObject = window.opener;
+        }
+    </script>
+
+</head>
+
+<body onload="onLoadProcessLableData()">
+    <div class="container-fluid">
+        <br />
+        <table style="margin-top: -12px;">
+            <tr>
+                <th style="width: 50px;">
+                    <p style="margin-top: 10px;">位置：</p>
+                </th>
+                <th style="width: 150px;">
+                    <label style="margin-top: 0px; font-size: large; color: blue;" id="location_id"></label>
+                </th>
+                <th style="width: 150px;">
+                    <button type="button" class="btn btn-primary" style="width: 80px; height:35px;"
+                        id="updateDataButton" name="updateDataButton" onclick="updateButtonClick()">更新</button>
+                </th>
+                <th>
+                    <button type="button" class="btn btn-primary" style="width: 100px; height:35px;"
+                        id="cancelDataButton" name="cancelDataButton" onclick="cancelButtonClick()">キャンセル</button>
+                </th>
+                <th style="width: 10px;">
+                    &nbsp;
+                </th>
+                <th>
+                    <button type="button" class="btn btn-danger" style="width: 80px; height:35px;" id="deleteDataButton"
+                        name="deleteDataButton" onclick="deleteButtonClick()">削除</button>
+                </th>
+            </tr>
+        </table>
+
+        <table class="table" style="margin-top: 10px;">
+            <tr>
+                <td style="width: 200px;">
+                    <p id="lableStartText">開始：</p>
+                    <input type="text" class="form-control" style="width: 150px;height:35px;" maxlength="2" value=""
+                        readonly id="lableStart" />
+                </td>
+                <td>
+                    <p id="lableEndText">終了：</p>
+                    <input type="text" class="form-control" style="width: 150px;height:35px;" maxlength="2" value=""
+                        id="lableEnd" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p>ラベル名称</p>
+                    <input type="text" class="form-control" style="width: 500px;height:35px;" maxlength="50" value=""
+                        id="chartLableText" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+
+
+    </div>
+
+</body>
+
+</html>
+<!-- for js file -->

@@ -44,6 +44,8 @@ from ProcessChartMain import ProcessChartMain_api  # プロセス可視化チャ
 from ProcessDiagram import ProcessDiagram_api
 from ProcessDiagramDetail import ProcessDiagramDetail_api
 from ProcessEditWindow import ProcessEditWindow_api
+from ProcessLabelEditWindow import ProcessLabelEditWindow_api
+
 # Const
 # -----------------------------------------------------------------------------
 # Path: config - log
@@ -75,6 +77,7 @@ app.register_blueprint(ProcessChartMain_api)
 app.register_blueprint(ProcessDiagram_api)
 app.register_blueprint(ProcessDiagramDetail_api)
 app.register_blueprint(ProcessEditWindow_api)
+app.register_blueprint(ProcessLabelEditWindow_api)
 
 # ========================================================
 
@@ -229,9 +232,22 @@ def gotoProcessDiagram():
 
 
 # ========================================================================
+# プロセスチャートのカラム・行のラベル画面を表示する
+#
+# ------------------------------------------------------
+@app.route("/goToProcessLabelEdit")
+def goToProcessLabelEdit():
+    logger.info("goToProcessLabelEdit .....")
+    organization = session["organization"]
+    full_name = session["full_name"]
+    return render_template("ProcessLabelEditWindows.html", organization=organization, full_name=full_name)
+
+# ========================================================================
 # プロセスチャートの詳細画面を表示する
 #
 # ------------------------------------------------------
+
+
 @app.route("/goToProcessDiagramDetail")
 def goToProcessDiagramDetail():
     logger.info("goToProcessDiagramDetail .....")
