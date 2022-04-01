@@ -90,7 +90,8 @@ def getProcessChartBusinessLabelData():
             "  StartIdx, " \
             "  EndIdx, " \
             "  LabelType, " \
-            "  ISNULL(LabelText,'') as LabelText " \
+            "  ISNULL(LabelText,'') as LabelText, " \
+            "  ISNULL(LabelColor, '#FFFFCC') as LabelColor" \
             " FROM " \
             "   ChartBusinessLabel_TBL " \
             " WHERE " \
@@ -110,6 +111,7 @@ def getProcessChartBusinessLabelData():
             design['EndIdx'] = x[1]
             design['LabelType'] = x[2]
             design['LabelText'] = x[3]
+            design['LabelColor'] = x[4]
 
             designList.append(design)
 
@@ -171,7 +173,8 @@ def getChartLabelText():
             "  StartIdx, " \
             "  EndIdx, " \
             "  LabelType, " \
-            "  ISNULL(LabelText,'') as LabelText " \
+            "  ISNULL(LabelText,'') as LabelText, " \
+            "  ISNULL(LabelColor, '#FFFFCC') as LabelColor" \
             " FROM " \
             "   ChartBusinessLabel_TBL " \
             " WHERE " \
@@ -193,6 +196,7 @@ def getChartLabelText():
             design['EndIdx'] = x[1]
             design['LabelType'] = x[2]
             design['LabelText'] = x[3]
+            design['LabelColor'] = x[4]
 
             designList.append(design)
 
@@ -205,6 +209,7 @@ def getChartLabelText():
             design['EndIdx'] = dataStartIdx
             design['LabelType'] = labelType
             design['LabelText'] = ""
+            design['LabelColor'] = "#FFFFCC"
 
             designList.append(design)
 
@@ -243,6 +248,7 @@ def updateChartLabelText():
         dataStartIdx = flask.request.form['dataStartIdx']
         dataEndIdx = flask.request.form['dataEndIdx']
         labelType = flask.request.form['labelType']
+        labelColor = flask.request.form['labelColor']
 
         print("processProcedureID = [" + processProcedureID + "]")
         print("beforeDataStartIdx = [" + beforeDataStartIdx + "]")
@@ -250,6 +256,7 @@ def updateChartLabelText():
         print("dataStartIdx = [" + dataStartIdx + "]")
         print("dataEndIdx = [" + dataEndIdx + "]")
         print("labelType = [" + labelType + "]")
+        print("labelColor = [" + labelColor + "]")
 
         status = {}
 
@@ -292,7 +299,7 @@ def updateChartLabelText():
             "   ProcessProcedureID = '" + processProcedureID + "' " \
             " AND LabelType = '" + labelType + "' " \
             " AND (StartIdx >= '" + str(dataEndIdx) + "'" \
-            + " AND EndIdx <= '" + str(dataEndIdx) + "') "
+            + " AND StartIdx <= '" + str(dataEndIdx) + "') "
 
         select_conn_cursor.execute(select_query)
 
@@ -335,26 +342,28 @@ def updateChartLabelText():
 
         select_conn_cursor.close()
 
+        trn_conn = pyodbc.connect('DRIVER={SQL Server};'
+                                  'Server='+app_section.get('IP')+';'
+                                  'Database=' +
+                                  app_section.get('DATABASE')+';'
+                                  'uid='+app_section.get('DB_USER_ID')+';'
+                                  'pwd='+app_section.get('DB_PASSWORD')+';')
+
+        trn_cursor = trn_conn.cursor()
+
         # 重なりがない
         if len(designList) == 0:
-            trn_conn = pyodbc.connect('DRIVER={SQL Server};'
-                                      'Server='+app_section.get('IP')+';'
-                                      'Database=' +
-                                      app_section.get('DATABASE')+';'
-                                      'uid='+app_section.get('DB_USER_ID')+';'
-                                      'pwd='+app_section.get('DB_PASSWORD')+';')
-
-            trn_cursor = trn_conn.cursor()
 
             if len(selectList) == 0:
                 trn_sql = "INSERT INTO " \
-                    " ChartBusinessLabel_TBL (ProcessProcedureID, StartIdx, EndIdx, LabelType, LabelText ) " \
+                    " ChartBusinessLabel_TBL (ProcessProcedureID, StartIdx, EndIdx, LabelType, LabelText, LabelColor ) " \
                     " VALUES ( " + \
                     " '" + processProcedureID + "', " \
                     " '" + str(dataStartIdx) + "', " \
                     " '" + str(dataEndIdx) + "', " \
                     " '" + labelType + "', " \
-                    " '" + labelText + "' " \
+                    " '" + labelText + "', " \
+                    " '" + labelColor + "' " \
                     " ); "
 
                 trn_cursor.execute(trn_sql)
@@ -364,13 +373,13 @@ def updateChartLabelText():
             else:
                 # 更新 ---------------------------
                 # SQL
-
                 trn_sql = "UPDATE " \
                     " ChartBusinessLabel_TBL " \
                     " SET " + \
                     "   StartIdx = '" + str(dataStartIdx) + "', " \
                     "   EndIdx = '" + str(dataEndIdx) + "', " \
-                    "   LabelText = '" + labelText + "' " \
+                    "   LabelText = '" + labelText + "', " \
+                    "   LabelColor = '" + labelColor + "' " \
                     " where " \
                     "   ProcessProcedureID = '" + processProcedureID + "' " \
                     " AND StartIdx = '" + beforeDataStartIdx + "' " \
@@ -382,10 +391,33 @@ def updateChartLabelText():
 
             status['status'] = "OK"
 
-        else:
-            # 重複エラー
-            status['status'] = "NG"
-            status['message'] = "隣接するラベルが存在します。\r\n隣接する部分を削除するか、位置を変更してください。"
+        if len(designList) == 1:
+            # 自分自身である
+            if dataStartIdx == dataEndIdx:
+                # 更新 ---------------------------
+                # SQL
+                trn_sql = "UPDATE " \
+                    " ChartBusinessLabel_TBL " \
+                    " SET " + \
+                    "   StartIdx = '" + str(dataStartIdx) + "', " \
+                    "   EndIdx = '" + str(dataEndIdx) + "', " \
+                    "   LabelText = '" + labelText + "', " \
+                    "   LabelColor = '" + labelColor + "' " \
+                    " where " \
+                    "   ProcessProcedureID = '" + processProcedureID + "' " \
+                    " AND StartIdx = '" + beforeDataStartIdx + "' " \
+                    " AND LabelType = '" + labelType + "' "
+
+                trn_cursor.execute(trn_sql)
+
+                trn_cursor.commit()
+
+                status['status'] = "OK"
+
+            else:
+                # 重複エラー
+                status['status'] = "NG"
+                status['message'] = "隣接するラベルが存在します。\r\n隣接する部分を削除するか、位置を変更してください。"
 
     except Exception as e:
         status['status'] = "NG"
