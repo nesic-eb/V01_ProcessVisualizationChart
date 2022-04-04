@@ -411,7 +411,7 @@ function onLoadProcessChartData() {
 
         // 名称 
         document.getElementById("process_ProcedureName").value = blockData.ProcessProcedureName;
-        if (blockData.ChangeProhibitionFlag == "0") {
+        if (CHANGEPROHIBITIONFLAG == "0") {
           document.getElementById("process_ProcedureName").readOnly = false;
         }
         else {
