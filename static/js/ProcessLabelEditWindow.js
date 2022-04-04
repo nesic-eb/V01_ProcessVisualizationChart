@@ -17,13 +17,13 @@ console.log("dataStartIdx=" + sessionStorage.getItem("dataStartIdx"));
 console.log("labelComment=" + sessionStorage.getItem("labelComment"));
 console.log("labelType=" + sessionStorage.getItem("labelType"));
 
-console.log("ChangeProhibitionflag=" + sessionStorage.getItem("ChangeProhibitionflag"));
-
 // 変更禁止フラグ（１：禁止）
 var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
 
 // 画面のデザインコード
 var ORG_PROCESSPROCEDUREID = sessionStorage.getItem("ProcessProcedureID");
+
+console.log("ChangeProhibitionflag=" + CHANGEPROHIBITIONFLAG);
 
 // ##################################################################################################
 // ##################################################################################################
@@ -49,6 +49,18 @@ function onLoadProcessLableData() {
     var labelComment = sessionStorage.getItem("labelComment");
     var labelType = sessionStorage.getItem("labelType");
 
+    // ラベルが未設定の場合は、開始位置の設定を行う
+    if (labelComment == "") {
+        if (labelType == "Process") {
+            var chr = String.fromCharCode(64 + Number(dataStartIdx));
+            $("#lableStart").val(chr);
+        }
+        if (labelType == "Department") {
+            var idx = dataStartIdx;
+            $("#lableStart").val(idx);
+        }
+    }
+
     /// ------------------------------------
     /// コメントリストを取得して、設定する
     /// ------------------------------------
@@ -66,8 +78,8 @@ function onLoadProcessLableData() {
             labelData = response[0].BusinessLabel;
 
             if (labelType == "Process") {
-                startchr = String.fromCharCode(64 + Number(labelData[0].StartIdx));
-                endchr = String.fromCharCode(64 + Number(labelData[0].EndIdx));
+                var startchr = String.fromCharCode(64 + Number(labelData[0].StartIdx));
+                var endchr = String.fromCharCode(64 + Number(labelData[0].EndIdx));
                 $("#chartLableText").empty();
                 $("#chartLableText").val(labelData[0].LabelText);
                 $("#lableStart").val(startchr);
@@ -82,8 +94,8 @@ function onLoadProcessLableData() {
             }
 
             if (labelType == "Department") {
-                startchr = labelData[0].StartIdx;
-                endchr = labelData[0].EndIdx;
+                var startchr = labelData[0].StartIdx;
+                var endchr = labelData[0].EndIdx;
                 $("#chartLableText").empty();
                 $("#chartLableText").val(labelData[0].LabelText);
                 $("#lableStart").val(startchr);
