@@ -12,18 +12,30 @@
 console.log("■ ---------------------------------------------");
 console.log("■ セッション情報 -- ProcessDiagramDetail.js --------");
 
-console.log(sessionStorage.getItem("email"));
-console.log(sessionStorage.getItem("org1"));
-console.log(sessionStorage.getItem("org2"));
-console.log(sessionStorage.getItem("ProcessProcedureID"));
-console.log(sessionStorage.getItem("ProcessProcedureName"));
-console.log(sessionStorage.getItem("ChartDesignCode"));
-console.log(sessionStorage.getItem("ChangeProhibitionflag"));
-
-console.log("■ ---------------------------------------------");
+var email = sessionStorage.getItem("email");
+var org1 = sessionStorage.getItem("org1");
+var org2 = sessionStorage.getItem("org2");
+var ProcessProcedureID = sessionStorage.getItem("ProcessProcedureID");
+var ProcessProcedureName = sessionStorage.getItem("ProcessProcedureName");
+var ChartDesignCode = sessionStorage.getItem("ChartDesignCode");
+var AutoSaveControlflag = sessionStorage.getItem("AutoSaveControl");
 
 // 変更禁止フラグ（１：禁止）
 var CHANGEPROHIBITIONFLAG = sessionStorage.getItem("ChangeProhibitionflag");
+
+// 時間合計
+var G_WORKTIME_TOTAL = 0
+
+console.log("Email = " + email);
+console.log("Org1 = " + org1);
+console.log("Org2 = " + org2);
+console.log("Process Procedure ID = " + ProcessProcedureID);
+console.log("Process Procedure Name = " + ProcessProcedureName);
+console.log("Chart Design Code = " + ChartDesignCode);
+console.log("AutoSaveControlflag = " + AutoSaveControlflag);
+console.log("CHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
+
+console.log("■ ---------------------------------------------");
 
 var G_COMMENT_MAX = 0
 var G_WORKTIME_TOTAL = 0
@@ -72,13 +84,13 @@ $(document).ready(function () {
 
             var result = JSON.stringify(response)
             var data = response[0].Data
-            console.log("data = " + JSON.stringify(data))
+            //console.log("data = " + JSON.stringify(data))
 
             var Num = response[0].Num
             console.log("Num = " + JSON.stringify(Num))
 
             var design = response[0].design
-            console.log("design = " + JSON.stringify(design))
+            //console.log("design = " + JSON.stringify(design))
 
             var RowsNumber = data[0].RowsNumber
             console.log("rows = " + RowsNumber)
@@ -369,7 +381,7 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
             if (j == 0) {
                 var th = document.createElement("th");
                 th.classList.add("l-border");
-                th.setAttribute("style", "text-align:center; width: 20px; height: 30px;");
+                th.setAttribute("style", "text-align:center; width: 20px; height: 28px;");
                 th.style.backgroundColor = "#98fb98";
                 if (i == 0) {
                     th.setAttribute("rowspan", "2");
@@ -389,17 +401,17 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
                 var td = document.createElement("td");
                 td.classList.add("l-border");
                 if (i == 0) {
-                    td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 30px;");
+                    td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 28px;");
                     td.style.backgroundColor = "#f08080";
                 }
                 else {
                     // 枠
                     var checkflg = checkImgTd(i, design);
                     if (checkflg == true) {
-                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 140px; height: 30px;");
+                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 140px; height: 28px;");
                     }
                     else {
-                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 30px;");
+                        td.setAttribute("style", "text-align:center; vertical-align:middle; width: 20px; height: 28px;");
                     }
                     td.style.backgroundColor = "#ffffff";
                 }
@@ -423,11 +435,10 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
 
                     if (rowsNumMax <= rows) {
                         if (rowsNumMax <= j) {
-
                             var td = document.createElement('td');
                             td.classList.add("t-border");
                             td.setAttribute("rowspan", String(rowspanNum));
-                            td.setAttribute("style", "text-align: center; width: 25px; background-color: " + labelColor + ";");
+                            td.setAttribute("style", "text-align: center; width: 20px; background-color: " + labelColor + ";");
                             {
                                 var div = document.createElement('div');
                                 {
@@ -440,6 +451,7 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
                                 }
                                 td.appendChild(div);
                             }
+
                             tr.appendChild(td);
                             rowsNumMax = rowsNumMax + rowspanNum;
                         }
@@ -447,9 +459,9 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
                 }
                 else {
                     // データ行
-                tr.appendChild(td);
+                    tr.appendChild(td);
+                }
             }
-        }
         }
 
         // テーブルに行を追加
@@ -477,7 +489,7 @@ function createLeftTable(rows, column, design, chartBusinessLabelData) {
 
                         var td = document.createElement('td');
                         td.classList.add("l-border");
-                        td.setAttribute("style", "text-align: center; height: 30px; background-color: " + labelColor + ";");
+                        td.setAttribute("style", "text-align: center; height: 28px; background-color: " + labelColor + ";");
                         td.setAttribute("colspan", String(colspanNum));
                         {
                             var processLabel = "";

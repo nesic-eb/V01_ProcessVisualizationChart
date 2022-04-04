@@ -7,7 +7,7 @@
 
 
 // ##################################################################################################
-// ##################################################################################################
+// ##################################################################################################3
 /* セッション情報取得 */
 
 console.log("■ ---------------------------------------------");
@@ -36,6 +36,8 @@ console.log("Chart Design Code = " + ChartDesignCode);
 console.log("AutoSaveControlflag = " + AutoSaveControlflag);
 console.log("CHANGEPROHIBITIONFLAG = " + CHANGEPROHIBITIONFLAG);
 
+// 画面表示を変更する
+$("body").css("zoom", "90%");
 
 // ##################################################################################################
 // ##################################################################################################
@@ -101,7 +103,7 @@ function AutoSaveControl() {
   }
 }
 
-// + - 記号
+// + - 記号アイコン, 編集アイコン
 function PlusMinusImgControl(control) {
   var columsNum = sessionStorage.getItem("AutoColumnNum");
   var rowsNum = sessionStorage.getItem("AutoRowsNum");
@@ -115,6 +117,10 @@ function PlusMinusImgControl(control) {
         aplus.style.visibility = "hidden";
         aMinus.style.visibility = "hidden";
       }
+      var aEdit = document.getElementById(chr + "_process");
+      if (aEdit != null) {
+        aEdit.style.visibility = "hidden";
+      }
     }
     else {
       var aplus = document.getElementById(chr + "_colPlus");
@@ -122,6 +128,10 @@ function PlusMinusImgControl(control) {
       if (aplus != null) {
         aplus.style.visibility = "visible";
         aMinus.style.visibility = "visible";
+      }
+      var aEdit = document.getElementById(chr + "_process");
+      if (aEdit != null) {
+        aEdit.style.visibility = "visible";
       }
     }
   }
@@ -134,6 +144,10 @@ function PlusMinusImgControl(control) {
         aplus.style.visibility = "hidden";
         aMinus.style.visibility = "hidden";
       }
+      var aEdit = document.getElementById(row + "_process");
+      if (aEdit != null) {
+        aEdit.style.visibility = "hidden";
+      }
     }
     else {
       var aplus = document.getElementById(row + "_rowPlus");
@@ -141,6 +155,10 @@ function PlusMinusImgControl(control) {
       if (aplus != null) {
         aplus.style.visibility = "visible";
         aMinus.style.visibility = "visible";
+      }
+      var aEdit = document.getElementById(row + "_process");
+      if (aEdit != null) {
+        aEdit.style.visibility = "visible";
       }
     }
   }
@@ -391,8 +409,14 @@ function onLoadProcessChartData() {
         sessionStorage.setItem("AutoColumnNum", colNum);
         sessionStorage.setItem("AutoRowsNum", rowNum);
 
-        // 
+        // 名称 
         document.getElementById("process_ProcedureName").value = blockData.ProcessProcedureName;
+        if (blockData.ChangeProhibitionFlag == "0") {
+          document.getElementById("process_ProcedureName").readOnly = false;
+        }
+        else {
+          document.getElementById("process_ProcedureName").readOnly = true;
+        }
 
         // 作業頻度
         document.getElementById("SelectWorkFrequency").value = blockData.WorkFrequency;
@@ -545,6 +569,8 @@ function onLoadProcessChartData() {
 
         var columNumMax = 1;
         for (var j = 1; j <= Number(colNum); j++) {
+          var chrP = String.fromCharCode(64 + j);
+
           var LabelData = getProcessLabelData_EndColum(j, "column", ChartBusinessLabelData);
           var colspanNum = 1;
           var labelColor = "#FFFFCC";
@@ -570,19 +596,21 @@ function onLoadProcessChartData() {
                   if (processLabel != "") {
                     span.innerHTML = "【" + processLabel + "】" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                   }
-                  var aEdit = document.createElement('a');
-                  aEdit.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + String(j) + "','" + processLabel + "','" + "Process" + "','" + "')");
-                  aEdit.setAttribute("id", chr + "_process");
-                  aEdit.setAttribute("name", chr + "_process");
-                  var img = document.createElement('img');
-                  img.setAttribute("id", chr + "_processImg");
-                  img.setAttribute("style", "margin-top: -2px; width: 20px;");
-                  img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
+                  if (CHANGEPROHIBITIONFLAG == "0") {
+                    var aEdit = document.createElement('a');
+                    aEdit.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + String(j) + "','" + processLabel + "','" + "Process" + "','" + "')");
+                    aEdit.setAttribute("id", chrP + "_process");
+                    aEdit.setAttribute("name", chrP + "_process");
+                    var img = document.createElement('img');
+                    img.setAttribute("id", chrP + "_processImg");
+                    img.setAttribute("style", "margin-top: -2px; width: 20px;");
+                    img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
 
-                  aEdit.appendChild(img)
-                  div.appendChild(span)
+                    aEdit.appendChild(img)
+                    div.appendChild(aEdit)
+                  }
                 }
-                div.appendChild(aEdit)
+                div.appendChild(span)
                 td.appendChild(div);
               }
               trp.appendChild(td);
@@ -601,9 +629,7 @@ function onLoadProcessChartData() {
       // ------------------------------
       var rowsNumMax = 1;
       for (var k = 1; k <= rowNum; k++) {
-
         var tr = document.createElement('tr');
-
         tr.setAttribute("style", "height: 60px;");
         tr.classList.add("l-border");
 
@@ -695,19 +721,20 @@ function onLoadProcessChartData() {
                   if (departmentLabel != "") {
                     span.innerHTML = "【" + departmentLabel + "】";
                   }
+                  if (CHANGEPROHIBITIONFLAG == "0") {
+                    var aEdit = document.createElement('a');
+                    aEdit.setAttribute("style", "margin-top: 0px; width: 18px; margin-left: 0px;");
+                    aEdit.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + String(k) + "','" + departmentLabel + "','" + "Department" + "','" + "')");
+                    aEdit.setAttribute("id", k + "_process");
+                    aEdit.setAttribute("name", k + "_process");
+                    var img = document.createElement('img');
+                    img.setAttribute("id", chr + "_processImg");
+                    img.setAttribute("style", "margin-top: 20px; margin-left: -8px; width: 20px; ");
+                    img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
 
-                  var aEdit = document.createElement('a');
-                  aEdit.setAttribute("style", "margin-top: 0px; width: 18px; margin-left: 0px;");
-                  aEdit.setAttribute("href", "JavaScript:showModal('EdithWindow', '" + String(k) + "','" + departmentLabel + "','" + "Department" + "','" + "')");
-                  aEdit.setAttribute("id", chr + "_process");
-                  aEdit.setAttribute("name", chr + "_process");
-                  var img = document.createElement('img');
-                  img.setAttribute("id", chr + "_processImg");
-                  img.setAttribute("style", "margin-top: 20px; margin-left: -8px; width: 20px; ");
-                  img.setAttribute("src", "/static/img/flowChartImg/EditData.svg");
-
-                  aEdit.appendChild(img)
-                  span.appendChild(aEdit)
+                    aEdit.appendChild(img)
+                    span.appendChild(aEdit)
+                  }
                   div.appendChild(span)
                 }
                 td.appendChild(div);
@@ -724,6 +751,7 @@ function onLoadProcessChartData() {
         for (var innerloop = 1; innerloop <= colNum; innerloop++) {
           var tdi = document.createElement('td');
           tdi.classList.add("l-border");
+
           {
             var select = document.createElement('select');
             if (CHANGEPROHIBITIONFLAG == "0") {
