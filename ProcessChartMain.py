@@ -755,6 +755,15 @@ def deleteProcessCheckData():
 
                 delete_cursor.execute(delete_processCheck_query)
 
+                # 4. ラベル欄テーブル
+                delete_processCheck_query = \
+                    "Delete from " \
+                    " ChartBusinessLabel_TBL " \
+                    " WHERE " \
+                    " ProcessProcedureID = '" + processProcedureID + "' " \
+
+                delete_cursor.execute(delete_processCheck_query)
+
                 # 削除成功
                 delete_processCheck_conn.commit()
 
@@ -1150,7 +1159,6 @@ def copyProcessCheckData():
 
                     messageList.append("Error")
                     messageList.append("Insert Error（内部エラー）")
-
 
                     return jsonify(messageList)
 
